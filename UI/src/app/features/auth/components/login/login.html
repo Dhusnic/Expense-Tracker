@@ -1,0 +1,314 @@
+<div class="login-wrapper">
+  <div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+
+      <!-- LEFT PANEL -->
+      <div
+        class="col-lg-6 d-none d-lg-flex
+         bg-primary-gradient
+         text-white
+         position-relative
+         overflow-hidden
+         align-items-center
+         justify-content-center">
+        <div class="brand-overlay"></div>
+
+        <div class="brand-content text-center px-5 position-relative">
+          <div class="brand-logo mb-4">
+            <div class="logo-circle">
+              <i class="bi bi-cash-coin"></i>
+            </div>
+          </div>
+
+          <h1 class="display-4 fw-bold mb-3">Expense Tracker</h1>
+
+          <p class="lead mb-5 text-white-75">
+            Trackers made simple. Manage your finances with ease and confidence.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="col-lg-6 col-12 p-0">
+        <div class="auth-scroll-container">
+
+          <div class="form-wrapper mx-auto">
+
+            <!-- MOBILE LOGO -->
+            <div class="d-lg-none text-center mb-4">
+              <i class="bi bi-shield-lock-fill fs-1 text-primary"></i>
+            </div>
+
+            <!-- HEADER -->
+            <!-- @if (authMode === 'login') { -->
+            <div class="text-center mb-4">
+              <h2 class="fw-bold">
+                {{
+                authMode === 'forgot'
+                ? 'Reset Password'
+                : authMode === 'signup'
+                ? 'Create Account'
+                : 'Welcome Back'
+                }}
+              </h2>
+
+              <p class="text-muted">
+                {{
+                authMode === 'forgot'
+                ? 'Enter your email to receive a reset link'
+                : authMode === 'signup'
+                ? 'Create your enterprise account'
+                : 'Sign in to your account to continue'
+                }}
+              </p>
+
+              <!-- TOGGLE -->
+              @if (authMode !== 'forgot') {
+              <div class="d-flex justify-content-center gap-2 mt-2">
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="authMode === 'login'"
+                  [class.btn-outline-primary]="authMode !== 'login'"
+                  (click)="setAuthMode('login')">
+                  Login
+                </button>
+
+                <button
+                  class="btn btn-sm"
+                  [class.btn-primary]="authMode === 'signup'"
+                  [class.btn-outline-primary]="authMode !== 'signup'"
+                  (click)="setAuthMode('signup')">
+                  Sign Up
+                </button>
+              </div>
+              }
+            </div>
+            <!-- } -->
+
+            <!-- ERROR MESSAGE -->
+            @if (errorMessage) {
+            <div class="alert alert-danger d-flex align-items-center">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <span>{{ errorMessage }}</span>
+            </div>
+            }
+
+            <!-- SUCCESS MESSAGE -->
+            @if (successMessage) {
+            <div class="alert alert-success d-flex align-items-center">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              <span>{{ successMessage }}</span>
+            </div>
+            }
+
+            <!-- FORGOT PASSWORD -->
+            @if (authMode === 'forgot') {
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+                <form [formGroup]="forgotPasswordForm"
+                  (ngSubmit)="onForgotPasswordSubmit()">
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      class="form-control form-control-lg"
+                      formControlName="email"
+                      placeholder="name@company.com" />
+                  </div>
+
+                  <button
+                    class="btn btn-primary btn-lg w-100 mb-3"
+                    type="submit"
+                    [disabled]="forgotPasswordForm.invalid || isLoading">
+                    Send Reset Link
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary w-100"
+                    (click)="setAuthMode('login')">
+                    Back to Login
+                  </button>
+
+                </form>
+              </div>
+            </div>
+            }
+
+            <!-- LOGIN FORM -->
+            @if (authMode === 'login') {
+            <!-- GOOGLE SSO -->
+            <div class="mb-4">
+              <button
+                type="button"
+                class="btn btn-outline-dark btn-lg w-100 d-flex align-items-center justify-content-center gap-2 google-sso-btn"
+                (click)="loginWithGoogle()"
+                [disabled]="isLoading">
+                <img
+                  src="https://developers.google.com/identity/images/g-logo.png"
+                  alt="Google"
+                  width="20"
+                  height="20" />
+                <span class="fw-semibold">Continue with Google</span>
+              </button>
+            </div>
+
+            <!-- DIVIDER -->
+            <div class="d-flex align-items-center mb-1">
+              <hr class="flex-grow-1" />
+              <span class="px-3 text-muted small">OR</span>
+              <hr class="flex-grow-1" />
+            </div>
+
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+
+                <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      class="form-control form-control-lg"
+                      formControlName="email"
+                      autocomplete="email" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">
+                      Password
+                    </label>
+                    <div class="input-group input-group-lg">
+                      <input
+                        [type]="showPassword ? 'text' : 'password'"
+                        class="form-control"
+                        formControlName="password" />
+                      <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="togglePasswordVisibility()">
+                        <i class="bi" [class.bi-eye]="!showPassword"
+                          [class.bi-eye-slash]="showPassword"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="d-flex justify-content-between mb-3 pl-1">
+                    <div class="form-check">
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        formControlName="rememberMe" />
+                      <label class="form-check-label">
+                        Remember me
+                      </label>
+                    </div>
+
+                    <a
+                      href="javascript:void(0)"
+                      class="link-primary"
+                      (click)="setAuthMode('login')">
+                      Forgot password?
+                    </a>
+                  </div>
+
+                  <button
+                    class="btn btn-primary btn-lg w-100"
+                    type="submit"
+                    [disabled]="loginForm.invalid || isLoading">
+                    <span class="fw-semibold">
+                      <!-- {{ authMode === 'signup' ? 'Sign up with Google' : 'Continue with Google' }} -->
+                      Login
+                    </span>
+                  </button>
+                </form>
+              </div>
+            </div>
+            }
+
+            @if (authMode === 'signup') {
+            <div class="card shadow-sm border-0">
+              <div class="card-body p-4">
+
+                <form [formGroup]="signupForm" (ngSubmit)="onSignupSubmit()">
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Full Name</label>
+                    <input class="form-control form-control-lg"
+                      formControlName="fullName" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Work Email</label>
+                    <input type="email" class="form-control form-control-lg"
+                      formControlName="email" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control form-control-lg"
+                      formControlName="password" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Company Name</label>
+                    <input class="form-control form-control-lg"
+                      formControlName="companyName" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Company Domain</label>
+                    <input class="form-control form-control-lg"
+                      placeholder="example.com"
+                      formControlName="companyDomain" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Job Title</label>
+                    <input class="form-control form-control-lg"
+                      formControlName="jobTitle" />
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label fw-semibold">Team Size</label>
+                    <select class="form-select form-select-lg"
+                      formControlName="teamSize">
+                      <option value>Select</option>
+                      <option value="1-10">1–10</option>
+                      <option value="11-50">11–50</option>
+                      <option value="51-200">51–200</option>
+                      <option value="200+">200+</option>
+                    </select>
+                  </div>
+
+                  <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox"
+                      formControlName="termsAccepted" />
+                    <label class="form-check-label">
+                      I agree to the Terms & Privacy Policy
+                    </label>
+                  </div>
+
+                  <button
+                    class="btn btn-primary btn-lg w-100"
+                    type="submit"
+                    [disabled]="signupForm.invalid || isLoading">
+                    Create Account
+                  </button>
+
+                </form>
+              </div>
+            </div>
+            }
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
