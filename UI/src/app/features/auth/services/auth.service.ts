@@ -1,20 +1,26 @@
 import { Injectable } from '@angular/core';
+import { ApiService } from '../../../core/services/api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  login(username: string, password: string): boolean {
-    // TODO: API call
-    return username === 'admin' && password === 'admin';
+  constructor(private api: ApiService) {}
+
+  login(payload: { email: string; password: string }) {
+    return this.api.post('/auth/login', payload);
   }
 
-  logout(): void {
-    localStorage.removeItem('token');
+  logout() {
+    return this.api.post('/auth/logout', {});
   }
 
-  isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+  register(payload: { }) {
+    return this.api.post('/auth/register', payload);
+  }
+
+  getProfile() {
+    return this.api.get('/auth/profile');
   }
 }

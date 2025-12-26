@@ -234,58 +234,105 @@
             @if (authMode === 'signup') {
             <div class="card shadow-sm border-0">
               <div class="card-body p-4">
-
                 <form [formGroup]="signupForm" (ngSubmit)="onSignupSubmit()">
 
+                  <!-- Full Name -->
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Full Name</label>
                     <input class="form-control form-control-lg"
                       formControlName="fullName" />
                   </div>
 
+                  <!-- Email -->
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Work Email</label>
                     <input type="email" class="form-control form-control-lg"
                       formControlName="email" />
                   </div>
 
+                  <!-- Password -->
                   <div class="mb-3">
                     <label class="form-label fw-semibold">Password</label>
                     <input type="password" class="form-control form-control-lg"
                       formControlName="password" />
                   </div>
 
+                  <!-- Phone Number (optional) -->
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Company Name</label>
-                    <input class="form-control form-control-lg"
-                      formControlName="companyName" />
+                    <!-- <label class="form-label fw-semibold">Phone Number</label> -->
+                    <!-- <ngx-intl-tel-input
+                      [cssClass]="'form-control form-control-lg'"
+                      [preferredCountries]="['IN', 'US', 'GB']"
+                      [enableAutoCountrySelect]="true"
+                      [enablePlaceholder]="true"
+                      [searchCountryFlag]="true"
+                      [selectFirstCountry]="false"
+                      [phoneValidation]="true"
+                      formControlName="phoneNumber">
+                    </ngx-intl-tel-input> -->
+                    <app-phone-input #phoneComponent></app-phone-input>
+                    <div
+                      *ngIf="signupForm.get('phoneNumber')?.invalid && signupForm.get('phoneNumber')?.touched"
+                      class="text-danger">
+                      Please enter a valid phone number
+                    </div>
                   </div>
 
+                  <!-- Region (optional) -->
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Company Domain</label>
+                    <label class="form-label fw-semibold">Region</label>
                     <input class="form-control form-control-lg"
-                      placeholder="example.com"
-                      formControlName="companyDomain" />
+                      formControlName="region" placeholder="IN" />
                   </div>
 
-                  <div class="mb-3">
-                    <label class="form-label fw-semibold">Job Title</label>
-                    <input class="form-control form-control-lg"
-                      formControlName="jobTitle" />
-                  </div>
+                  <!-- Birthdate (optional) -->
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Birthdate</mat-label>
 
+                    <input
+                      matInput
+                      [matDatepicker]="picker"
+                      formControlName="birthdate"
+                      placeholder="DD/MM/YYYY"
+                      [min]="minDate"
+                      [max]="maxDate"
+                      aria-label="Birthdate" />
+
+                    <mat-datepicker-toggle matSuffix
+                      [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker
+                      startView="multi-year"></mat-datepicker>
+
+                    <!-- Errors -->
+                    <mat-error
+                      *ngIf="signupForm.get('birthdate')?.hasError('required')">
+                      Birthdate is required
+                    </mat-error>
+
+                    <mat-error
+                      *ngIf="signupForm.get('birthdate')?.hasError('matDatepickerParse')">
+                      Invalid date format (DD/MM/YYYY)
+                    </mat-error>
+
+                    <mat-error
+                      *ngIf="signupForm.get('birthdate')?.hasError('underAge')">
+                      You must be at least 18 years old
+                    </mat-error>
+                  </mat-form-field>
+
+                  <!-- Gender (optional) -->
                   <div class="mb-3">
-                    <label class="form-label fw-semibold">Team Size</label>
+                    <label class="form-label fw-semibold">Gender</label>
                     <select class="form-select form-select-lg"
-                      formControlName="teamSize">
+                      formControlName="gender">
                       <option value>Select</option>
-                      <option value="1-10">1–10</option>
-                      <option value="11-50">11–50</option>
-                      <option value="51-200">51–200</option>
-                      <option value="200+">200+</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
                     </select>
                   </div>
 
+                  <!-- Terms -->
                   <div class="form-check mb-3">
                     <input class="form-check-input" type="checkbox"
                       formControlName="termsAccepted" />
@@ -294,16 +341,22 @@
                     </label>
                   </div>
 
-                  <button
-                    class="btn btn-primary btn-lg w-100"
-                    type="submit"
+                  <!-- Submit Button -->
+                  <button class="btn btn-primary btn-lg w-100" type="submit"
                     [disabled]="signupForm.invalid || isLoading">
                     Create Account
                   </button>
 
+                  <!-- Success/Error Messages -->
+                  <div *ngIf="successMessage" class="mt-3 text-success">{{
+                    successMessage }}</div>
+                  <div *ngIf="errorMessage" class="mt-3 text-danger">{{
+                    errorMessage }}</div>
+
                 </form>
               </div>
             </div>
+
             }
 
           </div>

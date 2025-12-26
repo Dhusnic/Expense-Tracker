@@ -8,8 +8,13 @@ import { Login } from './components/login/login';
 // import { BrowserModule } from '@angular/platform-browser';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+// app.module.ts or feature module
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
-
+// import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 @NgModule({
   declarations: [
   ],
@@ -21,6 +26,7 @@ import { HttpClientModule } from '@angular/common/http';
     // BrowserModule,
     ReactiveFormsModule,
     HttpClientModule,
+    // NgxIntlTelInputModule
   ]
 })
 export class AuthModule {}
