@@ -1,0 +1,48 @@
+.app-container {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--bs-body-bg);
+  transition: background-color 0.3s ease;
+}
+
+.app-main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.app-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background: var(--bs-tertiary-bg);
+  transition: background-color 0.3s ease;
+  scroll-behavior: smooth;
+  
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: var(--bs-tertiary-bg);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--bs-border-color);
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--bs-secondary-color);
+    }
+  }
+}
+
+@media (max-width: 991.98px) {
+  .app-container {
+    flex-direction: column;
+  }
+}

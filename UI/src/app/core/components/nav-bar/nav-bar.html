@@ -1,0 +1,207 @@
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top shadow-sm">
+    <div class="container-fluid px-4">
+        <!-- Brand/Logo -->
+        <a class="navbar-brand fw-bold" routerLink="/">
+            <i class="bi bi-layers-fill me-2"></i>
+            Enterprise App
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarContent"
+            aria-controls="navbarContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <!-- Search Bar -->
+            <div class="mx-auto search-container">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input
+                        type="text"
+                        class="form-control border-start-0 ps-0"
+                        placeholder="Search..."
+                        [(ngModel)]="searchQuery"
+                        (keypress)="onSearchKeyPress($event)"
+                        aria-label="Search">
+                    @if (searchQuery().length > 0) {
+                    <button
+                        class="btn btn-outline-secondary border-start-0"
+                        type="button"
+                        (click)="onSearch()">
+                        <i class="bi bi-arrow-right"></i>
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Right Side Actions -->
+            <ul class="navbar-nav ms-auto align-items-center gap-2">
+                <!-- Theme Toggle -->
+                <li class="nav-item">
+                    <button
+                        class="btn btn-icon nav-action-btn"
+                        (click)="toggleTheme()"
+                        [attr.aria-label]="'Switch to ' + (currentTheme() === 'light' ? 'dark' : 'light') + ' theme'"
+                        type="button">
+                        @if (currentTheme() === 'light') {
+                        <i class="bi bi-moon-stars-fill"></i>
+                        } @else {
+                        <i class="bi bi-sun-fill"></i>
+                        }
+                    </button>
+                </li>
+
+                <!-- Notification Bell -->
+                <li class="nav-item dropdown">
+                    <button
+                        class="btn btn-icon nav-action-btn position-relative"
+                        (click)="toggleNotificationDropdown($event)"
+                        type="button"
+                        aria-label="Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                        @if (notificationCount() > 0) {
+                        <span
+                            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                            {{ notificationCount() > 99 ? '99+' :
+                            notificationCount() }}
+                            <span class="visually-hidden">unread
+                                notifications</span>
+                        </span>
+                        }
+                    </button>
+
+                    <!-- Notification Dropdown -->
+                    @if (isNotificationDropdownOpen()) {
+                    <div
+                        class="dropdown-menu dropdown-menu-end notification-dropdown show"
+                        (click)="$event.stopPropagation()">
+                        <div
+                            class="dropdown-header d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0">Notifications</h6>
+                            <span class="badge bg-primary">{{
+                                notifications().length }}</span>
+                        </div>
+                        <div class="dropdown-divider"></div>
+
+                        @if (notifications().length === 0) {
+                        <div class="dropdown-item text-center text-muted py-4">
+                            <i class="bi bi-bell-slash fs-3 d-block mb-2"></i>
+                            <small>No notifications</small>
+                        </div>
+                        } @else {
+                        <div class="notification-list">
+                            @for (notification of notifications(); track
+                            notification.id) {
+                            <button
+                                class="dropdown-item notification-item"
+                                [class.unread]="!notification.read"
+                                (click)="onNotificationClick(notification)">
+                                <div class="d-flex align-items-start">
+                                    <div class="notification-icon me-3"
+                                        [ngClass]="getNotificationTypeClass(notification.type)">
+                                        <i
+                                            [class]="getNotificationIcon(notification.type)"></i>
+                                    </div>
+                                    <div class="flex-grow-1">
+                                        <div class="notification-title">{{
+                                            notification.title }}</div>
+                                        <div class="notification-message">{{
+                                            notification.message }}</div>
+                                        <small class="notification-time">{{
+                                            formatTimestamp(notification.timestamp)
+                                            }}</small>
+                                    </div>
+                                </div>
+                            </button>
+                            }
+                        </div>
+                        }
+
+                        <div class="dropdown-divider"></div>
+                        <a
+                            class="dropdown-item text-center small text-primary fw-semibold"
+                            routerLink="/notifications">
+                            View all notifications
+                        </a>
+                    </div>
+                    }
+                </li>
+
+                <!-- User Profile Dropdown -->
+                <li class="nav-item dropdown">
+                    <button
+                        class="btn user-profile-btn d-flex align-items-center gap-2"
+                        (click)="toggleUserDropdown($event)"
+                        type="button"
+                        aria-label="User menu">
+                        <div class="user-avatar">
+                            {{ getUserInitials() }}
+                        </div>
+                        <div class="user-info d-none d-lg-block text-start">
+                            <div class="user-name">{{ getUserDisplayName()
+                                }}</div>
+                            <div class="user-email">{{ userProfile()?.email ||
+                                'user@example.com' }}</div>
+                        </div>
+                        <i class="bi bi-chevron-down ms-1"></i>
+                    </button>
+
+                    <!-- User Dropdown Menu -->
+                    @if (isUserDropdownOpen()) {
+                    <div
+                        class="dropdown-menu dropdown-menu-end user-dropdown show"
+                        (click)="$event.stopPropagation()">
+                        <!-- User Info Header -->
+                        <div class="dropdown-header user-header">
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar user-avatar-lg me-3">
+                                    {{ getUserInitials() }}
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">{{
+                                        getUserDisplayName() }}</div>
+                                    <small class="text-muted">{{
+                                        userProfile()?.email }}</small>
+                                    <div class="mt-1">
+                                        @if (userProfile()?.emailVerified) {
+                                        <span
+                                            class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i
+                                                class="bi bi-patch-check-fill me-1"></i>Verified
+                                        </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+
+                        <!-- Dropdown Menu Items -->
+                        @for (item of userDropdownMenu; track item.id) {
+                        @if (item.divider) {
+                        <div class="dropdown-divider"></div>
+                        }
+                        <button
+                            class="dropdown-item d-flex align-items-center"
+                            [class.text-danger]="item.id === 'logout'"
+                            (click)="executeAction(item, $event)">
+                            <i [class]="'bi ' + item.icon + ' me-2'"></i>
+                            {{ item.label }}
+                        </button>
+                        }
+                    </div>
+                    }
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

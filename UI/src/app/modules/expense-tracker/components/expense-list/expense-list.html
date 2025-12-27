@@ -1,0 +1,1424 @@
+<div class="expense-list-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="page-title">
+                        <i class="bi bi-wallet2 me-2"></i>
+                        Transactions
+                    </h1>
+                    <p class="page-subtitle">
+                        Manage and track all your financial transactions
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <button
+                        type="button"
+                        class="btn btn-primary btn-lg"
+                        (click)="createNewTransaction()">
+                        <i class="bi bi-plus-lg me-2"></i>
+                        New Transaction
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards (Expandable) -->
+    @if (showSummary()) {
+    <div class="summary-section">
+        <div class="container-fluid">
+            <div class="summary-header">
+                <h3 class="summary-title">Financial Overview</h3>
+                <button
+                    type="button"
+                    class="btn btn-sm btn-ghost"
+                    (click)="toggleSummary()">
+                    <i class="bi bi-chevron-up"></i>
+                </button>
+            </div>
+
+            <div class="summary-cards">
+                <!-- Total Income -->
+                <div class="summary-card income-card">
+                    <div class="summary-card-icon">
+                        <i class="bi bi-arrow-down-circle-fill"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-label">Total Income</div>
+                        <div class="summary-card-value">
+                            {{ formatCurrency(summary().totalIncome) }}
+                        </div>
+                        <div class="summary-card-trend positive">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            <span>+12.5%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total Expense -->
+                <div class="summary-card expense-card">
+                    <div class="summary-card-icon">
+                        <i class="bi bi-arrow-up-circle-fill"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-label">Total Expense</div>
+                        <div class="summary-card-value">
+                            {{ formatCurrency(summary().totalExpense) }}
+                        </div>
+                        <div class="summary-card-trend negative">
+                            <i class="bi bi-graph-down-arrow"></i>
+                            <span>+8.3%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Net Balance -->
+                <div class="summary-card balance-card">
+                    <div class="summary-card-icon">
+                        <i class="bi bi-piggy-bank-fill"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-label">Net Balance</div>
+                        <div class="summary-card-value">
+                            {{ formatCurrency(summary().netBalance) }}
+                        </div>
+                        <div class="summary-card-trend"
+                            [class.positive]="summary().netBalance > 0"
+                            [class.negative]="summary().netBalance < 0">
+                            <i
+                                [class]="summary().netBalance > 0 ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                            <span>{{ summary().netBalance > 0 ? 'Surplus' :
+                                'Deficit' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Amount -->
+                <div class="summary-card pending-card">
+                    <div class="summary-card-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-label">Pending</div>
+                        <div class="summary-card-value">
+                            {{ formatCurrency(summary().pendingAmount) }}
+                        </div>
+                        <div class="summary-card-info">
+                            <i class="bi bi-info-circle"></i>
+                            <span>Awaiting payment</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recurring Amount -->
+                <div class="summary-card recurring-card">
+                    <div class="summary-card-icon">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </div>
+                    <div class="summary-card-content">
+                        <div class="summary-card-label">Recurring</div>
+                        <div class="summary-card-value">
+                            {{ formatCurrency(summary().recurringAmount) }}
+                        </div>
+                        <div class="summary-card-info">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Monthly</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    } @else {
+    <div class="summary-collapsed">
+        <div class="container-fluid">
+            <button
+                type="button"
+                class="btn btn-sm btn-ghost"
+                (click)="toggleSummary()">
+                <i class="bi bi-chevron-down me-2"></i>
+                Show Financial Overview
+            </button>
+        </div>
+    </div>
+    }
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="container-fluid">
+            <div class="toolbar-content">
+                <!-- Left Section -->
+                <div class="toolbar-left">
+                    <!-- Search -->
+                    <div class="search-box">
+                        <i class="bi bi-search search-icon"></i>
+                        <input
+                            type="text"
+                            class="form-control search-input"
+                            placeholder="Search transactions..."
+                            [value]="filters().searchQuery"
+                            (input)="onSearch($any($event.target).value)">
+                        @if (filters().searchQuery) {
+                        <button
+                            type="button"
+                            class="btn-clear-search"
+                            (click)="onSearch('')">
+                            <i class="bi bi-x"></i>
+                        </button>
+                        }
+                    </div>
+
+                    <!-- Date Presets -->
+                    <div class="date-presets">
+                        <button
+                            type="button"
+                            class="btn btn-preset"
+                            [class.active]="filters().dateRange?.preset === 'today'"
+                            (click)="applyDatePreset('today')">
+                            Today
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-preset"
+                            [class.active]="filters().dateRange?.preset === 'thisWeek'"
+                            (click)="applyDatePreset('thisWeek')">
+                            This Week
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-preset"
+                            [class.active]="filters().dateRange?.preset === 'thisMonth'"
+                            (click)="applyDatePreset('thisMonth')">
+                            This Month
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-preset"
+                            [class.active]="filters().dateRange?.preset === 'lastMonth'"
+                            (click)="applyDatePreset('lastMonth')">
+                            Last Month
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-preset"
+                            [class.active]="filters().dateRange?.preset === 'all'"
+                            (click)="applyDatePreset('all')">
+                            All Time
+                        </button>
+
+                    </div>
+
+                    <!-- Filter Toggle -->
+                    <button
+                        type="button"
+                        class="btn btn-filter"
+                        [class.active]="showFilters()"
+                        (click)="toggleFilters()">
+                        <i class="bi bi-funnel me-2"></i>
+                        Filters
+                        @if (showFilters()) {
+                        <span class="badge badge-primary ms-2">Active</span>
+                        }
+                    </button>
+                </div>
+
+                <!-- Right Section -->
+                <div class="toolbar-right">
+                    <!-- View Mode Switcher -->
+                    <div class="view-mode-switcher">
+                        @for (mode of viewModes; track mode.value) {
+                        <button
+                            type="button"
+                            class="btn btn-view-mode"
+                            [class.active]="currentViewMode() === mode.value"
+                            [attr.title]="mode.label"
+                            (click)="changeViewMode(mode.value)">
+                            <i [class]="'bi ' + mode.icon"></i>
+                        </button>
+                        }
+                    </div>
+
+                    <!-- Group By -->
+                    <div class="dropdown group-by-dropdown">
+                        <button
+                            class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="groupByDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-collection me-2"></i>
+                            Group By: {{ currentGroupByLabel() }}
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="groupByDropdown">
+                            @for (option of groupByOptions; track option.value)
+                            {
+                            <li>
+                                <a
+                                    class="dropdown-item"
+                                    [class.active]="currentGroupBy() === option.value"
+                                    (click)="changeGroupBy(option.value)">
+                                    {{ option.label }}
+                                    @if (currentGroupBy() === option.value) {
+                                    <i class="bi bi-check float-end"></i>
+                                    }
+                                </a>
+                            </li>
+                            }
+                        </ul>
+                    </div>
+
+                    <!-- Export -->
+                    <div class="dropdown export-dropdown">
+                        <button
+                            class="btn btn-secondary dropdown-toggle"
+                            type="button"
+                            id="exportDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-download me-2"></i>
+                            Export
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="exportDropdown">
+                            <li>
+                                <a class="dropdown-item"
+                                    (click)="exportAll('csv')">
+                                    <i class="bi bi-filetype-csv me-2"></i>
+                                    Export as CSV
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    (click)="exportAll('excel')">
+                                    <i
+                                        class="bi bi-file-earmark-excel me-2"></i>
+                                    Export as Excel
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    (click)="exportAll('pdf')">
+                                    <i class="bi bi-file-earmark-pdf me-2"></i>
+                                    Export as PDF
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Auto Refresh -->
+                    <div class="auto-refresh">
+                        <button
+                            type="button"
+                            class="btn btn-refresh"
+                            [class.active]="autoRefreshEnabled()"
+                            [attr.title]="autoRefreshEnabled() ? 'Auto-refresh enabled' : 'Auto-refresh paused'"
+                            (click)="toggleAutoRefresh()">
+                            <i class="bi bi-arrow-clockwise"
+                                [class.spinning]="autoRefreshEnabled()"></i>
+                            @if (autoRefreshEnabled()) {
+                            <span class="refresh-countdown">{{
+                                autoRefreshCountdown() }}s</span>
+                            }
+                        </button>
+                        <button
+                            type="button"
+                            class="btn btn-refresh-now"
+                            [attr.title]="'Refresh now'"
+                            (click)="refreshData()">
+                            <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bulk Actions Bar (shown when items are selected) -->
+            @if (hasSelectedTransactions()) {
+            <div class="bulk-actions-bar">
+                <div class="bulk-actions-info">
+                    <i class="bi bi-check-square me-2"></i>
+                    <span class="selected-count">{{ selectedTransactions().size
+                        }} selected</span>
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-link"
+                        (click)="toggleSelectAll()">
+                        Clear Selection
+                    </button>
+                </div>
+                <div class="bulk-actions-buttons">
+                    @for (action of bulkActions; track action.type) {
+                    <button
+                        type="button"
+                        class="btn btn-sm"
+                        [class.btn-danger]="action.type === 'delete'"
+                        [class.btn-primary]="action.type !== 'delete'"
+                        (click)="executeBulkAction(action)">
+                        <i [class]="'bi ' + action.icon + ' me-2'"></i>
+                        {{ action.label }}
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+
+    <!-- Filters Panel (Collapsible) -->
+    @if (showFilters()) {
+    <div class="filters-panel">
+        <div class="container-fluid">
+            <div class="filters-content">
+                <div class="row g-3">
+                    <!-- Transaction Type Filter -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Transaction Type</label>
+                        <div class="filter-group">
+                            @for (type of [
+                            { value: TransactionType.INCOME, label: 'Income',
+                            icon: 'bi-arrow-down-circle' },
+                            { value: TransactionType.EXPENSE, label: 'Expense',
+                            icon: 'bi-arrow-up-circle' },
+                            { value: TransactionType.TRANSFER, label:
+                            'Transfer', icon: 'bi-arrow-left-right' }
+                            ]; track type.value) {
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [id]="'type-' + type.value"
+                                    [checked]="filters().transactionTypes?.includes(type.value)"
+                                    (change)="onFilterChange('transactionTypes', type.value, $any($event.target).checked)">
+                                <label class="form-check-label"
+                                    [for]="'type-' + type.value">
+                                    <i
+                                        [class]="'bi ' + type.icon + ' me-2'"></i>
+                                    {{ type.label }}
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Category</label>
+                        <select
+                            class="form-select"
+                            multiple
+                            size="5"
+                            [value]="filters().categoryIds">
+                            @for (category of categories(); track category.id) {
+                            <option [value]="category.id">
+                                {{ category.name }}
+                            </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Account Filter -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Account</label>
+                        <select
+                            class="form-select"
+                            multiple
+                            size="5"
+                            [value]="filters().accountIds">
+                            @for (account of accounts(); track account.id) {
+                            <option [value]="account.id">
+                                {{ account.name }}
+                            </option>
+                            }
+                        </select>
+                    </div>
+
+                    <!-- Amount Range -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Amount Range</label>
+                        <div class="amount-range-inputs">
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                placeholder="Min"
+                                [value]="filters().amountRange?.min || ''"
+                                (input)="onAmountRangeChange('min', $any($event.target).value)">
+                            <span class="range-separator">to</span>
+                            <input
+                                type="number"
+                                class="form-control form-control-sm"
+                                placeholder="Max"
+                                [value]="filters().amountRange?.max || ''"
+                                (input)="onAmountRangeChange('max', $any($event.target).value)">
+                        </div>
+                    </div>
+
+                    <!-- Status Filter -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Status</label>
+                        <div class="filter-group">
+                            @for (status of ['PAID', 'PENDING', 'OVERDUE',
+                            'RECURRING']; track status) {
+                            <div class="form-check">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    [id]="'status-' + status"
+                                    [checked]="filters().status?.includes(status)"
+                                    (change)="onFilterChange('status', status, $any($event.target).checked)">
+                                <label class="form-check-label"
+                                    [for]="'status-' + status">
+                                    <span
+                                        [class]="'badge ' + getStatusBadgeClass(status)">{{
+                                        status }}</span>
+                                </label>
+                            </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Custom Date Range -->
+                    <div class="col-md-3">
+                        <label class="filter-label">Start Date</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            [value]="filters().dateRange?.startDate ? filters().dateRange!.startDate!.toISOString().split('T')[0] : ''"
+                            (change)="onDateRangeChange('start', $any($event.target).value)">
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="filter-label">End Date</label>
+                        <input
+                            type="date"
+                            class="form-control"
+                            [value]="filters().dateRange?.endDate ? filters().dateRange!.endDate!.toISOString().split('T')[0] : ''"
+                            (change)="onDateRangeChange('end', $any($event.target).value)">
+                    </div>
+
+                    <!-- Filter Actions -->
+                    <div class="col-12">
+                        <div class="filter-actions">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                (click)="loadTransactions()">
+                                <i class="bi bi-funnel me-2"></i>
+                                Apply Filters
+                            </button>
+                            <button
+                                type="button"
+                                class="btn btn-outline-secondary"
+                                (click)="clearFilters()">
+                                <i class="bi bi-x-lg me-2"></i>
+                                Clear All
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid">
+            <!-- Loading State -->
+            @if (loading()) {
+            <div class="loading-overlay">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="loading-text">Loading transactions...</p>
+            </div>
+            }
+
+            <!-- Empty State -->
+            @if (!loading() && transactions().length === 0) {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="bi bi-inbox"></i>
+                </div>
+                <h3 class="empty-state-title">No Transactions Found</h3>
+                <p class="empty-state-description">
+                    @if (filters().searchQuery ||
+                    filters().transactionTypes?.length) {
+                    No transactions match your current filters. Try adjusting
+                    your search criteria.
+                    } @else {
+                    You haven't added any transactions yet. Start by creating
+                    your first transaction.
+                    }
+                </p>
+                <div class="empty-state-actions">
+                    @if (filters().searchQuery ||
+                    filters().transactionTypes?.length) {
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="clearFilters()">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Clear Filters
+                    </button>
+                    } @else {
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        (click)="createNewTransaction()">
+                        <i class="bi bi-plus-lg me-2"></i>
+                        Create First Transaction
+                    </button>
+                    }
+                </div>
+            </div>
+            }
+
+            <!-- Transactions List -->
+            @if (!loading() && transactions().length > 0) {
+            <div class="transactions-wrapper">
+                <!-- TABLE VIEW -->
+                @if (currentViewMode() === 'table') {
+                <div class="table-view">
+                    @for (group of groupedTransactions() | keyvalue; track
+                    group.key) {
+                    <div class="transaction-group">
+                        @if (currentGroupBy() !== 'none') {
+                        <div class="group-header">
+                            <h4 class="group-title">{{ group.key }}</h4>
+                            <span class="group-count">{{ group.value.length }}
+                                transactions</span>
+                        </div>
+                        }
+
+                        <div class="table-responsive">
+                            <table class="table transaction-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 40px;">
+                                            <input
+                                                type="checkbox"
+                                                class="form-check-input"
+                                                [checked]="allSelected()"
+                                                (change)="toggleSelectAll()">
+                                        </th>
+                                        <th style="width: 50px;"></th>
+                                        <th
+                                            class="sortable"
+                                            (click)="sortBy('date')">
+                                            Date
+                                            @if (sortOptions().field === 'date')
+                                            {
+                                            <i
+                                                [class]="sortOptions().direction === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                                            }
+                                        </th>
+                                        <th
+                                            class="sortable"
+                                            (click)="sortBy('description')">
+                                            Description
+                                            @if (sortOptions().field ===
+                                            'description') {
+                                            <i
+                                                [class]="sortOptions().direction === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                                            }
+                                        </th>
+                                        <th
+                                            class="sortable"
+                                            (click)="sortBy('category')">
+                                            Category
+                                            @if (sortOptions().field ===
+                                            'category') {
+                                            <i
+                                                [class]="sortOptions().direction === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                                            }
+                                        </th>
+                                        <th>Account</th>
+                                        <th>Payment Method</th>
+                                        <th>Status</th>
+                                        <th
+                                            class="sortable text-end"
+                                            (click)="sortBy('amount')">
+                                            Amount
+                                            @if (sortOptions().field ===
+                                            'amount') {
+                                            <i
+                                                [class]="sortOptions().direction === 'asc' ? 'bi bi-arrow-up' : 'bi bi-arrow-down'"></i>
+                                            }
+                                        </th>
+                                        <th class="text-center"
+                                            style="width: 150px;">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for (transaction of group.value; track
+                                    transaction.id) {
+                                    <tr
+                                        class="transaction-row"
+                                        [class.selected]="isSelected(transaction.id)"
+                                        (click)="viewDetails(transaction)">
+                                        <td (click)="$event.stopPropagation()">
+                                            <input
+                                                type="checkbox"
+                                                class="form-check-input"
+                                                [checked]="isSelected(transaction.id)"
+                                                (change)="toggleSelectTransaction(transaction.id)">
+                                        </td>
+                                        <td>
+                                            <div class="transaction-type-icon">
+                                                <i
+                                                    [class]="getTransactionTypeIcon(transaction.transactionType)"></i>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="transaction-date">
+                                                <div class="date-primary">{{
+                                                    formatDate(transaction.transactionDate)
+                                                    }}</div>
+                                                <div class="date-time">{{
+                                                    formatTime(transaction.transactionDate)
+                                                    }}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                class="transaction-description">
+                                                <div class="description-text">
+                                                    {{ transaction.description
+                                                    }}
+                                                    @if (transaction.isFavorite)
+                                                    {
+                                                    <i
+                                                        class="bi bi-star-fill text-warning ms-2"></i>
+                                                    }
+                                                    @if
+                                                    (transaction.isRecurring) {
+                                                    <i
+                                                        class="bi bi-arrow-repeat text-info ms-1"
+                                                        title="Recurring"></i>
+                                                    }
+                                                    @if
+                                                    ((transaction.attachments?.length
+                                                    || 0) > 0) {
+                                                    <i
+                                                        class="bi bi-paperclip ms-1"
+                                                        title="{{ transaction.attachments?.length || 0 }} attachment(s)"></i>
+                                                    }
+                                                    @if (transaction.notes) {
+                                                    <i class="bi bi-sticky ms-1"
+                                                        title="Has notes"></i>
+                                                    }
+                                                </div>
+                                                @if ((transaction.tags?.length
+                                                || 0) > 0) {
+                                                <div class="transaction-tags">
+                                                    @for (tag of
+                                                    (transaction.tags ||
+                                                    []).slice(0, 2); track tag)
+                                                    {
+                                                    <span class="tag-mini">{{
+                                                        tag }}</span>
+                                                    }
+                                                    @if
+                                                    ((transaction.tags?.length
+                                                    || 0) > 2) {
+                                                    <span class="tag-mini">+{{
+                                                        (transaction.tags?.length
+                                                        || 0) - 2 }}</span>
+                                                    }
+                                                </div>
+                                                }
+
+                                                @if (transaction.tags?.length) {
+                                                <div class="transaction-tags">
+                                                    @for (tag of
+                                                    (transaction.tags ||
+                                                    []).slice(0, 2); track tag)
+                                                    {
+                                                    <span class="tag-mini">{{
+                                                        tag }}</span>
+                                                    }
+                                                    @if ((transaction.tags?.length || 0)
+                                                    > 2) {
+                                                    <span class="tag-mini">+{{
+                                                        (transaction.tags?.length || 0)
+                                                        - 2 }}</span>
+                                                    }
+                                                </div>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="category-badge">
+                                                {{
+                                                getCategoryName(transaction.categoryId)
+                                                }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="account-name">
+                                                {{
+                                                getAccountName(transaction.fromAccountId
+                                                || transaction.toAccountId ||
+                                                '') }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="payment-method">
+                                                {{ transaction.paymentMethod }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span
+                                                [class]="'badge ' + getStatusBadgeClass(transaction.status)">
+                                                {{ transaction.status }}
+                                            </span>
+                                        </td>
+                                        <td class="text-end">
+                                            <div
+                                                class="transaction-amount"
+                                                [class.amount-positive]="transaction.transactionType === TransactionType.INCOME"
+                                                [class.amount-negative]="transaction.transactionType === TransactionType.EXPENSE">
+                                                {{
+                                                formatCurrency(transaction.amount,
+                                                transaction.currency) }}
+                                            </div>
+                                        </td>
+                                        <td class="text-center"
+                                            (click)="$event.stopPropagation()">
+                                            <div class="action-buttons">
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-action"
+                                                    title="Favorite"
+                                                    (click)="toggleFavorite(transaction, $event)">
+                                                    <i
+                                                        [class]="transaction.isFavorite ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-action"
+                                                    title="Edit"
+                                                    (click)="editTransaction(transaction)">
+                                                    <i class="bi bi-pencil"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-action"
+                                                    title="Duplicate"
+                                                    (click)="duplicateTransaction(transaction)">
+                                                    <i class="bi bi-files"></i>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-action btn-danger"
+                                                    title="Delete"
+                                                    (click)="deleteTransaction(transaction)">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- Continue with other view modes... -->
+                <!-- CARD VIEW -->
+                @if (currentViewMode() === 'card') {
+                <div class="card-view">
+                    @for (group of groupedTransactions() | keyvalue; track
+                    group.key) {
+                    <div class="transaction-group">
+                        @if (currentGroupBy() !== 'none') {
+                        <div class="group-header">
+                            <h4 class="group-title">{{ group.key }}</h4>
+                            <span class="group-count">{{ group.value.length }}
+                                transactions</span>
+                        </div>
+                        }
+
+                        <div class="card-grid">
+                            @for (transaction of group.value; track
+                            transaction.id) {
+                            <div
+                                class="transaction-card"
+                                [class.selected]="isSelected(transaction.id)"
+                                (click)="viewDetails(transaction)">
+                                <!-- Card Header -->
+                                <div class="card-header-section">
+                                    <div class="card-checkbox"
+                                        (click)="$event.stopPropagation()">
+                                        <input
+                                            type="checkbox"
+                                            class="form-check-input"
+                                            [checked]="isSelected(transaction.id)"
+                                            (change)="toggleSelectTransaction(transaction.id)">
+                                    </div>
+                                    <div class="card-type-icon">
+                                        <i
+                                            [class]="getTransactionTypeIcon(transaction.transactionType)"></i>
+                                    </div>
+                                    <div class="card-favorite"
+                                        (click)="$event.stopPropagation()">
+                                        <button
+                                            type="button"
+                                            class="btn-favorite"
+                                            (click)="toggleFavorite(transaction, $event)">
+                                            <i
+                                                [class]="transaction.isFavorite ? 'bi bi-star-fill text-warning' : 'bi bi-star'"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Card Body -->
+                                <div class="card-body-section">
+                                    <div class="card-amount"
+                                        [class.amount-positive]="transaction.transactionType === TransactionType.INCOME"
+                                        [class.amount-negative]="transaction.transactionType === TransactionType.EXPENSE">
+                                        {{ formatCurrency(transaction.amount,
+                                        transaction.currency) }}
+                                    </div>
+
+                                    <div class="card-description">
+                                        {{ transaction.description }}
+                                    </div>
+
+                                    <div class="card-meta">
+                                        <div class="meta-item">
+                                            <i class="bi bi-calendar3"></i>
+                                            <span>{{
+                                                formatDate(transaction.transactionDate)
+                                                }}</span>
+                                        </div>
+                                        <div class="meta-item">
+                                            <i class="bi bi-tag"></i>
+                                            <span>{{
+                                                getCategoryName(transaction.categoryId)
+                                                }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-details">
+                                        <div class="detail-row">
+                                            <span
+                                                class="detail-label">Account:</span>
+                                            <span class="detail-value">
+                                                {{
+                                                getAccountName(transaction.fromAccountId
+                                                || transaction.toAccountId ||
+                                                '') }}
+                                            </span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span
+                                                class="detail-label">Payment:</span>
+                                            <span class="detail-value">{{
+                                                transaction.paymentMethod
+                                                }}</span>
+                                        </div>
+                                        <div class="detail-row">
+                                            <span
+                                                class="detail-label">Status:</span>
+                                            <span
+                                                [class]="'badge ' + getStatusBadgeClass(transaction.status)">
+                                                {{ transaction.status }}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    <!-- Indicators -->
+                                    <!-- Indicators -->
+                                    <div class="card-indicators">
+                                        @if (transaction.isRecurring) {
+                                        <span class="indicator"
+                                            title="Recurring">
+                                            <i class="bi bi-arrow-repeat"></i>
+                                        </span>
+                                        }
+                                        @if ((transaction.attachments?.length ||
+                                        0) > 0) {
+                                        <span class="indicator"
+                                            title="{{ transaction.attachments?.length || 0 }} attachment(s)">
+                                            <i class="bi bi-paperclip"></i>
+                                            <span class="indicator-count">{{
+                                                transaction.attachments?.length
+                                                || 0 }}</span>
+                                        </span>
+                                        }
+                                        @if (transaction.notes) {
+                                        <span class="indicator"
+                                            title="Has notes">
+                                            <i class="bi bi-sticky"></i>
+                                        </span>
+                                        }
+                                        @if (transaction.isTaxDeductible) {
+                                        <span class="indicator"
+                                            title="Tax Deductible">
+                                            <i class="bi bi-receipt"></i>
+                                        </span>
+                                        }
+                                    </div>
+
+                                    <!-- Tags -->
+                                    @if ((transaction.tags?.length || 0) > 0) {
+                                    <div class="card-tags">
+                                        @for (tag of (transaction.tags ||
+                                        []).slice(0, 3); track tag) {
+                                        <span class="tag-badge">{{ tag }}</span>
+                                        }
+                                        @if ((transaction.tags?.length || 0) >
+                                        3) {
+                                        <span class="tag-badge">+{{
+                                            (transaction.tags?.length || 0) - 3
+                                            }}</span>
+                                        }
+                                    </div>
+                                    }
+
+                                    <!-- Tags -->
+                                    @if (transaction.tags?.length) {
+                                    <div class="card-tags">
+                                        @for (tag of (transaction.tags ||
+                                        []).slice(0, 2); track tag) {
+                                        <span class="tag-badge">{{ tag }}</span>
+                                        }
+                                        @if ((transaction.tags?.length || 0) > 3) {
+                                        <span class="tag-badge">+{{
+                                            (transaction.tags?.length || 0) - 3
+                                            }}</span>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+
+                                <!-- Card Footer -->
+                                <div class="card-footer-section"
+                                    (click)="$event.stopPropagation()">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-primary"
+                                        (click)="editTransaction(transaction)">
+                                        <i class="bi bi-pencil me-1"></i>
+                                        Edit
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-secondary"
+                                        (click)="duplicateTransaction(transaction)">
+                                        <i class="bi bi-files me-1"></i>
+                                        Duplicate
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="deleteTransaction(transaction)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- COMPACT VIEW -->
+                @if (currentViewMode() === 'compact') {
+                <div class="compact-view">
+                    @for (group of groupedTransactions() | keyvalue; track
+                    group.key) {
+                    <div class="transaction-group">
+                        @if (currentGroupBy() !== 'none') {
+                        <div class="group-header">
+                            <h4 class="group-title">{{ group.key }}</h4>
+                            <span class="group-count">{{ group.value.length }}
+                                transactions</span>
+                        </div>
+                        }
+
+                        <div class="compact-list">
+                            @for (transaction of group.value; track
+                            transaction.id) {
+                            <div
+                                class="compact-item"
+                                [class.selected]="isSelected(transaction.id)"
+                                (click)="viewDetails(transaction)">
+                                <div class="compact-checkbox"
+                                    (click)="$event.stopPropagation()">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        [checked]="isSelected(transaction.id)"
+                                        (change)="toggleSelectTransaction(transaction.id)">
+                                </div>
+
+                                <div class="compact-icon">
+                                    <i
+                                        [class]="getTransactionTypeIcon(transaction.transactionType)"></i>
+                                </div>
+
+                                <div class="compact-content">
+                                    <div class="compact-main">
+                                        <div class="compact-description">
+                                            {{ transaction.description }}
+                                            @if (transaction.isFavorite) {
+                                            <i
+                                                class="bi bi-star-fill text-warning ms-2"></i>
+                                            }
+                                        </div>
+                                        <div class="compact-meta">
+                                            <span class="meta-date">{{
+                                                formatDate(transaction.transactionDate)
+                                                }}</span>
+                                            <span
+                                                class="meta-separator">•</span>
+                                            <span class="meta-category">{{
+                                                getCategoryName(transaction.categoryId)
+                                                }}</span>
+                                            <span
+                                                class="meta-separator">•</span>
+                                            <span
+                                                [class]="'badge badge-sm ' + getStatusBadgeClass(transaction.status)">
+                                                {{ transaction.status }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="compact-amount"
+                                    [class.amount-positive]="transaction.transactionType === TransactionType.INCOME"
+                                    [class.amount-negative]="transaction.transactionType === TransactionType.EXPENSE">
+                                    {{ formatCurrency(transaction.amount,
+                                    transaction.currency) }}
+                                </div>
+
+                                <div class="compact-actions"
+                                    (click)="$event.stopPropagation()">
+                                    <div class="dropdown">
+                                        <button
+                                            class="btn btn-sm btn-ghost"
+                                            type="button"
+                                            data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            <i
+                                                class="bi bi-three-dots-vertical"></i>
+                                        </button>
+                                        <ul
+                                            class="dropdown-menu dropdown-menu-end">
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    (click)="editTransaction(transaction)">
+                                                    <i
+                                                        class="bi bi-pencil me-2"></i>
+                                                    Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    (click)="duplicateTransaction(transaction)">
+                                                    <i
+                                                        class="bi bi-files me-2"></i>
+                                                    Duplicate
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="dropdown-item"
+                                                    (click)="toggleFavorite(transaction, $event)">
+                                                    <i
+                                                        [class]="transaction.isFavorite ? 'bi bi-star-fill me-2' : 'bi bi-star me-2'"></i>
+                                                    {{ transaction.isFavorite ?
+                                                    'Remove from Favorites' :
+                                                    'Add to Favorites' }}
+                                                </a>
+                                            </li>
+                                            <li><hr
+                                                    class="dropdown-divider"></li>
+                                            <li>
+                                                <a
+                                                    class="dropdown-item text-danger"
+                                                    (click)="deleteTransaction(transaction)">
+                                                    <i
+                                                        class="bi bi-trash me-2"></i>
+                                                    Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- TIMELINE VIEW -->
+                @if (currentViewMode() === 'timeline') {
+                <div class="timeline-view">
+                    @for (group of groupedTransactions() | keyvalue; track
+                    group.key) {
+                    <div class="timeline-group">
+                        @if (currentGroupBy() !== 'none') {
+                        <div class="timeline-date-marker">
+                            <div class="date-marker-line"></div>
+                            <div class="date-marker-badge">{{ group.key }}</div>
+                            <div class="date-marker-line"></div>
+                        </div>
+                        }
+
+                        <div class="timeline-items">
+                            @for (transaction of group.value; track
+                            transaction.id; let isFirst = $first; let isLast =
+                            $last) {
+                            <div class="timeline-item"
+                                [class.first-item]="isFirst"
+                                [class.last-item]="isLast">
+                                <div class="timeline-marker">
+                                    <div class="timeline-dot"
+                                        [class.dot-income]="transaction.transactionType === TransactionType.INCOME"
+                                        [class.dot-expense]="transaction.transactionType === TransactionType.EXPENSE"
+                                        [class.dot-transfer]="transaction.transactionType === TransactionType.TRANSFER">
+                                        <i
+                                            [class]="getTransactionTypeIcon(transaction.transactionType)"></i>
+                                    </div>
+                                    @if (!isLast) {
+                                    <div class="timeline-line"></div>
+                                    }
+                                </div>
+
+                                <div class="timeline-content"
+                                    (click)="viewDetails(transaction)">
+                                    <div class="timeline-card">
+                                        <div class="timeline-card-header">
+                                            <div class="timeline-time">
+                                                {{
+                                                formatTime(transaction.transactionDate)
+                                                }}
+                                            </div>
+                                            <div class="timeline-amount"
+                                                [class.amount-positive]="transaction.transactionType === TransactionType.INCOME"
+                                                [class.amount-negative]="transaction.transactionType === TransactionType.EXPENSE">
+                                                {{
+                                                formatCurrency(transaction.amount,
+                                                transaction.currency) }}
+                                            </div>
+                                        </div>
+
+                                        <div class="timeline-card-body">
+                                            <h5 class="timeline-description">
+                                                {{ transaction.description }}
+                                                @if (transaction.isFavorite) {
+                                                <i
+                                                    class="bi bi-star-fill text-warning"></i>
+                                                }
+                                            </h5>
+
+                                            <div class="timeline-details">
+                                                <div
+                                                    class="timeline-detail-item">
+                                                    <i class="bi bi-tag"></i>
+                                                    <span>{{
+                                                        getCategoryName(transaction.categoryId)
+                                                        }}</span>
+                                                </div>
+                                                <div
+                                                    class="timeline-detail-item">
+                                                    <i class="bi bi-wallet"></i>
+                                                    <span>{{
+                                                        getAccountName(transaction.fromAccountId
+                                                        ||
+                                                        transaction.toAccountId
+                                                        || '') }}</span>
+                                                </div>
+                                                <div
+                                                    class="timeline-detail-item">
+                                                    <i
+                                                        class="bi bi-credit-card"></i>
+                                                    <span>{{
+                                                        transaction.paymentMethod
+                                                        }}</span>
+                                                </div>
+                                                <div
+                                                    class="timeline-detail-item">
+                                                    <span
+                                                        [class]="'badge ' + getStatusBadgeClass(transaction.status)">
+                                                        {{ transaction.status }}
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            @if (transaction.notes) {
+                                            <div class="timeline-notes">
+                                                <i
+                                                    class="bi bi-sticky-fill me-2"></i>
+                                                {{ transaction.notes }}
+                                            </div>
+                                            }
+
+                                            @if (transaction.tags?.length) {
+                                            <div class="timeline-tags">
+                                                @for (tag of transaction.tags;
+                                                track tag) {
+                                                <span class="tag-badge">{{ tag
+                                                    }}</span>
+                                                }
+                                            </div>
+                                            }
+                                        </div>
+
+                                        <div class="timeline-card-footer"
+                                            (click)="$event.stopPropagation()">
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-ghost"
+                                                (click)="editTransaction(transaction)">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-ghost"
+                                                (click)="duplicateTransaction(transaction)">
+                                                <i class="bi bi-files"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-ghost"
+                                                (click)="toggleFavorite(transaction, $event)">
+                                                <i
+                                                    [class]="transaction.isFavorite ? 'bi bi-star-fill' : 'bi bi-star'"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-sm btn-ghost text-danger"
+                                                (click)="deleteTransaction(transaction)">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination-section">
+                <div class="pagination-info">
+                    <span class="info-text">
+                        Showing {{ (pagination().currentPage *
+                        pagination().pageSize) + 1 }}
+                        to {{ Math.min((pagination().currentPage + 1) *
+                        pagination().pageSize, pagination().totalItems) }}
+                        of {{ pagination().totalItems }} transactions
+                    </span>
+
+                    <div class="page-size-selector">
+                        <label>Items per page:</label>
+                        <select
+                            class="form-select form-select-sm"
+                            [value]="pagination().pageSize"
+                            (change)="changePageSize(+$any($event.target).value)">
+                            @for (size of pageSizeOptions; track size) {
+                            <option [value]="size">{{ size }}</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <nav aria-label="Transaction pagination">
+                    <ul class="pagination">
+                        <!-- First Page -->
+                        <li class="page-item"
+                            [class.disabled]="pagination().currentPage === 0">
+                            <a class="page-link" (click)="goToPage(0)"
+                                aria-label="First">
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Previous Page -->
+                        <li class="page-item"
+                            [class.disabled]="pagination().currentPage === 0">
+                            <a class="page-link" (click)="previousPage()"
+                                aria-label="Previous">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+
+                        <!-- Page Numbers -->
+                        @if (pagination().currentPage > 2) {
+                        <li class="page-item">
+                            <a class="page-link" (click)="goToPage(0)">1</a>
+                        </li>
+                        @if (pagination().currentPage > 3) {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        }
+                        }
+
+                        @for (pageNum of displayedPageNumbers(); track pageNum)
+                        {
+                        <li class="page-item"
+                            [class.active]="pagination().currentPage === pageNum">
+                            <a class="page-link" (click)="goToPage(pageNum)">
+                                {{ pageNum + 1 }}
+                            </a>
+                        </li>
+                        }
+
+                        @if (pagination().currentPage < pagination().totalPages
+                        - 3) {
+                        @if (pagination().currentPage < pagination().totalPages
+                        - 4) {
+                        <li class="page-item disabled">
+                            <span class="page-link">...</span>
+                        </li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link"
+                                (click)="goToPage(pagination().totalPages - 1)">
+                                {{ pagination().totalPages }}
+                            </a>
+                        </li>
+                        }
+
+                        <!-- Next Page -->
+                        <li class="page-item"
+                            [class.disabled]="pagination().currentPage === pagination().totalPages - 1">
+                            <a class="page-link" (click)="nextPage()"
+                                aria-label="Next">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+
+                        <!-- Last Page -->
+                        <li class="page-item"
+                            [class.disabled]="pagination().currentPage === pagination().totalPages - 1">
+                            <a class="page-link"
+                                (click)="goToPage(pagination().totalPages - 1)"
+                                aria-label="Last">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            }
+        </div>
+    </div>
+</div>

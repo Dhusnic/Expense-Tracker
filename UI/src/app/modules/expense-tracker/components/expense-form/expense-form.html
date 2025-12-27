@@ -1,0 +1,1255 @@
+<div class="expense-form-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="row align-items-center">
+                <div class="col">
+                    <h1 class="page-title">
+                        <i class="bi bi-plus-circle-fill me-2"></i>
+                        New Transaction
+                    </h1>
+                    <p class="page-subtitle">Create a new transaction entry</p>
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-outline-secondary"
+                        (click)="onCancel()">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stepper Navigation -->
+    <div class="stepper-wrapper">
+        <div class="stepper-progress mb-4">
+            <div class="stepper-progress-bar"
+                [style.width.%]="progressPercentage()"></div>
+        </div>
+        <div class="container-fluid">
+            <div class="stepper">
+
+                <div class="stepper-steps">
+                    @for (step of steps; track step.id) {
+                    <div
+                        class="stepper-step"
+                        [class.active]="currentStep() === step.id"
+                        [class.completed]="step.completed"
+                        [class.clickable]="step.completed || step.id < currentStep()"
+                        (click)="goToStep(step.id)">
+                        <div class="step-icon">
+                            <i [class]="'bi ' + step.icon"></i>
+                            @if (step.completed) {
+                            <div class="step-check">
+                                <i class="bi bi-check-lg"></i>
+                            </div>
+                            }
+                        </div>
+                        <div class="step-content">
+                            <div class="step-title">{{ step.title }}</div>
+                            <div class="step-subtitle">{{ step.subtitle }}</div>
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Content -->
+    <div class="form-content">
+        <div class="container-fluid">
+            <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+
+                <!-- Step 1: Transaction Type -->
+                @if (currentStep() === 1) {
+                <div class="form-step" formGroupName="step1">
+                    <div class="step-header">
+                        <h2 class="step-heading">Select Transaction Type</h2>
+                        <p class="step-description">Choose the type of
+                            transaction you want to record</p>
+                    </div>
+
+                    <div class="transaction-type-grid">
+                        <!-- Income -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.INCOME"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.INCOME)">
+                            <div class="type-icon income">
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                            </div>
+                            <h3 class="type-title">Income</h3>
+                            <p class="type-description">Money received from
+                                salary, business, or other sources</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-success-subtle text-success">Salary</span>
+                                <span
+                                    class="badge bg-success-subtle text-success">Business</span>
+                                <span
+                                    class="badge bg-success-subtle text-success">Investment</span>
+                            </div>
+                        </div>
+
+                        <!-- Expense -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.EXPENSE"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.EXPENSE)">
+                            <div class="type-icon expense">
+                                <i class="bi bi-arrow-up-circle-fill"></i>
+                            </div>
+                            <h3 class="type-title">Expense</h3>
+                            <p class="type-description">Money spent on
+                                purchases, bills, or services</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-danger-subtle text-danger">Food</span>
+                                <span
+                                    class="badge bg-danger-subtle text-danger">Shopping</span>
+                                <span
+                                    class="badge bg-danger-subtle text-danger">Bills</span>
+                            </div>
+                        </div>
+
+                        <!-- Transfer -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.TRANSFER"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.TRANSFER)">
+                            <div class="type-icon transfer">
+                                <i class="bi bi-arrow-left-right"></i>
+                            </div>
+                            <h3 class="type-title">Transfer</h3>
+                            <p class="type-description">Move money between your
+                                accounts</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-primary-subtle text-primary">Bank
+                                    to Wallet</span>
+                                <span
+                                    class="badge bg-primary-subtle text-primary">Savings</span>
+                            </div>
+                        </div>
+
+                        <!-- Debt Given -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.DEBT_GIVEN"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.DEBT_GIVEN)">
+                            <div class="type-icon debt-given">
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            </div>
+                            <h3 class="type-title">Debt Given</h3>
+                            <p class="type-description">Money lent to
+                                someone</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-warning-subtle text-warning">Loan</span>
+                                <span
+                                    class="badge bg-warning-subtle text-warning">Borrowed</span>
+                            </div>
+                        </div>
+
+                        <!-- Debt Received -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.DEBT_RECEIVED"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.DEBT_RECEIVED)">
+                            <div class="type-icon debt-received">
+                                <i class="bi bi-hand-thumbs-down-fill"></i>
+                            </div>
+                            <h3 class="type-title">Debt Received</h3>
+                            <p class="type-description">Money borrowed from
+                                someone</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-info-subtle text-info">Borrowed</span>
+                                <span
+                                    class="badge bg-info-subtle text-info">Owe</span>
+                            </div>
+                        </div>
+
+                        <!-- Debt Repayment -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.DEBT_REPAYMENT"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.DEBT_REPAYMENT)">
+                            <div class="type-icon repayment">
+                                <i class="bi bi-cash-coin"></i>
+                            </div>
+                            <h3 class="type-title">Debt Repayment</h3>
+                            <p class="type-description">Paying back money you
+                                borrowed</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-success-subtle text-success">Repay</span>
+                                <span
+                                    class="badge bg-success-subtle text-success">Return</span>
+                            </div>
+                        </div>
+
+                        <!-- Debt Collection -->
+                        <div class="transaction-type-card"
+                            [class.selected]="transactionForm.get('step1.transactionType')?.value === TransactionType.DEBT_COLLECTION"
+                            (click)="transactionForm.get('step1.transactionType')?.setValue(TransactionType.DEBT_COLLECTION)">
+                            <div class="type-icon collection">
+                                <i class="bi bi-wallet2"></i>
+                            </div>
+                            <h3 class="type-title">Debt Collection</h3>
+                            <p class="type-description">Receiving money back
+                                that you lent</p>
+                            <div class="type-examples">
+                                <span
+                                    class="badge bg-primary-subtle text-primary">Collect</span>
+                                <span
+                                    class="badge bg-primary-subtle text-primary">Receive</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (transactionForm.get('step1.transactionType')?.invalid
+                    && transactionForm.get('step1.transactionType')?.touched) {
+                    <div class="alert alert-danger mt-3">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        Please select a transaction type to continue
+                    </div>
+                    }
+                </div>
+                }
+
+                <!-- Step 2: Basic Information -->
+                @if (currentStep() === 2) {
+                <div class="form-step" formGroupName="step2">
+                    <div class="step-header">
+                        <h2 class="step-heading">Basic Information</h2>
+                        <p class="step-description">Enter the transaction
+                            details</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Amount -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label
+                                    class="form-label required">Amount</label>
+                                <div class="input-group input-group-lg">
+                                    <select class="form-select"
+                                        formControlName="currency"
+                                        style="max-width: 100px;">
+                                        @for (currency of
+                                        expenseService.getSupportedCurrencies();
+                                        track currency) {
+                                        <option [value]="currency">{{ currency
+                                            }}</option>
+                                        }
+                                    </select>
+                                    <input
+                                        type="text"
+                                        class="form-control form-control-lg"
+                                        formControlName="amount"
+                                        placeholder="0.00"
+                                        (blur)="formatAmount($event)"
+                                        [class.is-invalid]="transactionForm.get('step2.amount')?.invalid && transactionForm.get('step2.amount')?.touched">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary"
+                                        (click)="toggleCalculator()"
+                                        title="Calculator">
+                                        <i class="bi bi-calculator"></i>
+                                    </button>
+                                </div>
+                                @if
+                                (transactionForm.get('step2.amount')?.invalid &&
+                                transactionForm.get('step2.amount')?.touched) {
+                                <div class="invalid-feedback d-block">
+                                    @if
+                                    (transactionForm.get('step2.amount')?.hasError('required'))
+                                    {
+                                    Amount is required
+                                    }
+                                    @if
+                                    (transactionForm.get('step2.amount')?.hasError('positiveAmount'))
+                                    {
+                                    Amount must be greater than zero
+                                    }
+                                </div>
+                                }
+                            </div>
+
+                            <!-- Calculator (Optional) -->
+                            @if (showCalculator()) {
+                            <div class="calculator-widget mt-2">
+                                <div class="calculator-display">
+                                    {{
+                                    transactionForm.get('step2.amount')?.value
+                                    || 0 | number:'1.2-2' }}
+                                </div>
+                                <div class="calculator-buttons">
+                                    @for (num of
+                                    ['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C'];
+                                    track num) {
+                                    <button
+                                        type="button"
+                                        class="calc-btn"
+                                        [class.calc-operator]="['+','-','*','/','=','C'].includes(num)"
+                                        (click)="onCalculatorInput(num)">
+                                        {{ num }}
+                                    </button>
+                                    }
+                                </div>
+                            </div>
+                            }
+                        </div>
+
+                        <!-- Transaction Date -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Transaction
+                                    Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control form-control-lg"
+                                    formControlName="transactionDate"
+                                    [max]="getCurrentDate()"
+                                    [class.is-invalid]="transactionForm.get('step2.transactionDate')?.invalid && transactionForm.get('step2.transactionDate')?.touched">
+                                @if
+                                (transactionForm.get('step2.transactionDate')?.invalid
+                                &&
+                                transactionForm.get('step2.transactionDate')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    Transaction date is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Category -->
+                        @if (transactionForm.get('step1.transactionType')?.value
+                        !== TransactionType.TRANSFER) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label
+                                    class="form-label required">Category</label>
+                                <select
+                                    class="form-select form-select-lg"
+                                    formControlName="categoryId"
+                                    [class.is-invalid]="transactionForm.get('step2.categoryId')?.invalid && transactionForm.get('step2.categoryId')?.touched">
+                                    <option [value]="null">Select
+                                        Category</option>
+                                    @for (category of filteredCategories();
+                                    track category.id) {
+                                    <option [value]="category.id">
+                                        <i [class]="'bi ' + category.icon"></i>
+                                        {{ category.name }}
+                                    </option>
+                                    }
+                                </select>
+                                @if
+                                (transactionForm.get('step2.categoryId')?.invalid
+                                &&
+                                transactionForm.get('step2.categoryId')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    Category is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Subcategory -->
+                        @if (subcategories().length > 0) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Subcategory</label>
+                                <select class="form-select form-select-lg"
+                                    formControlName="subcategoryId">
+                                    <option [value]="null">Select Subcategory
+                                        (Optional)</option>
+                                    @for (subcategory of subcategories(); track
+                                    subcategory.id) {
+                                    <option [value]="subcategory.id">{{
+                                        subcategory.name }}</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        }
+                        }
+
+                        <!-- Contact (for debt transactions) -->
+                        @if ([TransactionType.DEBT_GIVEN,
+                        TransactionType.DEBT_RECEIVED,
+                        TransactionType.DEBT_REPAYMENT,
+                        TransactionType.DEBT_COLLECTION].includes(transactionForm.get('step1.transactionType')?.value))
+                        {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label
+                                    class="form-label required">Contact</label>
+                                <select
+                                    class="form-select form-select-lg"
+                                    formControlName="contactId"
+                                    [class.is-invalid]="transactionForm.get('step2.contactId')?.invalid && transactionForm.get('step2.contactId')?.touched">
+                                    <option [value]="null">Select
+                                        Contact</option>
+                                    @for (contact of contacts(); track
+                                    contact.id) {
+                                    <option [value]="contact.id">{{ contact.name
+                                        }}</option>
+                                    }
+                                </select>
+                                @if
+                                (transactionForm.get('step2.contactId')?.invalid
+                                &&
+                                transactionForm.get('step2.contactId')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    Contact is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Due Date -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Due
+                                    Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control form-control-lg"
+                                    formControlName="dueDate"
+                                    [class.is-invalid]="transactionForm.get('step2.dueDate')?.invalid && transactionForm.get('step2.dueDate')?.touched">
+                                @if
+                                (transactionForm.get('step2.dueDate')?.invalid
+                                &&
+                                transactionForm.get('step2.dueDate')?.touched) {
+                                <div class="invalid-feedback">
+                                    Due date is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Is Paid -->
+                        <div class="col-md-12">
+                            <div class="form-check form-switch form-switch-lg">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="isPaidSwitch"
+                                    formControlName="isPaid">
+                                <label class="form-check-label"
+                                    for="isPaidSwitch">
+                                    Mark as Paid/Settled
+                                </label>
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label
+                                    class="form-label required">Description</label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="description"
+                                    placeholder="Enter transaction description"
+                                    [class.is-invalid]="transactionForm.get('step2.description')?.invalid && transactionForm.get('step2.description')?.touched">
+                                @if
+                                (transactionForm.get('step2.description')?.invalid
+                                &&
+                                transactionForm.get('step2.description')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    @if
+                                    (transactionForm.get('step2.description')?.hasError('required'))
+                                    {
+                                    Description is required
+                                    }
+                                    @if
+                                    (transactionForm.get('step2.description')?.hasError('minlength'))
+                                    {
+                                    Description must be at least 3 characters
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">Notes</label>
+                                <textarea
+                                    class="form-control"
+                                    formControlName="notes"
+                                    rows="3"
+                                    placeholder="Add any additional notes (optional)"></textarea>
+                                <div class="form-text">
+                                    {{
+                                    transactionForm.get('step2.notes')?.value?.length
+                                    || 0 }} / 500 characters
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tags -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">Tags</label>
+                                <div class="tags-container">
+                                    @for (tag of
+                                    transactionForm.get('step2.tags')?.value;
+                                    track tag) {
+                                    <span class="tag-badge">
+                                        {{ tag }}
+                                        <button type="button" class="tag-remove"
+                                            (click)="removeTag(tag)">
+                                            <i class="bi bi-x"></i>
+                                        </button>
+                                    </span>
+                                    }
+                                </div>
+                                <div class="input-group mt-2">
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        placeholder="Add tag and press Enter"
+                                        #tagInput
+                                        (keyup.enter)="addTag(tagInput)">
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary"
+                                        (click)="addTag(tagInput)">
+                                        <i class="bi bi-plus-lg"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <!-- Step 3: Payment Details -->
+                @if (currentStep() === 3) {
+                <div class="form-step" formGroupName="step3">
+                    <div class="step-header">
+                        <h2 class="step-heading">Payment Details</h2>
+                        <p class="step-description">Specify payment method and
+                            account information</p>
+                    </div>
+
+                    <div class="row g-4">
+                        <!-- Payment Method -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label required">Payment
+                                    Method</label>
+                                <div class="payment-method-grid">
+                                    @for (method of
+                                    expenseService.getPaymentMethods(); track
+                                    method.value) {
+                                    <div
+                                        class="payment-method-card"
+                                        [class.selected]="transactionForm.get('step3.paymentMethod')?.value === method.value"
+                                        (click)="transactionForm.get('step3.paymentMethod')?.setValue(method.value)">
+                                        <i [class]="'bi ' + method.icon"></i>
+                                        <span>{{ method.label }}</span>
+                                    </div>
+                                    }
+                                </div>
+                                @if
+                                (transactionForm.get('step3.paymentMethod')?.invalid
+                                &&
+                                transactionForm.get('step3.paymentMethod')?.touched)
+                                {
+                                <div class="alert alert-danger mt-2">
+                                    Please select a payment method
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- From Account -->
+                        @if (transactionForm.get('step1.transactionType')?.value
+                        !== TransactionType.INCOME) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">From
+                                    Account</label>
+                                <select
+                                    class="form-select form-select-lg"
+                                    formControlName="fromAccountId"
+                                    [class.is-invalid]="transactionForm.get('step3.fromAccountId')?.invalid && transactionForm.get('step3.fromAccountId')?.touched">
+                                    <option [value]="null">Select
+                                        Account</option>
+                                    @for (account of accounts(); track
+                                    account.id) {
+                                    <option [value]="account.id">
+                                        {{ account.name }} ({{
+                                        formatCurrency(account.balance,
+                                        account.currency) }})
+                                    </option>
+                                    }
+                                </select>
+                                @if
+                                (transactionForm.get('step3.fromAccountId')?.invalid
+                                &&
+                                transactionForm.get('step3.fromAccountId')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    From account is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- To Account (for Transfer and Income) -->
+                        @if (transactionForm.get('step1.transactionType')?.value
+                        === TransactionType.TRANSFER ||
+                        transactionForm.get('step1.transactionType')?.value ===
+                        TransactionType.INCOME) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">To
+                                    Account</label>
+                                <select
+                                    class="form-select form-select-lg"
+                                    formControlName="toAccountId"
+                                    [class.is-invalid]="transactionForm.get('step3.toAccountId')?.invalid && transactionForm.get('step3.toAccountId')?.touched">
+                                    <option [value]="null">Select
+                                        Account</option>
+                                    @for (account of accounts(); track
+                                    account.id) {
+                                    <option [value]="account.id">
+                                        {{ account.name }} ({{
+                                        formatCurrency(account.balance,
+                                        account.currency) }})
+                                    </option>
+                                    }
+                                </select>
+                                @if
+                                (transactionForm.get('step3.toAccountId')?.invalid
+                                &&
+                                transactionForm.get('step3.toAccountId')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    To account is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- UPI Details -->
+                        @if (transactionForm.get('step3.paymentMethod')?.value
+                        === PaymentMethod.UPI) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">UPI
+                                    Provider</label>
+                                <select
+                                    class="form-select form-select-lg"
+                                    formControlName="upiProviderId"
+                                    [class.is-invalid]="transactionForm.get('step3.upiProviderId')?.invalid && transactionForm.get('step3.upiProviderId')?.touched">
+                                    <option [value]="null">Select UPI
+                                        Provider</option>
+                                    @for (provider of upiProviders(); track
+                                    provider.id) {
+                                    <option [value]="provider.id">{{
+                                        provider.name }}</option>
+                                    }
+                                </select>
+                                @if
+                                (transactionForm.get('step3.upiProviderId')?.invalid
+                                &&
+                                transactionForm.get('step3.upiProviderId')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    UPI provider is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">UPI Transaction
+                                    ID</label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="upiTransactionId"
+                                    placeholder="Enter UPI Transaction ID (Optional)">
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Card Details -->
+                        @if (transactionForm.get('step3.paymentMethod')?.value
+                        === PaymentMethod.CREDIT_CARD ||
+                        transactionForm.get('step3.paymentMethod')?.value ===
+                        PaymentMethod.DEBIT_CARD) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Card Last 4
+                                    Digits</label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="cardLastFourDigits"
+                                    placeholder="1234"
+                                    maxlength="4"
+                                    [class.is-invalid]="transactionForm.get('step3.cardLastFourDigits')?.invalid && transactionForm.get('step3.cardLastFourDigits')?.touched">
+                                @if
+                                (transactionForm.get('step3.cardLastFourDigits')?.invalid
+                                &&
+                                transactionForm.get('step3.cardLastFourDigits')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    Please enter the last 4 digits of the card
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Cheque Details -->
+                        @if (transactionForm.get('step3.paymentMethod')?.value
+                        === PaymentMethod.CHEQUE) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Cheque
+                                    Number</label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="chequeNumber"
+                                    placeholder="Enter Cheque Number"
+                                    [class.is-invalid]="transactionForm.get('step3.chequeNumber')?.invalid && transactionForm.get('step3.chequeNumber')?.touched">
+                                @if
+                                (transactionForm.get('step3.chequeNumber')?.invalid
+                                &&
+                                transactionForm.get('step3.chequeNumber')?.touched)
+                                {
+                                <div class="invalid-feedback">
+                                    Cheque number is required
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Reference Number -->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Reference
+                                    Number</label>
+                                <input
+                                    type="text"
+                                    class="form-control form-control-lg"
+                                    formControlName="referenceNumber"
+                                    placeholder="Transaction Reference (Optional)">
+                            </div>
+                        </div>
+
+                        <!-- Transfer Fee -->
+                        @if (transactionForm.get('step1.transactionType')?.value
+                        === TransactionType.TRANSFER) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Transfer Fee</label>
+                                <input
+                                    type="number"
+                                    class="form-control form-control-lg"
+                                    formControlName="transferFee"
+                                    placeholder="0.00"
+                                    step="0.01"
+                                    min="0">
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch form-switch-lg">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="linkedTransactionsSwitch"
+                                    formControlName="createLinkedTransactions">
+                                <label class="form-check-label"
+                                    for="linkedTransactionsSwitch">
+                                    Create linked transactions (debit from
+                                    source, credit to destination)
+                                </label>
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Divider -->
+                        <div class="col-12">
+                            <hr class="my-4">
+                            <h4 class="section-title">Advanced Options</h4>
+                        </div>
+
+                        <!-- Recurring Transaction -->
+                        <div class="col-12">
+                            <div class="form-check form-switch form-switch-lg">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="recurringSwitch"
+                                    formControlName="isRecurring">
+                                <label class="form-check-label"
+                                    for="recurringSwitch">
+                                    Make this a recurring transaction
+                                </label>
+                            </div>
+                        </div>
+
+                        @if (showRecurringOptions()) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label
+                                    class="form-label required">Frequency</label>
+                                <select class="form-select form-select-lg"
+                                    formControlName="recurringFrequency">
+                                    <option
+                                        [value]="RecurrenceFrequency.DAILY">Daily</option>
+                                    <option
+                                        [value]="RecurrenceFrequency.WEEKLY">Weekly</option>
+                                    <option
+                                        [value]="RecurrenceFrequency.MONTHLY">Monthly</option>
+                                    <option
+                                        [value]="RecurrenceFrequency.QUARTERLY">Quarterly</option>
+                                    <option
+                                        [value]="RecurrenceFrequency.YEARLY">Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label required">Start
+                                    Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control form-control-lg"
+                                    formControlName="recurringStartDate">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">End Date</label>
+                                <input
+                                    type="date"
+                                    class="form-control form-control-lg"
+                                    formControlName="recurringEndDate">
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Number of
+                                    Occurrences</label>
+                                <input
+                                    type="number"
+                                    class="form-control form-control-lg"
+                                    formControlName="recurringOccurrences"
+                                    placeholder="Leave empty for indefinite"
+                                    min="1">
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Tax Deductible -->
+                        <div class="col-12">
+                            <div class="form-check form-switch form-switch-lg">
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    id="taxDeductibleSwitch"
+                                    formControlName="isTaxDeductible">
+                                <label class="form-check-label"
+                                    for="taxDeductibleSwitch">
+                                    This transaction is tax deductible
+                                </label>
+                            </div>
+                        </div>
+
+                        @if
+                        (transactionForm.get('step3.isTaxDeductible')?.value) {
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">Tax Category</label>
+                                <select class="form-select form-select-lg"
+                                    formControlName="taxCategory">
+                                    <option value>Select Tax Category</option>
+                                    <option value="80C">80C -
+                                        Investments</option>
+                                    <option value="80D">80D - Health
+                                        Insurance</option>
+                                    <option value="24B">24B - Home Loan
+                                        Interest</option>
+                                    <option value="OTHER">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Attachments -->
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label class="form-label">Attachments</label>
+                                <div class="upload-area">
+                                    <input
+                                        type="file"
+                                        id="fileInput"
+                                        class="d-none"
+                                        multiple
+                                        accept="image/*,.pdf"
+                                        (change)="onFileSelect($event)">
+                                    <label for="fileInput" class="upload-label">
+                                        <i class="bi bi-cloud-upload"></i>
+                                        <span>Click to upload or drag and
+                                            drop</span>
+                                        <small>PNG, JPG, PDF up to 10MB</small>
+                                    </label>
+                                </div>
+
+                                @if
+                                (transactionForm.get('step3.attachments')?.value?.length
+                                > 0) {
+                                <div class="attachments-list mt-3">
+                                    @for (attachment of
+                                    transactionForm.get('step3.attachments')?.value;
+                                    track attachment.id; let i = $index) {
+                                    <div class="attachment-item">
+                                        <i class="bi bi-file-earmark"></i>
+                                        <span class="attachment-name">{{
+                                            attachment.fileName }}</span>
+                                        <span class="attachment-size">{{
+                                            (attachment.fileSize /
+                                            1024).toFixed(2) }} KB</span>
+                                        <button
+                                            type="button"
+                                            class="btn-remove"
+                                            (click)="removeAttachment(i)">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
+                                    }
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Split Transaction -->
+                        <div class="col-12">
+                            <div
+                                class="d-flex align-items-center justify-content-between">
+                                <label class="form-label mb-0">Split
+                                    Transaction</label>
+                                <button
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary"
+                                    (click)="addSplitTransaction()">
+                                    <i class="bi bi-plus-lg me-1"></i>
+                                    Add Split
+                                </button>
+                            </div>
+
+                            @if
+                            (transactionForm.get('step3.splitTransactions')?.value?.length
+                            > 0) {
+                            <div class="split-transactions-list mt-3">
+                                @for (split of
+                                transactionForm.get('step3.splitTransactions')?.value;
+                                track $index; let i = $index) {
+                                <div class="split-item">
+                                    <select class="form-select">
+                                        <option value>Select Contact</option>
+                                        @for (contact of contacts(); track
+                                        contact.id) {
+                                        <option [value]="contact.id">{{
+                                            contact.name }}</option>
+                                        }
+                                    </select>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        placeholder="Amount"
+                                        step="0.01">
+                                    <button
+                                        type="button"
+                                        class="btn btn-sm btn-outline-danger"
+                                        (click)="removeSplitTransaction(i)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                                }
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <!-- Step 4: Review & Submit -->
+                @if (currentStep() === 4) {
+                <div class="form-step">
+                    <div class="step-header">
+                        <h2 class="step-heading">Review Your Transaction</h2>
+                        <p class="step-description">Please review all details
+                            before submitting</p>
+                    </div>
+
+                    <div class="review-container">
+                        <!-- Transaction Summary -->
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <h4>Transaction Summary</h4>
+                            </div>
+                            <div class="review-card-body">
+                                <div class="review-item">
+                                    <span class="review-label">Type:</span>
+                                    <span class="review-value">
+                                        <i
+                                            [class]="getTransactionTypeIcon(transactionForm.get('step1.transactionType')?.value)"></i>
+                                        {{
+                                        getTransactionTypeLabel(transactionForm.get('step1.transactionType')?.value)
+                                        }}
+                                    </span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Amount:</span>
+                                    <span class="review-value fw-bold fs-4">
+                                        {{
+                                        formatCurrency(transactionForm.get('step2.amount')?.value,
+                                        transactionForm.get('step2.currency')?.value)
+                                        }}
+                                    </span>
+                                </div>
+                                <div class="review-item">
+                                    <span class="review-label">Date:</span>
+                                    <span class="review-value">
+                                        {{
+                                        transactionForm.get('step2.transactionDate')?.value
+                                        | date:'fullDate' }}
+                                    </span>
+                                </div>
+                                <div class="review-item">
+                                    <span
+                                        class="review-label">Description:</span>
+                                    <span class="review-value">{{
+                                        transactionForm.get('step2.description')?.value
+                                        }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Category Details -->
+                        @if (transactionForm.get('step2.categoryId')?.value) {
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <h4>Category</h4>
+                            </div>
+                            <div class="review-card-body">
+                                <div class="review-item">
+                                    <span class="review-label">Category:</span>
+                                    <span class="review-value">
+                                        {{
+                                        getCategoryById(transactionForm.get('step2.categoryId')?.value)?.name
+                                        }}
+                                    </span>
+                                </div>
+                                @if
+                                (transactionForm.get('step2.subcategoryId')?.value)
+                                {
+                                <div class="review-item">
+                                    <span
+                                        class="review-label">Subcategory:</span>
+                                    <span class="review-value">
+                                        {{
+                                        getCategoryById(transactionForm.get('step2.subcategoryId')?.value)?.name
+                                        }}
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Payment Details -->
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <h4>Payment Details</h4>
+                            </div>
+                            <div class="review-card-body">
+                                <div class="review-item">
+                                    <span class="review-label">Payment
+                                        Method:</span>
+                                    <span class="review-value">
+                                        {{
+                                        transactionForm.get('step3.paymentMethod')?.value
+                                        }}
+                                    </span>
+                                </div>
+                                @if
+                                (transactionForm.get('step3.fromAccountId')?.value)
+                                {
+                                <div class="review-item">
+                                    <span class="review-label">From
+                                        Account:</span>
+                                    <span class="review-value">
+                                        {{
+                                        getAccountById(transactionForm.get('step3.fromAccountId')?.value)?.name
+                                        }}
+                                    </span>
+                                </div>
+                                }
+                                @if
+                                (transactionForm.get('step3.toAccountId')?.value)
+                                {
+                                <div class="review-item">
+                                    <span class="review-label">To
+                                        Account:</span>
+                                    <span class="review-value">
+                                        {{
+                                        getAccountById(transactionForm.get('step3.toAccountId')?.value)?.name
+                                        }}
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Additional Information -->
+                        @if (transactionForm.get('step2.notes')?.value ||
+                        transactionForm.get('step2.tags')?.value?.length > 0) {
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <h4>Additional Information</h4>
+                            </div>
+                            <div class="review-card-body">
+                                @if (transactionForm.get('step2.notes')?.value)
+                                {
+                                <div class="review-item">
+                                    <span class="review-label">Notes:</span>
+                                    <span class="review-value">{{
+                                        transactionForm.get('step2.notes')?.value
+                                        }}</span>
+                                </div>
+                                }
+                                @if
+                                (transactionForm.get('step2.tags')?.value?.length
+                                > 0) {
+                                <div class="review-item">
+                                    <span class="review-label">Tags:</span>
+                                    <div class="review-value">
+                                        @for (tag of
+                                        transactionForm.get('step2.tags')?.value;
+                                        track tag) {
+                                        <span class="badge bg-secondary me-1">{{
+                                            tag }}</span>
+                                        }
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+
+                        <!-- Advanced Features -->
+                        @if (transactionForm.get('step3.isRecurring')?.value ||
+                        transactionForm.get('step3.isTaxDeductible')?.value) {
+                        <div class="review-card">
+                            <div class="review-card-header">
+                                <h4>Advanced Features</h4>
+                            </div>
+                            <div class="review-card-body">
+                                @if
+                                (transactionForm.get('step3.isRecurring')?.value)
+                                {
+                                <div class="review-item">
+                                    <span class="review-label">Recurring:</span>
+                                    <span class="review-value">
+                                        <i
+                                            class="bi bi-check-circle text-success"></i>
+                                        {{
+                                        transactionForm.get('step3.recurringFrequency')?.value
+                                        }}
+                                    </span>
+                                </div>
+                                }
+                                @if
+                                (transactionForm.get('step3.isTaxDeductible')?.value)
+                                {
+                                <div class="review-item">
+                                    <span class="review-label">Tax
+                                        Deductible:</span>
+                                    <span class="review-value">
+                                        <i
+                                            class="bi bi-check-circle text-success"></i>
+                                        Yes
+                                    </span>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+                }
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="container-fluid">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                @if (currentStep() > 1) {
+                                <button
+                                    type="button"
+                                    class="btn btn-lg btn-outline-secondary"
+                                    (click)="previousStep()"
+                                    [disabled]="isSubmitting()">
+                                    <i class="bi bi-arrow-left me-2"></i>
+                                    Previous
+                                </button>
+                                }
+                            </div>
+                            <div class="col-auto">
+                                @if (currentStep() < totalSteps) {
+                                <button
+                                    type="button"
+                                    class="btn btn-lg btn-primary"
+                                    (click)="nextStep()"
+                                    [disabled]="currentStepValid()">
+                                    Next
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </button>
+                                } @else {
+                                <button
+                                    type="submit"
+                                    class="btn btn-lg btn-success"
+                                    [disabled]="transactionForm.invalid || isSubmitting()">
+                                    @if (isSubmitting()) {
+                                    <span
+                                        class="spinner-border spinner-border-sm me-2"></span>
+                                    Saving...
+                                    } @else {
+                                    <i class="bi bi-check-lg me-2"></i>
+                                    Submit Transaction
+                                    }
+                                </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

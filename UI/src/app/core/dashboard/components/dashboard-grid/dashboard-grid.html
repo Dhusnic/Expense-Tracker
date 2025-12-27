@@ -1,0 +1,142 @@
+<div class="dashboard-container" [class.sidebar-collapsed]="!sidebarExpanded()">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar" [style.width]="sidebarWidth()">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="bi bi-grid-3x3-gap-fill"></i>
+                @if (sidebarExpanded()) {
+                <span>Dashboards</span>
+                }
+            </div>
+            <button
+                class="sidebar-toggle-btn"
+                (click)="toggleSidebar()"
+                [attr.aria-label]="sidebarExpanded() ? 'Collapse sidebar' : 'Expand sidebar'">
+                <i
+                    [class]="sidebarExpanded() ? 'bi bi-chevron-left' : 'bi bi-chevron-right'"></i>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            @for (dashboard of dashboards(); track dashboard.id) {
+            <button
+                class="sidebar-nav-item"
+                [class.active]="activeDashboard() === dashboard.id"
+                (click)="switchDashboard(dashboard.id)"
+                [attr.aria-label]="dashboard.name">
+                <div class="nav-item-icon">
+                    <i [class]="'bi ' + dashboard.icon"></i>
+                </div>
+                @if (sidebarExpanded()) {
+                <div class="nav-item-content">
+                    <div class="nav-item-title">{{ dashboard.name }}</div>
+                    <div class="nav-item-description">{{ dashboard.description
+                        }}</div>
+                </div>
+                }
+            </button>
+            }
+        </nav>
+
+        @if (sidebarExpanded()) {
+        <div class="sidebar-footer">
+            <button class="btn btn-primary btn-sm w-100" (click)="addWidget()">
+                <i class="bi bi-plus-lg me-2"></i>
+                Add Widget
+            </button>
+        </div>
+        }
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1 class="dashboard-title">
+                    <i class="bi bi-speedometer2 me-2"></i>
+                    {{ getActiveDashboardName() }}
+                </h1>
+                <p class="dashboard-subtitle">Real-time analytics and
+                    insights</p>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-outline-primary" (click)="addWidget()">
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Add Widget
+                </button>
+            </div>
+        </header>
+
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Widgets Grid -->
+            <div class="widgets-grid">
+                @for (widget of widgets(); track widget.id) {
+                <div
+                    class="widget-item"
+                    [style.grid-column]="'span ' + widget.cols"
+                    [style.grid-row]="'span ' + widget.rows">
+                    <div class="widget-card">
+                        <!-- Widget Header -->
+                        <div class="widget-header">
+                            <div class="widget-title">
+                                <i class="bi bi-grip-vertical drag-icon"></i>
+                                <span>{{ widget.title }}</span>
+                            </div>
+                            <div class="widget-actions">
+                                <button
+                                    class="widget-action-btn"
+                                    (click)="refreshWidget(widget)"
+                                    aria-label="Refresh widget">
+                                    <i class="bi bi-arrow-clockwise"></i>
+                                </button>
+                                <button
+                                    class="widget-action-btn"
+                                    (click)="removeWidget(widget)"
+                                    aria-label="Remove widget">
+                                    <i class="bi bi-x-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Widget Content -->
+                        <div class="widget-content">
+                            @if (widget.chartOptions) {
+                            <div
+                                echarts
+                                [options]="widget.chartOptions"
+                                [autoResize]="true"
+                                [merge]="widget.chartOptions"
+                                (chartInit)="onChartInit($event, widget.id)"
+                                class="chart-container">
+                            </div>
+                            } @else {
+                            <div class="widget-placeholder">
+                                <i class="bi bi-bar-chart-line"></i>
+                                <p>No chart data available</p>
+                            </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+
+            <!-- Empty State -->
+            @if (widgets().length === 0) {
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="bi bi-grid-3x3"></i>
+                </div>
+                <h3>No Widgets Added</h3>
+                <p>Start building your dashboard by adding widgets</p>
+                <button class="btn btn-primary" (click)="addWidget()">
+                    <i class="bi bi-plus-lg me-2"></i>
+                    Add Your First Widget
+                </button>
+            </div>
+            }
+        </div>
+    </main>
+</div>

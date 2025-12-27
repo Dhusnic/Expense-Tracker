@@ -1,0 +1,155 @@
+<aside
+    class="enterprise-sidebar"
+    [class.collapsed]="!isExpanded()"
+    [class.hovering]="isHovering()"
+    [style.width]="sidebarWidth()"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()">
+
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <i [class]="'bi ' + config.logo.icon"></i>
+            </div>
+
+            @if (isExpanded()) {
+            <div class="brand-content">
+                <div class="brand-name">{{ config.logo.companyName }}</div>
+                @if (config.logo.version) {
+                <div class="brand-version">v{{ config.logo.version }}</div>
+                }
+            </div>
+            }
+        </div>
+
+        <button
+            class="sidebar-toggle"
+            (click)="toggleSidebar()"
+            [attr.aria-label]="isExpanded() ? 'Collapse sidebar' : 'Expand sidebar'"
+            [attr.aria-expanded]="isExpanded()">
+            <i
+                [class]="isExpanded() ? 'bi bi-chevron-left' : 'bi bi-chevron-right'"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar-nav" role="navigation">
+        <div class="nav-content">
+            @for (item of config.menuItems; track trackByMenuItem($index, item))
+            {
+            @if (item.divider) {
+            <div class="nav-divider">
+                @if (isExpanded() && item.label) {
+                <span class="divider-label">{{ item.label }}</span>
+                }
+            </div>
+            } @else {
+            <div class="nav-item-wrapper">
+                <button
+                    class="nav-item"
+                    [class.active]="isMenuItemActive(item)"
+                    [class.has-children]="item.children && item.children.length > 0"
+                    [class.expanded]="isSubmenuExpanded(item.id)"
+                    (click)="onMenuItemClick(item, $event)"
+                    [attr.aria-label]="item.label"
+                    [attr.aria-current]="isMenuItemActive(item) ? 'page' : null">
+
+                    <div class="nav-item-icon">
+                        <i [class]="'bi ' + item.icon"></i>
+                    </div>
+
+                    @if (isExpanded()) {
+                    <span class="nav-item-label">{{ item.label }}</span>
+
+                    @if (item.badge) {
+                    <span
+                        class="nav-item-badge"
+                        [ngClass]="getBadgeClass(item.badge.variant)">
+                        {{ item.badge.text }}
+                    </span>
+                    }
+
+                    @if (item.children && item.children.length > 0) {
+                    <i class="nav-item-chevron bi"
+                        [class.bi-chevron-down]="!isSubmenuExpanded(item.id)"
+                        [class.bi-chevron-up]="isSubmenuExpanded(item.id)"></i>
+                    }
+                    }
+
+                    @if (!isExpanded()) {
+                    <div class="nav-item-tooltip">
+                        <span>{{ item.label }}</span>
+                        @if (item.badge) {
+                        <span
+                            class="tooltip-badge"
+                            [ngClass]="getBadgeClass(item.badge.variant)">
+                            {{ item.badge.text }}
+                        </span>
+                        }
+                    </div>
+                    }
+                </button>
+
+                @if (item.children && item.children.length > 0 &&
+                isSubmenuExpanded(item.id) && isExpanded()) {
+                <div class="nav-submenu">
+                    @for (child of item.children; track child.id) {
+                    <button
+                        class="nav-submenu-item"
+                        [class.active]="isMenuItemActive(child)"
+                        (click)="onMenuItemClick(child, $event)"
+                        [attr.aria-label]="child.label">
+
+                        <div class="submenu-item-icon">
+                            <i [class]="'bi ' + child.icon"></i>
+                        </div>
+
+                        <span class="submenu-item-label">{{ child.label
+                            }}</span>
+
+                        <!-- @if (child?.badge) {
+                        <span
+                            class="submenu-item-badge"
+                            [ngClass]="getBadgeClass(child?.badge?.variant)">
+                            {{ child?.badge?.text }}
+                        </span>
+                        } -->
+                    </button>
+                    }
+                </div>
+                }
+            </div>
+            }
+            }
+        </div>
+    </nav>
+
+    <!-- Sidebar Footer -->
+    <div class="sidebar-footer">
+        <div class="footer-divider"></div>
+
+        @for (item of config.footerItems; track item.id) {
+        <button
+            class="footer-item"
+            [class.active]="isMenuItemActive(item)"
+            (click)="onMenuItemClick(item, $event)"
+            [attr.aria-label]="item.label">
+
+            <div class="footer-item-icon">
+                <i [class]="'bi ' + item.icon"></i>
+            </div>
+
+            @if (isExpanded()) {
+            <span class="footer-item-label">{{ item.label }}</span>
+            }
+
+            @if (!isExpanded()) {
+            <div class="footer-item-tooltip">
+                {{ item.label }}
+            </div>
+            }
+        </button>
+        }
+    </div>
+</aside>

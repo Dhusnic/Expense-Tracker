@@ -12,7 +12,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:4200",   # Angular
         "http://127.0.0.1:4200",
-        "http://13.61.45.146:4200"
+        "http://127.0.0.1:8000",
+        "http://10.131.38.133:4200",  # Django
     ],
     allow_credentials=True,
     allow_methods=["*"],
