@@ -1,0 +1,284 @@
+<div class="filters-container">
+    <!-- Header -->
+    <div class="filters-header">
+        <div class="header-left">
+            <h5 class="filters-title">
+                <i class="bi bi-funnel me-2"></i>
+                Advanced Filters
+            </h5>
+            @if (activeFilterCount() > 0) {
+                <span class="badge bg-primary">{{ activeFilterCount() }} active</span>
+            }
+        </div>
+        <button 
+            class="btn-close-filter"
+            (click)="closePanel()"
+            title="Close filters">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+
+    <!-- Filter Body -->
+    <div class="filters-body">
+        
+        <!-- Transaction Types -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-tag-fill me-2"></i>
+                Transaction Types
+            </label>
+            <div class="transaction-type-grid">
+                @for (type of allTransactionTypes; track type) {
+                    <button
+                        class="type-button"
+                        [class.selected]="isTransactionTypeSelected(type)"
+                        [style.--type-color]="getTransactionTypeColor(type)"
+                        (click)="toggleTransactionType(type)">
+                        <i class="bi bi-check-circle-fill check-icon"></i>
+                        <span class="type-label">{{ type }}</span>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Status Filters -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-toggle-on me-2"></i>
+                Status
+            </label>
+            <div class="button-group">
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isActive === null"
+                    (click)="setActiveStatus(null)">
+                    All
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isActive === true"
+                    (click)="setActiveStatus(true)">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Active
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isActive === false"
+                    (click)="setActiveStatus(false)">
+                    <i class="bi bi-dash-circle me-1"></i>
+                    Inactive
+                </button>
+            </div>
+        </div>
+
+        <!-- Budget Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-piggy-bank me-2"></i>
+                Budget Limit
+            </label>
+            <div class="button-group">
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasBudgetLimit === null"
+                    (click)="setBudgetFilter(null)">
+                    All
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasBudgetLimit === true"
+                    (click)="setBudgetFilter(true)">
+                    <i class="bi bi-check me-1"></i>
+                    Has Budget
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasBudgetLimit === false"
+                    (click)="setBudgetFilter(false)">
+                    <i class="bi bi-x me-1"></i>
+                    No Budget
+                </button>
+            </div>
+
+            <!-- Budget Range -->
+            <div class="budget-range">
+                <div class="range-input">
+                    <label>Min Budget (₹)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="0"
+                        [value]="localFilter().minBudget || ''"
+                        (input)="onMinBudgetChange($event)"
+                        min="0"
+                        step="1000">
+                </div>
+                <span class="range-separator">to</span>
+                <div class="range-input">
+                    <label>Max Budget (₹)</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Unlimited"
+                        [value]="localFilter().maxBudget || ''"
+                        (input)="onMaxBudgetChange($event)"
+                        min="0"
+                        step="1000">
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Deductible -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-receipt me-2"></i>
+                Tax Deductible
+            </label>
+            <div class="button-group">
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isTaxDeductible === null"
+                    (click)="setTaxFilter(null)">
+                    All
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isTaxDeductible === true"
+                    (click)="setTaxFilter(true)">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Yes
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isTaxDeductible === false"
+                    (click)="setTaxFilter(false)">
+                    <i class="bi bi-x-circle me-1"></i>
+                    No
+                </button>
+            </div>
+        </div>
+
+        <!-- Subcategories Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-folder me-2"></i>
+                Subcategories
+            </label>
+            <div class="button-group">
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasSubcategories === null"
+                    (click)="setSubcategoriesFilter(null)">
+                    All
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasSubcategories === true"
+                    (click)="setSubcategoriesFilter(true)">
+                    <i class="bi bi-check me-1"></i>
+                    Has Subcategories
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().hasSubcategories === false"
+                    (click)="setSubcategoriesFilter(false)">
+                    <i class="bi bi-x me-1"></i>
+                    No Subcategories
+                </button>
+            </div>
+        </div>
+
+        <!-- Default Category Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-star me-2"></i>
+                Default Category
+            </label>
+            <div class="button-group">
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isDefault === null"
+                    (click)="setDefaultFilter(null)">
+                    All
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isDefault === true"
+                    (click)="setDefaultFilter(true)">
+                    <i class="bi bi-star-fill me-1"></i>
+                    Default Only
+                </button>
+                <button
+                    class="btn-filter"
+                    [class.active]="localFilter().isDefault === false"
+                    (click)="setDefaultFilter(false)">
+                    Non-Default
+                </button>
+            </div>
+        </div>
+
+        <!-- Date Range -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-calendar-range me-2"></i>
+                Created Date Range
+            </label>
+            <div class="date-range">
+                <div class="date-input">
+                    <label>From</label>
+                    <input
+                        type="date"
+                        class="form-control"
+                        [value]="formatDateForInput(localFilter().createdDateFrom)"
+                        (change)="onDateFromChange($event)">
+                </div>
+                <span class="range-separator">to</span>
+                <div class="date-input">
+                    <label>To</label>
+                    <input
+                        type="date"
+                        class="form-control"
+                        [value]="formatDateForInput(localFilter().createdDateTo)"
+                        (change)="onDateToChange($event)">
+                </div>
+            </div>
+        </div>
+
+        <!-- Color Presets -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <i class="bi bi-palette me-2"></i>
+                Icon Colors
+            </label>
+            <div class="color-grid">
+                @for (color of colorPresets; track color) {
+                    <button
+                        class="color-button"
+                        [class.selected]="isColorSelected(color)"
+                        [style.background]="color"
+                        (click)="toggleColor(color)"
+                        [title]="color">
+                        <i class="bi bi-check check-icon"></i>
+                    </button>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Filter Footer -->
+    <div class="filters-footer">
+        <button
+            class="btn btn-outline-secondary"
+            (click)="resetFilters()">
+            <i class="bi bi-arrow-counterclockwise me-2"></i>
+            Reset All
+        </button>
+        <button
+            class="btn btn-primary"
+            (click)="applyFilters()">
+            <i class="bi bi-check-circle me-2"></i>
+            Apply Filters
+        </button>
+    </div>
+</div>

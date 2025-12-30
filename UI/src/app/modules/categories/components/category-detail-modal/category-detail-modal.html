@@ -1,0 +1,353 @@
+@if (isOpen()) {
+<div class="modal-backdrop" (click)="close()">
+    <div class="modal-container" (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="modal-header"
+            [style.background]="category()?.icon?.backgroundColor">
+            <div class="header-content">
+                <!-- Icon -->
+                <div class="category-icon-large"
+                    [style.background]="category()?.colorRgba ?? 'rgba(0,0,0,0.1)'">
+                    @if (category()?.icon?.type === 'BOOTSTRAP_ICON') {
+                    <i [class]="category()!.icon.value"
+                        [style.color]="category()?.icon?.color ?? '#000'"></i>
+                    }
+                    @if (category()?.icon?.type === 'EMOJI') {
+                    <span class="emoji">{{ category()!.icon.value }}</span>
+                    }
+                    @if (category()?.icon?.type === 'CUSTOM_IMAGE') {
+                    <img [src]="category()!.icon.value" alt="Icon">
+                    }
+                </div>
+
+                <!-- Title -->
+                <div class="header-title">
+                    <h2 class="category-name">
+                        {{ category()?.name }}
+                        @if (category()?.isDefault) {
+                        <i class="bi bi-star-fill text-warning"></i>
+                        }
+                    </h2>
+                    @if (category()?.description) {
+                    <p class="category-description">{{ category()?.description
+                        }}</p>
+                    }
+                    <div class="header-badges">
+                        <span class="badge"
+                            [class.badge-success]="category()?.isActive"
+                            [class.badge-secondary]="!category()?.isActive">
+                            {{ category()?.isActive ? 'Active' : 'Inactive' }}
+                        </span>
+                        @if (category()?.isTaxDeductible) {
+                        <span class="badge badge-info">
+                            <i class="bi bi-receipt me-1"></i>
+                            Tax Deductible
+                        </span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Close Button -->
+            <button class="btn-close-modal" (click)="close()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Modal Tabs -->
+        <div class="modal-tabs">
+            <button
+                class="tab-button"
+                [class.active]="activeTab() === 'details'"
+                (click)="setActiveTab('details')">
+                <i class="bi bi-info-circle me-2"></i>
+                Details
+            </button>
+            <button
+                class="tab-button"
+                [class.active]="activeTab() === 'subcategories'"
+                (click)="setActiveTab('subcategories')">
+                <i class="bi bi-folder me-2"></i>
+                Subcategories ({{ category()?.subcategoryCount }})
+            </button>
+            <button
+                class="tab-button"
+                [class.active]="activeTab() === 'settings'"
+                (click)="setActiveTab('settings')">
+                <i class="bi bi-gear me-2"></i>
+                Settings
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="modal-body">
+
+            <!-- Details Tab -->
+            @if (activeTab() === 'details') {
+            <div class="tab-content">
+
+                <!-- Transaction Types -->
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-tag-fill me-2"></i>
+                        Transaction Types
+                    </h6>
+                    <div class="transaction-types-display">
+                        @for (type of category()?.transactionTypes; track type)
+                        {
+                        <div
+                            class="type-chip-large"
+                            [style.background]="getTransactionTypeColor(type) + '20'"
+                            [style.color]="getTransactionTypeColor(type)"
+                            [style.border-color]="getTransactionTypeColor(type)">
+                            <i class="bi bi-circle-fill"></i>
+                            <span class="type-name">{{ type }}</span>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Budget Information -->
+                @if (category()?.budgetLimit) {
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-piggy-bank-fill me-2"></i>
+                        Budget Information
+                    </h6>
+                    <div class="budget-card">
+                        <div class="budget-info">
+                            <span class="budget-label">Monthly Budget
+                                Limit</span>
+                            <span class="budget-value">{{
+                                formatCurrency(category()?.budgetLimit)
+                                }}</span>
+                        </div>
+                        <div class="budget-progress">
+                            <div class="progress">
+                                <div class="progress-bar bg-success"
+                                    style="width: 0%"></div>
+                            </div>
+                            <small class="text-muted">No spending data
+                                available</small>
+                        </div>
+                    </div>
+                </div>
+                }
+
+                <!-- Metadata -->
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-clock-history me-2"></i>
+                        Metadata
+                    </h6>
+                    <div class="metadata-grid">
+                        <div class="meta-item">
+                            <span class="meta-label">Created</span>
+                            <span class="meta-value">{{
+                                formatDate(category()?.createdAt) }}</span>
+                        </div>
+                        @if (category()?.updatedAt) {
+                        <div class="meta-item">
+                            <span class="meta-label">Last Updated</span>
+                            <span class="meta-value">{{
+                                formatDate(category()?.updatedAt) }}</span>
+                        </div>
+                        }
+                        <div class="meta-item">
+                            <span class="meta-label">Sort Order</span>
+                            <span class="meta-value">{{ category()?.sortOrder
+                                }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Category ID</span>
+                            <span class="meta-value font-monospace">{{
+                                category()?.category_id ?? category()?.id
+                                }}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            }
+
+            <!-- Subcategories Tab -->
+            @if (activeTab() === 'subcategories') {
+            <div class="tab-content">
+                @if (category()?.subcategoryCount === 0) {
+                <div class="empty-state-small">
+                    <i class="bi bi-folder-x"></i>
+                    <p>No subcategories defined for this category</p>
+                </div>
+                } @else {
+                <div class="subcategories-grid">
+                    @for (sub of category()?.subcategories; track sub.id) {
+                    <div class="subcategory-card">
+                        <div class="sub-icon-wrapper"
+                            [style.background]="sub.icon.backgroundColor">
+                            @if (sub.icon.type === 'BOOTSTRAP_ICON') {
+                            <i [class]="sub.icon.value"
+                                [style.color]="sub.icon.color"></i>
+                            }
+                            @if (sub.icon.type === 'EMOJI') {
+                            <span>{{ sub.icon.value }}</span>
+                            }
+                        </div>
+                        <div class="sub-details">
+                            <h6 class="sub-name">{{ sub.name }}</h6>
+                            @if (sub.description) {
+                            <p class="sub-description">{{ sub.description }}</p>
+                            }
+                            <div class="sub-meta">
+                                @if (sub.budgetLimit) {
+                                <span class="sub-budget">
+                                    <i class="bi bi-piggy-bank"></i>
+                                    {{ formatCurrency(sub.budgetLimit) }}
+                                </span>
+                                }
+                                @if (sub.isTaxDeductible) {
+                                <span class="sub-tax">
+                                    <i class="bi bi-receipt"></i>
+                                    Tax Deductible
+                                </span>
+                                }
+                                <span class="sub-status"
+                                    [class.active]="sub.isActive">
+                                    {{ sub.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+            }
+
+            <!-- Settings Tab -->
+            @if (activeTab() === 'settings') {
+            <div class="tab-content">
+
+                <!-- Tax Settings -->
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-receipt-cutoff me-2"></i>
+                        Tax Settings
+                    </h6>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Tax Deductible</span>
+                                <span class="setting-description">Whether
+                                    transactions are tax deductible</span>
+                            </div>
+                            <div class="setting-value">
+                                @if (category()?.isTaxDeductible) {
+                                <i
+                                    class="bi bi-check-circle-fill text-success"></i>
+                                <span class="text-success">Yes</span>
+                                } @else {
+                                <i class="bi bi-x-circle-fill text-muted"></i>
+                                <span class="text-muted">No</span>
+                                }
+                            </div>
+                        </div>
+                        @if (category()?.taxCategory) {
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Tax Category</span>
+                                <span class="setting-description">IRS tax
+                                    category classification</span>
+                            </div>
+                            <div class="setting-value">
+                                <span class="badge bg-primary">{{
+                                    category()?.taxCategory }}</span>
+                            </div>
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Account Links -->
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-link-45deg me-2"></i>
+                        Linked Accounts
+                    </h6>
+                    <div class="settings-list">
+                        @if (category()?.defaultAccountId) {
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Default
+                                    Account</span>
+                                <span class="setting-description">Default
+                                    account for transactions</span>
+                            </div>
+                            <div class="setting-value">
+                                <i class="bi bi-wallet2 text-primary"></i>
+                                <span>{{ category()?.defaultAccountId }}</span>
+                            </div>
+                        </div>
+                        }
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Linked
+                                    Accounts</span>
+                                <span class="setting-description">Accounts
+                                    associated with this category</span>
+                            </div>
+                            <div class="setting-value">
+                                @if ((category()?.linkedAccountIds?.length ?? 0)
+                                === 0) {
+                                <span class="text-muted">None</span>
+                                } @else {
+                                <span class="badge bg-secondary">{{
+                                    category()?.linkedAccountIds?.length ?? 0 }}
+                                    accounts</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Settings -->
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-sliders me-2"></i>
+                        Other Settings
+                    </h6>
+                    <div class="settings-list">
+                        <div class="setting-item">
+                            <div class="setting-info">
+                                <span class="setting-name">Default
+                                    Category</span>
+                                <span class="setting-description">Set as default
+                                    for transactions</span>
+                            </div>
+                            <div class="setting-value">
+                                @if (category()?.isDefault) {
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <span class="text-warning">Yes</span>
+                                } @else {
+                                <span class="text-muted">No</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            }
+
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button class="btn btn-outline-secondary" (click)="close()">
+                Close
+            </button>
+        </div>
+
+    </div>
+</div>
+}

@@ -1,6 +1,6 @@
 from .auth.models import User
-from .expense_tracker.models import Transaction, Category, Account, Contact, Budget, UpiProvider
-
+from .expense_tracker.models import Transaction, Account, Contact, Budget, UpiProvider
+from .categories.models import Category
 
 models_list = [
     User,
@@ -9,5 +9,6 @@ models_list = [
     Account,
     Contact,
     Budget,
-    UpiProvider
+    UpiProvider,
+    Category
 ]

@@ -17,23 +17,23 @@ export const routes: Routes = [
       import('./modules/expense-tracker/expense-tracker-module').then(m => m.ExpenseTrackerModule)
   },
   {
-    path: '**',
-    redirectTo: '/auth/login'
-  },
-  {
-    path:"accounts",
+    path: "accounts",
     loadChildren: () =>
       import('./modules/accounts/accounts-module').then(m => m.AccountsModule)
   },
   {
-    path:"budgets",
+    path: "budgets",
     loadChildren: () =>
       import('./modules/budgets/budgets-module').then(m => m.BudgetsModule)
   },
   {
-    path:"categories",
+    path: "categories",
     loadChildren: () =>
       import('./modules/categories/categories-module').then(m => m.CategoriesModule)
-  }
+  },
+  {
+    path: '**',
+    redirectTo: '/auth/login'
+  },
 ];
 

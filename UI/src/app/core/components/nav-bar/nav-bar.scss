@@ -196,7 +196,7 @@ $avatar-lg-size: 56px;
 
 // User Dropdown
 .user-dropdown {
-    min-width: 320px;
+    min-width: 250px;
 
     .user-header {
         padding: 1rem;
@@ -225,7 +225,7 @@ $avatar-lg-size: 56px;
 
 // Notification Dropdown
 .notification-dropdown {
-    min-width: 380px;
+    min-width: 250px;
     max-height: 500px;
     overflow: hidden;
     display: flex;

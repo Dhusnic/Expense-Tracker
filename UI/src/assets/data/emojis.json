@@ -1,0 +1,1787 @@
+[
+    {
+        "emoji": "💰",
+        "name": "Money Bag",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "cash",
+            "finance",
+            "wealth",
+            "rich"
+        ]
+    },
+    {
+        "emoji": "💵",
+        "name": "Dollar Banknote",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "cash",
+            "dollar",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "💴",
+        "name": "Yen Banknote",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "cash",
+            "yen",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "💶",
+        "name": "Euro Banknote",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "cash",
+            "euro",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "💷",
+        "name": "Pound Banknote",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "cash",
+            "pound",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "💳",
+        "name": "Credit Card",
+        "category": "Finance",
+        "keywords": [
+            "card",
+            "payment",
+            "finance",
+            "bank"
+        ]
+    },
+    {
+        "emoji": "🏦",
+        "name": "Bank",
+        "category": "Finance",
+        "keywords": [
+            "finance",
+            "building",
+            "institution",
+            "money"
+        ]
+    },
+    {
+        "emoji": "💸",
+        "name": "Money with Wings",
+        "category": "Finance",
+        "keywords": [
+            "money",
+            "expense",
+            "spend",
+            "loss",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "📈",
+        "name": "Chart Increasing",
+        "category": "Finance",
+        "keywords": [
+            "chart",
+            "growth",
+            "profit",
+            "increase",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "📉",
+        "name": "Chart Decreasing",
+        "category": "Finance",
+        "keywords": [
+            "chart",
+            "decline",
+            "loss",
+            "decrease",
+            "finance"
+        ]
+    },
+    {
+        "emoji": "🛒",
+        "name": "Shopping Cart",
+        "category": "Shopping",
+        "keywords": [
+            "shop",
+            "buy",
+            "cart",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "emoji": "🛍️",
+        "name": "Shopping Bags",
+        "category": "Shopping",
+        "keywords": [
+            "shop",
+            "buy",
+            "bags",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "emoji": "🏪",
+        "name": "Convenience Store",
+        "category": "Shopping",
+        "keywords": [
+            "shop",
+            "store",
+            "shopping",
+            "retail"
+        ]
+    },
+    {
+        "emoji": "🏬",
+        "name": "Department Store",
+        "category": "Shopping",
+        "keywords": [
+            "shop",
+            "store",
+            "shopping",
+            "retail",
+            "mall"
+        ]
+    },
+    {
+        "emoji": "🎁",
+        "name": "Gift",
+        "category": "Shopping",
+        "keywords": [
+            "present",
+            "shopping",
+            "gift",
+            "celebration"
+        ]
+    },
+    {
+        "emoji": "🏷️",
+        "name": "Label",
+        "category": "Shopping",
+        "keywords": [
+            "tag",
+            "price",
+            "shopping",
+            "discount"
+        ]
+    },
+    {
+        "emoji": "🏠",
+        "name": "House",
+        "category": "Home",
+        "keywords": [
+            "home",
+            "building",
+            "property",
+            "residence"
+        ]
+    },
+    {
+        "emoji": "🏡",
+        "name": "House with Garden",
+        "category": "Home",
+        "keywords": [
+            "home",
+            "building",
+            "property",
+            "residence",
+            "garden"
+        ]
+    },
+    {
+        "emoji": "🏢",
+        "name": "Office Building",
+        "category": "Home",
+        "keywords": [
+            "building",
+            "office",
+            "work",
+            "business"
+        ]
+    },
+    {
+        "emoji": "🏘️",
+        "name": "Houses",
+        "category": "Home",
+        "keywords": [
+            "home",
+            "buildings",
+            "property",
+            "neighborhood"
+        ]
+    },
+    {
+        "emoji": "🔌",
+        "name": "Electric Plug",
+        "category": "Utilities",
+        "keywords": [
+            "electricity",
+            "utility",
+            "power",
+            "energy"
+        ]
+    },
+    {
+        "emoji": "💡",
+        "name": "Light Bulb",
+        "category": "Utilities",
+        "keywords": [
+            "electricity",
+            "light",
+            "utility",
+            "idea"
+        ]
+    },
+    {
+        "emoji": "💧",
+        "name": "Droplet",
+        "category": "Utilities",
+        "keywords": [
+            "water",
+            "utility",
+            "liquid",
+            "drop"
+        ]
+    },
+    {
+        "emoji": "🚿",
+        "name": "Shower",
+        "category": "Utilities",
+        "keywords": [
+            "water",
+            "utility",
+            "bathroom",
+            "clean"
+        ]
+    },
+    {
+        "emoji": "🔥",
+        "name": "Fire",
+        "category": "Utilities",
+        "keywords": [
+            "gas",
+            "utility",
+            "energy",
+            "heat"
+        ]
+    },
+    {
+        "emoji": "🚗",
+        "name": "Car",
+        "category": "Transport",
+        "keywords": [
+            "vehicle",
+            "transport",
+            "automobile",
+            "car"
+        ]
+    },
+    {
+        "emoji": "🚕",
+        "name": "Taxi",
+        "category": "Transport",
+        "keywords": [
+            "cab",
+            "transport",
+            "vehicle",
+            "taxi"
+        ]
+    },
+    {
+        "emoji": "🚙",
+        "name": "SUV",
+        "category": "Transport",
+        "keywords": [
+            "vehicle",
+            "transport",
+            "automobile",
+            "suv"
+        ]
+    },
+    {
+        "emoji": "🚌",
+        "name": "Bus",
+        "category": "Transport",
+        "keywords": [
+            "public-transport",
+            "vehicle",
+            "transport",
+            "bus"
+        ]
+    },
+    {
+        "emoji": "🚎",
+        "name": "Trolleybus",
+        "category": "Transport",
+        "keywords": [
+            "public-transport",
+            "vehicle",
+            "transport",
+            "trolley"
+        ]
+    },
+    {
+        "emoji": "🚐",
+        "name": "Minibus",
+        "category": "Transport",
+        "keywords": [
+            "vehicle",
+            "transport",
+            "van",
+            "minibus"
+        ]
+    },
+    {
+        "emoji": "🚛",
+        "name": "Truck",
+        "category": "Transport",
+        "keywords": [
+            "vehicle",
+            "transport",
+            "truck",
+            "delivery"
+        ]
+    },
+    {
+        "emoji": "🚲",
+        "name": "Bicycle",
+        "category": "Transport",
+        "keywords": [
+            "bike",
+            "transport",
+            "vehicle",
+            "cycle"
+        ]
+    },
+    {
+        "emoji": "🛵",
+        "name": "Motor Scooter",
+        "category": "Transport",
+        "keywords": [
+            "scooter",
+            "transport",
+            "vehicle",
+            "bike"
+        ]
+    },
+    {
+        "emoji": "🏍️",
+        "name": "Motorcycle",
+        "category": "Transport",
+        "keywords": [
+            "bike",
+            "transport",
+            "vehicle",
+            "motorcycle"
+        ]
+    },
+    {
+        "emoji": "✈️",
+        "name": "Airplane",
+        "category": "Transport",
+        "keywords": [
+            "flight",
+            "travel",
+            "transport",
+            "plane"
+        ]
+    },
+    {
+        "emoji": "🚂",
+        "name": "Train",
+        "category": "Transport",
+        "keywords": [
+            "rail",
+            "transport",
+            "vehicle",
+            "train"
+        ]
+    },
+    {
+        "emoji": "🚆",
+        "name": "Train",
+        "category": "Transport",
+        "keywords": [
+            "rail",
+            "transport",
+            "vehicle",
+            "train",
+            "metro"
+        ]
+    },
+    {
+        "emoji": "🚇",
+        "name": "Metro",
+        "category": "Transport",
+        "keywords": [
+            "subway",
+            "transport",
+            "metro",
+            "underground"
+        ]
+    },
+    {
+        "emoji": "⛽",
+        "name": "Fuel Pump",
+        "category": "Transport",
+        "keywords": [
+            "gas",
+            "fuel",
+            "transport",
+            "petrol"
+        ]
+    },
+    {
+        "emoji": "🍕",
+        "name": "Pizza",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "restaurant",
+            "pizza"
+        ]
+    },
+    {
+        "emoji": "🍔",
+        "name": "Hamburger",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "restaurant",
+            "burger"
+        ]
+    },
+    {
+        "emoji": "🍟",
+        "name": "French Fries",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "fries",
+            "snack"
+        ]
+    },
+    {
+        "emoji": "🌭",
+        "name": "Hot Dog",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "hotdog",
+            "snack"
+        ]
+    },
+    {
+        "emoji": "🥗",
+        "name": "Salad",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "healthy",
+            "vegetables"
+        ]
+    },
+    {
+        "emoji": "🍝",
+        "name": "Spaghetti",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "pasta",
+            "italian"
+        ]
+    },
+    {
+        "emoji": "🍜",
+        "name": "Noodles",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "noodles",
+            "ramen"
+        ]
+    },
+    {
+        "emoji": "🍲",
+        "name": "Pot of Food",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "cooking",
+            "pot"
+        ]
+    },
+    {
+        "emoji": "🍱",
+        "name": "Bento Box",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "lunch",
+            "japanese"
+        ]
+    },
+    {
+        "emoji": "🍛",
+        "name": "Curry Rice",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "curry",
+            "indian"
+        ]
+    },
+    {
+        "emoji": "🍚",
+        "name": "Rice",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "rice",
+            "grain"
+        ]
+    },
+    {
+        "emoji": "🍙",
+        "name": "Rice Ball",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "rice",
+            "japanese"
+        ]
+    },
+    {
+        "emoji": "🥘",
+        "name": "Paella",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "cooking",
+            "pan"
+        ]
+    },
+    {
+        "emoji": "🍳",
+        "name": "Fried Egg",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "breakfast",
+            "egg",
+            "meal"
+        ]
+    },
+    {
+        "emoji": "🥞",
+        "name": "Pancakes",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "breakfast",
+            "pancakes",
+            "meal"
+        ]
+    },
+    {
+        "emoji": "🍞",
+        "name": "Bread",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "bread",
+            "bakery",
+            "meal"
+        ]
+    },
+    {
+        "emoji": "🥐",
+        "name": "Croissant",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "bread",
+            "bakery",
+            "breakfast"
+        ]
+    },
+    {
+        "emoji": "🥖",
+        "name": "Baguette",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "bread",
+            "bakery",
+            "french"
+        ]
+    },
+    {
+        "emoji": "☕",
+        "name": "Coffee",
+        "category": "Food",
+        "keywords": [
+            "drink",
+            "beverage",
+            "coffee",
+            "cafe"
+        ]
+    },
+    {
+        "emoji": "🍵",
+        "name": "Tea",
+        "category": "Food",
+        "keywords": [
+            "drink",
+            "beverage",
+            "tea",
+            "hot"
+        ]
+    },
+    {
+        "emoji": "🥤",
+        "name": "Cup with Straw",
+        "category": "Food",
+        "keywords": [
+            "drink",
+            "beverage",
+            "soda",
+            "juice"
+        ]
+    },
+    {
+        "emoji": "🍺",
+        "name": "Beer",
+        "category": "Food",
+        "keywords": [
+            "drink",
+            "beverage",
+            "beer",
+            "alcohol"
+        ]
+    },
+    {
+        "emoji": "🍷",
+        "name": "Wine",
+        "category": "Food",
+        "keywords": [
+            "drink",
+            "beverage",
+            "wine",
+            "alcohol"
+        ]
+    },
+    {
+        "emoji": "🍽️",
+        "name": "Dining",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "restaurant",
+            "dining"
+        ]
+    },
+    {
+        "emoji": "🍴",
+        "name": "Fork and Knife",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "restaurant",
+            "dining"
+        ]
+    },
+    {
+        "emoji": "🥄",
+        "name": "Spoon",
+        "category": "Food",
+        "keywords": [
+            "food",
+            "meal",
+            "spoon",
+            "dining"
+        ]
+    },
+    {
+        "emoji": "💊",
+        "name": "Pill",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "drug"
+        ]
+    },
+    {
+        "emoji": "💉",
+        "name": "Syringe",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "injection"
+        ]
+    },
+    {
+        "emoji": "🩺",
+        "name": "Stethoscope",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "doctor"
+        ]
+    },
+    {
+        "emoji": "🏥",
+        "name": "Hospital",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "hospital"
+        ]
+    },
+    {
+        "emoji": "⚕️",
+        "name": "Medical Symbol",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "symbol"
+        ]
+    },
+    {
+        "emoji": "🩹",
+        "name": "Bandage",
+        "category": "Health",
+        "keywords": [
+            "medicine",
+            "health",
+            "medical",
+            "bandaid"
+        ]
+    },
+    {
+        "emoji": "🏋️",
+        "name": "Weightlifting",
+        "category": "Health",
+        "keywords": [
+            "fitness",
+            "health",
+            "gym",
+            "exercise"
+        ]
+    },
+    {
+        "emoji": "🧘",
+        "name": "Yoga",
+        "category": "Health",
+        "keywords": [
+            "fitness",
+            "health",
+            "yoga",
+            "meditation"
+        ]
+    },
+    {
+        "emoji": "🎬",
+        "name": "Movie",
+        "category": "Entertainment",
+        "keywords": [
+            "movie",
+            "entertainment",
+            "cinema",
+            "film"
+        ]
+    },
+    {
+        "emoji": "🎭",
+        "name": "Theater",
+        "category": "Entertainment",
+        "keywords": [
+            "theater",
+            "entertainment",
+            "drama",
+            "arts"
+        ]
+    },
+    {
+        "emoji": "🎪",
+        "name": "Circus",
+        "category": "Entertainment",
+        "keywords": [
+            "circus",
+            "entertainment",
+            "show",
+            "fun"
+        ]
+    },
+    {
+        "emoji": "🎨",
+        "name": "Art",
+        "category": "Entertainment",
+        "keywords": [
+            "art",
+            "entertainment",
+            "creative",
+            "painting"
+        ]
+    },
+    {
+        "emoji": "🎮",
+        "name": "Gaming",
+        "category": "Entertainment",
+        "keywords": [
+            "game",
+            "entertainment",
+            "gaming",
+            "play"
+        ]
+    },
+    {
+        "emoji": "🎵",
+        "name": "Music",
+        "category": "Entertainment",
+        "keywords": [
+            "music",
+            "entertainment",
+            "audio",
+            "song"
+        ]
+    },
+    {
+        "emoji": "🎸",
+        "name": "Guitar",
+        "category": "Entertainment",
+        "keywords": [
+            "music",
+            "entertainment",
+            "guitar",
+            "instrument"
+        ]
+    },
+    {
+        "emoji": "🎤",
+        "name": "Microphone",
+        "category": "Entertainment",
+        "keywords": [
+            "music",
+            "entertainment",
+            "sing",
+            "karaoke"
+        ]
+    },
+    {
+        "emoji": "📺",
+        "name": "Television",
+        "category": "Entertainment",
+        "keywords": [
+            "tv",
+            "entertainment",
+            "media",
+            "watch"
+        ]
+    },
+    {
+        "emoji": "📚",
+        "name": "Books",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "learning",
+            "reading",
+            "books"
+        ]
+    },
+    {
+        "emoji": "📖",
+        "name": "Book",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "learning",
+            "reading",
+            "book"
+        ]
+    },
+    {
+        "emoji": "✏️",
+        "name": "Pencil",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "writing",
+            "school",
+            "pencil"
+        ]
+    },
+    {
+        "emoji": "🖊️",
+        "name": "Pen",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "writing",
+            "school",
+            "pen"
+        ]
+    },
+    {
+        "emoji": "🎓",
+        "name": "Graduation",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "graduation",
+            "school",
+            "degree"
+        ]
+    },
+    {
+        "emoji": "🏫",
+        "name": "School",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "school",
+            "building",
+            "learning"
+        ]
+    },
+    {
+        "emoji": "🎒",
+        "name": "Backpack",
+        "category": "Education",
+        "keywords": [
+            "education",
+            "school",
+            "bag",
+            "backpack"
+        ]
+    },
+    {
+        "emoji": "💻",
+        "name": "Laptop",
+        "category": "Technology",
+        "keywords": [
+            "computer",
+            "technology",
+            "laptop",
+            "device"
+        ]
+    },
+    {
+        "emoji": "🖥️",
+        "name": "Desktop",
+        "category": "Technology",
+        "keywords": [
+            "computer",
+            "technology",
+            "desktop",
+            "device"
+        ]
+    },
+    {
+        "emoji": "⌨️",
+        "name": "Keyboard",
+        "category": "Technology",
+        "keywords": [
+            "computer",
+            "technology",
+            "keyboard",
+            "typing"
+        ]
+    },
+    {
+        "emoji": "🖱️",
+        "name": "Mouse",
+        "category": "Technology",
+        "keywords": [
+            "computer",
+            "technology",
+            "mouse",
+            "device"
+        ]
+    },
+    {
+        "emoji": "📱",
+        "name": "Phone",
+        "category": "Technology",
+        "keywords": [
+            "mobile",
+            "technology",
+            "phone",
+            "smartphone"
+        ]
+    },
+    {
+        "emoji": "📞",
+        "name": "Telephone",
+        "category": "Technology",
+        "keywords": [
+            "phone",
+            "technology",
+            "call",
+            "telephone"
+        ]
+    },
+    {
+        "emoji": "☎️",
+        "name": "Phone",
+        "category": "Technology",
+        "keywords": [
+            "phone",
+            "technology",
+            "call",
+            "landline"
+        ]
+    },
+    {
+        "emoji": "📷",
+        "name": "Camera",
+        "category": "Technology",
+        "keywords": [
+            "photography",
+            "technology",
+            "camera",
+            "photo"
+        ]
+    },
+    {
+        "emoji": "📹",
+        "name": "Video Camera",
+        "category": "Technology",
+        "keywords": [
+            "video",
+            "technology",
+            "camera",
+            "recording"
+        ]
+    },
+    {
+        "emoji": "🌐",
+        "name": "Globe",
+        "category": "Technology",
+        "keywords": [
+            "internet",
+            "world",
+            "technology",
+            "web"
+        ]
+    },
+    {
+        "emoji": "📧",
+        "name": "Email",
+        "category": "Technology",
+        "keywords": [
+            "email",
+            "technology",
+            "mail",
+            "communication"
+        ]
+    },
+    {
+        "emoji": "👔",
+        "name": "Necktie",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "clothing",
+            "formal",
+            "tie"
+        ]
+    },
+    {
+        "emoji": "👗",
+        "name": "Dress",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "clothing",
+            "dress",
+            "wear"
+        ]
+    },
+    {
+        "emoji": "👠",
+        "name": "High Heel",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "shoe",
+            "heel",
+            "footwear"
+        ]
+    },
+    {
+        "emoji": "👟",
+        "name": "Sneaker",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "shoe",
+            "sneaker",
+            "footwear"
+        ]
+    },
+    {
+        "emoji": "👜",
+        "name": "Handbag",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "bag",
+            "handbag",
+            "purse"
+        ]
+    },
+    {
+        "emoji": "👝",
+        "name": "Clutch",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "bag",
+            "clutch",
+            "purse"
+        ]
+    },
+    {
+        "emoji": "⌚",
+        "name": "Watch",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "watch",
+            "time",
+            "accessory"
+        ]
+    },
+    {
+        "emoji": "💍",
+        "name": "Ring",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "jewelry",
+            "ring",
+            "accessory"
+        ]
+    },
+    {
+        "emoji": "💎",
+        "name": "Gem",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "jewelry",
+            "gem",
+            "diamond"
+        ]
+    },
+    {
+        "emoji": "🧥",
+        "name": "Coat",
+        "category": "Fashion",
+        "keywords": [
+            "fashion",
+            "clothing",
+            "coat",
+            "jacket"
+        ]
+    },
+    {
+        "emoji": "👫",
+        "name": "Couple",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "couple",
+            "relationship",
+            "people"
+        ]
+    },
+    {
+        "emoji": "👪",
+        "name": "Family",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "family",
+            "people",
+            "group"
+        ]
+    },
+    {
+        "emoji": "👥",
+        "name": "Group",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "group",
+            "people",
+            "community"
+        ]
+    },
+    {
+        "emoji": "💬",
+        "name": "Chat",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "chat",
+            "message",
+            "communication"
+        ]
+    },
+    {
+        "emoji": "💭",
+        "name": "Thought",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "thought",
+            "thinking",
+            "idea"
+        ]
+    },
+    {
+        "emoji": "🤝",
+        "name": "Handshake",
+        "category": "Social",
+        "keywords": [
+            "social",
+            "handshake",
+            "agreement",
+            "deal"
+        ]
+    },
+    {
+        "emoji": "❤️",
+        "name": "Heart",
+        "category": "Social",
+        "keywords": [
+            "love",
+            "social",
+            "heart",
+            "like"
+        ]
+    },
+    {
+        "emoji": "🎉",
+        "name": "Party",
+        "category": "Social",
+        "keywords": [
+            "party",
+            "celebration",
+            "social",
+            "fun"
+        ]
+    },
+    {
+        "emoji": "🎂",
+        "name": "Birthday Cake",
+        "category": "Social",
+        "keywords": [
+            "birthday",
+            "celebration",
+            "social",
+            "cake"
+        ]
+    },
+    {
+        "emoji": "📅",
+        "name": "Calendar",
+        "category": "Office",
+        "keywords": [
+            "date",
+            "schedule",
+            "office",
+            "calendar"
+        ]
+    },
+    {
+        "emoji": "📆",
+        "name": "Calendar",
+        "category": "Office",
+        "keywords": [
+            "date",
+            "schedule",
+            "office",
+            "calendar"
+        ]
+    },
+    {
+        "emoji": "📝",
+        "name": "Note",
+        "category": "Office",
+        "keywords": [
+            "note",
+            "office",
+            "writing",
+            "document"
+        ]
+    },
+    {
+        "emoji": "📋",
+        "name": "Clipboard",
+        "category": "Office",
+        "keywords": [
+            "clipboard",
+            "office",
+            "document",
+            "note"
+        ]
+    },
+    {
+        "emoji": "📁",
+        "name": "Folder",
+        "category": "Office",
+        "keywords": [
+            "folder",
+            "office",
+            "file",
+            "document"
+        ]
+    },
+    {
+        "emoji": "📂",
+        "name": "Open Folder",
+        "category": "Office",
+        "keywords": [
+            "folder",
+            "office",
+            "file",
+            "document"
+        ]
+    },
+    {
+        "emoji": "📄",
+        "name": "Document",
+        "category": "Office",
+        "keywords": [
+            "document",
+            "office",
+            "file",
+            "paper"
+        ]
+    },
+    {
+        "emoji": "📃",
+        "name": "Page",
+        "category": "Office",
+        "keywords": [
+            "page",
+            "office",
+            "document",
+            "paper"
+        ]
+    },
+    {
+        "emoji": "✉️",
+        "name": "Envelope",
+        "category": "Office",
+        "keywords": [
+            "mail",
+            "office",
+            "envelope",
+            "letter"
+        ]
+    },
+    {
+        "emoji": "📮",
+        "name": "Mailbox",
+        "category": "Office",
+        "keywords": [
+            "mail",
+            "office",
+            "mailbox",
+            "post"
+        ]
+    },
+    {
+        "emoji": "📊",
+        "name": "Bar Chart",
+        "category": "Office",
+        "keywords": [
+            "chart",
+            "office",
+            "analytics",
+            "graph"
+        ]
+    },
+    {
+        "emoji": "⭐",
+        "name": "Star",
+        "category": "General",
+        "keywords": [
+            "star",
+            "favorite",
+            "rating",
+            "important"
+        ]
+    },
+    {
+        "emoji": "🌟",
+        "name": "Glowing Star",
+        "category": "General",
+        "keywords": [
+            "star",
+            "favorite",
+            "rating",
+            "important",
+            "shine"
+        ]
+    },
+    {
+        "emoji": "✨",
+        "name": "Sparkles",
+        "category": "General",
+        "keywords": [
+            "sparkle",
+            "shine",
+            "special",
+            "magic"
+        ]
+    },
+    {
+        "emoji": "🔔",
+        "name": "Bell",
+        "category": "General",
+        "keywords": [
+            "notification",
+            "alert",
+            "bell",
+            "reminder"
+        ]
+    },
+    {
+        "emoji": "🔕",
+        "name": "Bell Off",
+        "category": "General",
+        "keywords": [
+            "notification",
+            "mute",
+            "bell",
+            "silent"
+        ]
+    },
+    {
+        "emoji": "🔒",
+        "name": "Lock",
+        "category": "General",
+        "keywords": [
+            "security",
+            "lock",
+            "secure",
+            "private"
+        ]
+    },
+    {
+        "emoji": "🔓",
+        "name": "Unlock",
+        "category": "General",
+        "keywords": [
+            "security",
+            "unlock",
+            "open",
+            "access"
+        ]
+    },
+    {
+        "emoji": "🔑",
+        "name": "Key",
+        "category": "General",
+        "keywords": [
+            "security",
+            "key",
+            "access",
+            "unlock"
+        ]
+    },
+    {
+        "emoji": "🛡️",
+        "name": "Shield",
+        "category": "General",
+        "keywords": [
+            "security",
+            "shield",
+            "protection",
+            "insurance"
+        ]
+    },
+    {
+        "emoji": "⚙️",
+        "name": "Gear",
+        "category": "General",
+        "keywords": [
+            "settings",
+            "gear",
+            "config",
+            "options"
+        ]
+    },
+    {
+        "emoji": "🔧",
+        "name": "Wrench",
+        "category": "General",
+        "keywords": [
+            "tools",
+            "wrench",
+            "repair",
+            "maintenance"
+        ]
+    },
+    {
+        "emoji": "🔨",
+        "name": "Hammer",
+        "category": "General",
+        "keywords": [
+            "tools",
+            "hammer",
+            "repair",
+            "build"
+        ]
+    },
+    {
+        "emoji": "🏆",
+        "name": "Trophy",
+        "category": "General",
+        "keywords": [
+            "achievement",
+            "trophy",
+            "success",
+            "reward"
+        ]
+    },
+    {
+        "emoji": "🏅",
+        "name": "Medal",
+        "category": "General",
+        "keywords": [
+            "achievement",
+            "medal",
+            "success",
+            "reward"
+        ]
+    },
+    {
+        "emoji": "🌲",
+        "name": "Tree",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "tree",
+            "plant",
+            "forest"
+        ]
+    },
+    {
+        "emoji": "🌳",
+        "name": "Deciduous Tree",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "tree",
+            "plant",
+            "forest"
+        ]
+    },
+    {
+        "emoji": "🌴",
+        "name": "Palm Tree",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "tree",
+            "plant",
+            "tropical"
+        ]
+    },
+    {
+        "emoji": "🌱",
+        "name": "Seedling",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "plant",
+            "grow",
+            "seed"
+        ]
+    },
+    {
+        "emoji": "🌸",
+        "name": "Blossom",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "flower",
+            "plant",
+            "spring"
+        ]
+    },
+    {
+        "emoji": "🌺",
+        "name": "Hibiscus",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "flower",
+            "plant",
+            "tropical"
+        ]
+    },
+    {
+        "emoji": "🌻",
+        "name": "Sunflower",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "flower",
+            "plant",
+            "sun"
+        ]
+    },
+    {
+        "emoji": "🌹",
+        "name": "Rose",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "flower",
+            "plant",
+            "love"
+        ]
+    },
+    {
+        "emoji": "☀️",
+        "name": "Sun",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "sun",
+            "light"
+        ]
+    },
+    {
+        "emoji": "🌙",
+        "name": "Moon",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "moon",
+            "night"
+        ]
+    },
+    {
+        "emoji": "⭐",
+        "name": "Star",
+        "category": "Nature",
+        "keywords": [
+            "nature",
+            "star",
+            "sky",
+            "night"
+        ]
+    },
+    {
+        "emoji": "⛅",
+        "name": "Cloud",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "cloud",
+            "sky"
+        ]
+    },
+    {
+        "emoji": "🌧️",
+        "name": "Rain",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "rain",
+            "wet"
+        ]
+    },
+    {
+        "emoji": "⛈️",
+        "name": "Storm",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "storm",
+            "thunder"
+        ]
+    },
+    {
+        "emoji": "❄️",
+        "name": "Snow",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "nature",
+            "snow",
+            "cold"
+        ]
+    },
+    {
+        "emoji": "☂️",
+        "name": "Umbrella",
+        "category": "Nature",
+        "keywords": [
+            "weather",
+            "umbrella",
+            "rain",
+            "protection"
+        ]
+    }
+]

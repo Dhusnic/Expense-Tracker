@@ -1,0 +1,120 @@
+<div 
+    class="category-list-item"
+    [class.selected]="isSelected"
+    [class.hovered]="isHovered()"
+    (mouseenter)="isHovered.set(true)"
+    (mouseleave)="isHovered.set(false); showActions.set(false)"
+    (click)="onView()">
+    
+    <!-- Checkbox -->
+    @if (showCheckbox) {
+        <div class="item-checkbox" (click)="onSelect($event)">
+            <input 
+                type="checkbox"
+                class="form-check-input"
+                [checked]="isSelected">
+        </div>
+    }
+
+    <!-- Icon -->
+    <div class="item-icon" [style.background]="category.colorRgba">
+        @if (category.icon.type === 'BOOTSTRAP_ICON') {
+            <i [class]="category.icon.value" [style.color]="category.icon.color"></i>
+        }
+        @if (category.icon.type === 'EMOJI') {
+            <span class="emoji">{{ category.icon.value }}</span>
+        }
+        @if (category.icon.type === 'CUSTOM_IMAGE') {
+            <img [src]="category.icon.value" alt="Icon">
+        }
+    </div>
+
+    <!-- Main Info -->
+    <div class="item-main">
+        <div class="item-header">
+            <h6 class="item-name">
+                {{ category.name }}
+                @if (category.isDefault) {
+                    <i class="bi bi-star-fill text-warning ms-2"></i>
+                }
+            </h6>
+            <span class="status-badge" [class.active]="category.isActive">
+                {{ category.isActive ? 'Active' : 'Inactive' }}
+            </span>
+        </div>
+
+        @if (category.description) {
+            <p class="item-description">{{ category.description }}</p>
+        }
+
+        <div class="item-tags">
+            @for (type of category.transactionTypes.slice(0, 3); track type) {
+                <span class="tag">{{ type }}</span>
+            }
+            @if (category.transactionTypes.length > 3) {
+                <span class="tag more">+{{ category.transactionTypes.length - 3 }}</span>
+            }
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="item-stats">
+        <div class="stat">
+            <i class="bi bi-folder"></i>
+            <span>{{ category.subcategoryCount }}</span>
+        </div>
+        @if (category.budgetLimit) {
+            <div class="stat">
+                <i class="bi bi-piggy-bank"></i>
+                <span>{{ formatCurrency(category.budgetLimit) }}</span>
+            </div>
+        }
+        @if (category.isTaxDeductible) {
+            <div class="stat tax">
+                <i class="bi bi-receipt"></i>
+            </div>
+        }
+    </div>
+
+    <!-- Date -->
+    <div class="item-date">
+        <small class="text-muted">
+            {{ category.createdAt | date: 'MMM d, yyyy' }}
+        </small>
+    </div>
+
+    <!-- Actions -->
+    <div class="item-actions">
+        <button 
+            class="btn-action"
+            (click)="onQuickEdit($event)"
+            title="Quick Edit">
+            <i class="bi bi-lightning-charge"></i>
+        </button>
+        <button 
+            class="btn-action"
+            (click)="onEdit($event)"
+            title="Edit">
+            <i class="bi bi-pencil"></i>
+        </button>
+        <div class="dropdown">
+            <button 
+                class="btn-action"
+                (click)="toggleActions($event)">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+            @if (showActions()) {
+                <div class="dropdown-menu show">
+                    <button class="dropdown-item" (click)="onDuplicate($event)">
+                        <i class="bi bi-files me-2"></i>
+                        Duplicate
+                    </button>
+                    <button class="dropdown-item text-danger" (click)="onDelete($event)">
+                        <i class="bi bi-trash me-2"></i>
+                        Delete
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

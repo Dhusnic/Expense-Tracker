@@ -1,0 +1,257 @@
+<div 
+    class="category-panel"
+    [class.selected]="isSelected"
+    [class.expanded]="isExpanded()"
+    [class.hovered]="isHovered()"
+    (mouseenter)="isHovered.set(true)"
+    (mouseleave)="isHovered.set(false); showActions.set(false)">
+    
+    <!-- Panel Header -->
+    <div class="panel-header" (click)="onView()">
+        <!-- Checkbox -->
+        @if (showCheckbox) {
+            <div class="panel-checkbox" (click)="onSelect($event)">
+                <input 
+                    type="checkbox"
+                    class="form-check-input"
+                    [checked]="isSelected">
+            </div>
+        }
+
+        <!-- Icon & Name -->
+        <div class="panel-title">
+            <div class="category-icon-wrapper" [style.background]="category.colorRgba">
+                @if (category.icon.type === 'BOOTSTRAP_ICON') {
+                    <i [class]="category.icon.value" [style.color]="category.icon.color"></i>
+                }
+                @if (category.icon.type === 'EMOJI') {
+                    <span class="emoji">{{ category.icon.value }}</span>
+                }
+                @if (category.icon.type === 'CUSTOM_IMAGE') {
+                    <img [src]="category.icon.value" alt="Icon">
+                }
+            </div>
+
+            <div class="title-content">
+                <h5 class="category-name">
+                    {{ category.name }}
+                    @if (category.isDefault) {
+                        <i class="bi bi-star-fill text-warning"></i>
+                    }
+                </h5>
+                @if (category.description) {
+                    <p class="category-description">{{ category.description }}</p>
+                }
+            </div>
+        </div>
+
+        <!-- Status & Actions -->
+        <div class="panel-controls">
+            <span 
+                class="status-badge"
+                [class.active]="category.isActive">
+                {{ category.isActive ? 'Active' : 'Inactive' }}
+            </span>
+
+            <button 
+                class="btn-expand"
+                (click)="toggleExpand($event)"
+                title="Show details">
+                <i class="bi" [class.bi-chevron-down]="!isExpanded()" [class.bi-chevron-up]="isExpanded()"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Panel Stats (Always Visible) -->
+    <div class="panel-stats">
+        <div class="stat-card">
+            <i class="bi bi-folder stat-icon"></i>
+            <div class="stat-info">
+                <span class="stat-value">{{ category.subcategoryCount }}</span>
+                <span class="stat-label">Subcategories</span>
+            </div>
+        </div>
+
+        @if (category.budgetLimit) {
+            <div class="stat-card">
+                <i class="bi bi-piggy-bank stat-icon"></i>
+                <div class="stat-info">
+                    <span class="stat-value">{{ formatCurrency(category.budgetLimit) }}</span>
+                    <span class="stat-label">Budget Limit</span>
+                </div>
+            </div>
+        }
+
+        <div class="stat-card">
+            <i class="bi bi-tags stat-icon"></i>
+            <div class="stat-info">
+                <span class="stat-value">{{ category.transactionTypes.length }}</span>
+                <span class="stat-label">Types</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Expanded Details -->
+    @if (isExpanded()) {
+        <div class="panel-details">
+            <!-- Transaction Types -->
+            <div class="detail-section">
+                <h6 class="section-title">
+                    <i class="bi bi-tag me-2"></i>
+                    Transaction Types
+                </h6>
+                <div class="transaction-types-grid">
+                    @for (type of category.transactionTypes; track type) {
+                        <div 
+                            class="type-chip"
+                            [style.background]="getTransactionTypeColor(type) + '20'"
+                            [style.color]="getTransactionTypeColor(type)"
+                            [style.border-color]="getTransactionTypeColor(type)">
+                            <i class="bi bi-circle-fill"></i>
+                            {{ type }}
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Subcategories Preview -->
+            @if (category.subcategoryCount > 0) {
+                <div class="detail-section">
+                    <h6 class="section-title">
+                        <i class="bi bi-folder me-2"></i>
+                        Subcategories ({{ category.subcategoryCount }})
+                    </h6>
+                    <div class="subcategories-list">
+                        @for (sub of category.subcategories.slice(0, 5); track sub.id) {
+                            <div class="subcategory-item">
+                                <div class="sub-icon" [style.background]="sub.icon.backgroundColor">
+                                    @if (sub.icon.type === 'BOOTSTRAP_ICON') {
+                                        <i [class]="sub.icon.value" [style.color]="sub.icon.color"></i>
+                                    }
+                                    @if (sub.icon.type === 'EMOJI') {
+                                        <span>{{ sub.icon.value }}</span>
+                                    }
+                                </div>
+                                <span class="sub-name">{{ sub.name }}</span>
+                                @if (sub.budgetLimit) {
+                                    <span class="sub-budget">{{ formatCurrency(sub.budgetLimit) }}</span>
+                                }
+                            </div>
+                        }
+                        @if (category.subcategoryCount > 5) {
+                            <div class="subcategory-more">
+                                <i class="bi bi-three-dots"></i>
+                                {{ category.subcategoryCount - 5 }} more
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <!-- Additional Info -->
+            <div class="detail-section">
+                <h6 class="section-title">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Additional Information
+                </h6>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">Created</span>
+                        <span class="info-value">{{ formatDate(category.createdAt) }}</span>
+                    </div>
+                    @if (category.updatedAt) {
+                        <div class="info-item">
+                            <span class="info-label">Updated</span>
+                            <span class="info-value">{{ formatDate(category.updatedAt) }}</span>
+                        </div>
+                    }
+                    @if (category.isTaxDeductible) {
+                        <div class="info-item">
+                            <span class="info-label">Tax Settings</span>
+                            <span class="info-value">
+                                <i class="bi bi-check-circle-fill text-success me-1"></i>
+                                Tax Deductible
+                                @if (category.taxCategory) {
+                                    <span class="text-muted">({{ category.taxCategory }})</span>
+                                }
+                            </span>
+                        </div>
+                    }
+                    @if (category.defaultAccountId) {
+                        <div class="info-item">
+                            <span class="info-label">Default Account</span>
+                            <span class="info-value">
+                                <i class="bi bi-wallet2 me-1"></i>
+                                Linked
+                            </span>
+                        </div>
+                    }
+                    @if (category.linkedAccountIds.length > 0) {
+                        <div class="info-item">
+                            <span class="info-label">Linked Accounts</span>
+                            <span class="info-value">{{ category.linkedAccountIds.length }} accounts</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="detail-actions">
+                <button 
+                    class="btn btn-sm btn-primary"
+                    (click)="onEdit($event)">
+                    <i class="bi bi-pencil me-2"></i>
+                    Edit Category
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="onQuickEdit($event)">
+                    <i class="bi bi-lightning-charge me-2"></i>
+                    Quick Edit
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="onDuplicate($event)">
+                    <i class="bi bi-files me-2"></i>
+                    Duplicate
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-danger ms-auto"
+                    (click)="onDelete($event)">
+                    <i class="bi bi-trash me-2"></i>
+                    Delete
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- Quick Actions (Hover) -->
+    @if (isHovered() && !isExpanded()) {
+        <div class="quick-actions-bar">
+            <button 
+                class="btn-quick"
+                (click)="onQuickEdit($event)"
+                title="Quick Edit">
+                <i class="bi bi-lightning-charge"></i>
+            </button>
+            <button 
+                class="btn-quick"
+                (click)="onEdit($event)"
+                title="Edit">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <button 
+                class="btn-quick"
+                (click)="onDuplicate($event)"
+                title="Duplicate">
+                <i class="bi bi-files"></i>
+            </button>
+            <button 
+                class="btn-quick text-danger"
+                (click)="onDelete($event)"
+                title="Delete">
+                <i class="bi bi-trash"></i>
+            </button>
+        </div>
+    }
+</div>

@@ -7,7 +7,7 @@ from .expense_tracker.routes import router as expense_router
 from .models_list import models_list
 from decouple import Config, RepositoryEnv
 from pathlib import Path
-
+from .categories.routes import router as categories_router
 BASE_DIR = Path(__file__).resolve().parent
 ENV_PATH = BASE_DIR / "core" / "settings" / ".env"
 
@@ -45,7 +45,7 @@ app.add_middleware(
 # Include routers
 app.include_router(auth_router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(expense_router, prefix="/api/transactions", tags=["Expense Tracker"])
-
+app.include_router(categories_router, prefix="/api/categories", tags=["Categories"])
 # Health check
 @app.get("/health")
 async def health_check():

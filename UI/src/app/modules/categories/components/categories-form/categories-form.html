@@ -1,0 +1,1151 @@
+<div class="categories-form-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container-fluid">
+            <div class="header-content">
+                <div class="header-left">
+                    <button
+                        type="button"
+                        class="btn-back"
+                        (click)="onCancel()">
+                        <i class="bi bi-arrow-left"></i>
+                    </button>
+                    <div class="header-title-section">
+                        <h1 class="page-title">
+                            <i class="bi bi-folder-plus me-3"></i>
+                            Add New Category
+                        </h1>
+                        <p class="page-subtitle">Create and organize your
+                            transaction categories with subcategories</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary"
+                        (click)="resetForm()"
+                        [disabled]="isSubmitting()">
+                        <i class="bi bi-arrow-counterclockwise me-2"></i>
+                        Reset
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-outline-danger"
+                        (click)="onCancel()">
+                        <i class="bi bi-x-lg me-2"></i>
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Form Content -->
+    <div class="form-content">
+        <div class="container-fluid">
+            <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+
+                <!-- Main Category Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-folder"></i>
+                        </div>
+                        <div class="section-title-group">
+                            <h2 class="section-title">Main Category
+                                Information</h2>
+                            <p class="section-subtitle">Basic details and icon
+                                for your category</p>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <div class="row g-4">
+
+                            <!-- Category Name -->
+                            <div class="col-12 col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label required">
+                                        <i class="bi bi-tag me-2"></i>
+                                        Category Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        formControlName="name"
+                                        placeholder="e.g., Food & Dining, Transportation, Healthcare"
+                                        maxlength="100">
+                                    <div class="form-text">
+                                        Choose a descriptive name for your
+                                        category (2-100 characters)
+                                    </div>
+                                    @if (categoryForm.get('name')?.invalid &&
+                                    categoryForm.get('name')?.touched) {
+                                    <div class="invalid-feedback d-block">
+                                        @if
+                                        (categoryForm.get('name')?.errors?.['required'])
+                                        {
+                                        <span>Category name is required</span>
+                                        }
+                                        @if
+                                        (categoryForm.get('name')?.errors?.['minlength'])
+                                        {
+                                        <span>Category name must be at least 2
+                                            characters</span>
+                                        }
+                                        @if
+                                        (categoryForm.get('name')?.errors?.['maxlength'])
+                                        {
+                                        <span>Category name cannot exceed 100
+                                            characters</span>
+                                        }
+                                        @if
+                                        (categoryForm.get('name')?.errors?.['duplicate'])
+                                        {
+                                        <span>A category with this name already
+                                            exists</span>
+                                        }
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Category Icon Selection -->
+                            <div class="col-12 col-lg-6">
+                                <div class="form-group">
+                                    <label class="form-label required">
+                                        <i class="bi bi-image me-2"></i>
+                                        Category Icon
+                                    </label>
+
+                                    <!-- Icon Preview and Selection Buttons -->
+                                    <div class="icon-selection-wrapper">
+                                        <!-- Icon Preview -->
+                                        <div class="icon-preview-container">
+                                            @if (selectedCategoryIcon()) {
+                                            <div class="icon-preview-box"
+                                                [style.background-color]="selectedCategoryIcon()?.backgroundColor">
+                                                @if
+                                                (selectedCategoryIcon()?.type
+                                                === IconType.BOOTSTRAP_ICON) {
+                                                <i
+                                                    [class]="selectedCategoryIcon()?.value"
+                                                    [style.color]="selectedCategoryIcon()?.color"></i>
+                                                }
+                                                @if
+                                                (selectedCategoryIcon()?.type
+                                                === IconType.EMOJI) {
+                                                <span class="emoji-preview">{{
+                                                    selectedCategoryIcon()?.value
+                                                    }}</span>
+                                                }
+                                                @if
+                                                (selectedCategoryIcon()?.type
+                                                === IconType.CUSTOM_IMAGE) {
+                                                <img
+                                                    [src]="selectedCategoryIcon()?.value"
+                                                    alt="Category icon">
+                                                }
+                                            </div>
+                                            } @else {
+                                            <div class="icon-preview-box empty">
+                                                <i
+                                                    class="bi bi-question-circle"></i>
+                                            </div>
+                                            }
+                                        </div>
+
+                                        <!-- Icon Selection Buttons -->
+                                        <div class="icon-buttons-group">
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon-select"
+                                                (click)="openIconPicker('category')">
+                                                <i
+                                                    class="bi bi-bootstrap me-2"></i>
+                                                Bootstrap Icons
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon-select"
+                                                (click)="openEmojiPicker('category')">
+                                                <i
+                                                    class="bi bi-emoji-smile me-2"></i>
+                                                Emojis
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon-select"
+                                                (click)="openImageUpload('category')">
+                                                <i
+                                                    class="bi bi-upload me-2"></i>
+                                                Upload Image
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-text">
+                                        Select an icon from Bootstrap Icons,
+                                        Emojis, or upload a custom image
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Icon Color Selection -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-palette me-2"></i>
+                                        Icon Color
+                                    </label>
+                                    <div class="color-picker-wrapper">
+                                        <div class="color-presets">
+                                            @for (color of colorPresets; track
+                                            color) {
+                                            <button
+                                                type="button"
+                                                class="color-preset-btn"
+                                                [class.active]="categoryForm.get('icon.color')?.value === color"
+                                                [style.background-color]="color"
+                                                (click)="selectColor(color)"
+                                                [title]="color">
+                                            </button>
+                                            }
+                                        </div>
+                                        <div class="custom-color-input">
+                                            <label
+                                                class="custom-color-label">Custom:</label>
+                                            <input
+                                                type="color"
+                                                class="form-control form-control-color"
+                                                formControlName="icon.color">
+                                            <input
+                                                type="text"
+                                                class="form-control color-hex-input"
+                                                formControlName="icon.color"
+                                                placeholder="#000000"
+                                                maxlength="7">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-card-text me-2"></i>
+                                        Description
+                                    </label>
+                                    <textarea
+                                        class="form-control"
+                                        formControlName="description"
+                                        rows="3"
+                                        placeholder="Add a detailed description for this category (optional)"
+                                        maxlength="500"></textarea>
+                                    <div class="form-text">
+                                        {{
+                                        categoryForm.get('description')?.value?.length
+                                        || 0 }} / 500 characters
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction Types Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-arrow-left-right"></i>
+                        </div>
+                        <div class="section-title-group">
+                            <h2 class="section-title">Transaction Types</h2>
+                            <p class="section-subtitle">Select which transaction
+                                types this category applies to</p>
+                        </div>
+                        <div class="section-actions">
+                            <button
+                                type="button"
+                                class="btn btn-sm btn-outline-primary"
+                                (click)="toggleSelectAllTypes()">
+                                <i
+                                    [class]="allTypesSelected() ? 'bi bi-check-square me-2' : 'bi bi-square me-2'"></i>
+                                {{ allTypesSelected() ? 'Deselect All' :
+                                'Select All' }}
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <div class="transaction-types-grid">
+                            @for (type of transactionTypes; track type.value) {
+                            <div class="transaction-type-card"
+                                [class.selected]="isTransactionTypeSelected(type.value)"
+                                (click)="toggleTransactionType(type.value)">
+                                <div class="type-checkbox">
+                                    <input
+                                        type="checkbox"
+                                        class="form-check-input"
+                                        [checked]="isTransactionTypeSelected(type.value)"
+                                        (click)="$event.stopPropagation()">
+                                </div>
+                                <div class="type-icon"
+                                    [style.background-color]="type.color + '20'">
+                                    <i [class]="'bi ' + type.icon"
+                                        [style.color]="type.color"></i>
+                                </div>
+                                <div class="type-label">{{ type.label }}</div>
+                            </div>
+                            }
+                        </div>
+                        @if (categoryForm.get('transactionTypes')?.invalid &&
+                        categoryForm.get('transactionTypes')?.touched) {
+                        <div class="invalid-feedback d-block">
+                            <i class="bi bi-exclamation-circle me-2"></i>
+                            Please select at least one transaction type
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Subcategories Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-diagram-3"></i>
+                        </div>
+                        <div class="section-title-group">
+                            <h2 class="section-title">Subcategories</h2>
+                            <p class="section-subtitle">Add subcategories to
+                                organize transactions within this category</p>
+                        </div>
+                        <div class="section-actions">
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                (click)="addSubcategory()">
+                                <i class="bi bi-plus-lg me-2"></i>
+                                Add Subcategory
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        @if (subcategoriesArray.length === 0) {
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <i class="bi bi-inbox"></i>
+                            </div>
+                            <h3 class="empty-state-title">No Subcategories
+                                Yet</h3>
+                            <p class="empty-state-description">
+                                Click "Add Subcategory" to create subcategories
+                                for better organization
+                            </p>
+                        </div>
+                        } @else {
+                        <!-- Subcategories List with Drag & Drop -->
+                        <div class="subcategories-list"
+                            cdkDropList
+                            (cdkDropListDropped)="dropSubcategory($event)">
+                            @for (subcategory of subcategoriesArray.controls;
+                            track $index; let i = $index) {
+                            <div class="subcategory-item"
+                                [formGroupName]="i"
+                                cdkDrag>
+                                <!-- Drag Handle -->
+                                <div class="subcategory-drag-handle"
+                                    cdkDragHandle>
+                                    <i class="bi bi-grip-vertical"></i>
+                                </div>
+
+                                <!-- Subcategory Content -->
+                                <div class="subcategory-content"
+                                    [formGroup]="getSubcategoryFormGroup(i)">
+                                    <div class="row g-3">
+
+                                        <!-- Subcategory Name -->
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label
+                                                    class="form-label required">
+                                                    Subcategory Name
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control form-control-sm"
+                                                    [class.is-invalid]="subcategoriesArray.at(i).get('name')?.invalid && subcategoriesArray.at(i).get('name')?.touched"
+                                                    formControlName="name"
+                                                    placeholder="e.g., Groceries, Restaurants">
+
+                                                <!-- Show validation error -->
+                                                @if
+                                                (subcategoriesArray.at(i).get('name')?.invalid
+                                                &&
+                                                subcategoriesArray.at(i).get('name')?.touched)
+                                                {
+                                                <div
+                                                    class="invalid-feedback d-block">
+                                                    @if
+                                                    (subcategoriesArray.at(i).get('name')?.errors?.['required'])
+                                                    {
+                                                    <small>❌ Subcategory name is
+                                                        required</small>
+                                                    }
+                                                    @if
+                                                    (subcategoriesArray.at(i).get('name')?.errors?.['minlength'])
+                                                    {
+                                                    <small>❌ Must be at least 2
+                                                        characters</small>
+                                                    }
+                                                </div>
+                                                }
+                                            </div>
+                                        </div>
+
+                                        <!-- Subcategory Icon -->
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="form-group">
+                                                <label
+                                                    class="form-label required">
+                                                    Icon
+                                                </label>
+                                                <div
+                                                    class="subcategory-icon-selection">
+                                                    <!-- Icon Preview -->
+                                                    <div
+                                                        class="subcategory-icon-preview">
+                                                        @if
+                                                        (getSubcategoryIcon(i))
+                                                        {
+                                                        <div
+                                                            class="icon-preview-small"
+                                                            [style.background-color]="getSubcategoryIcon(i)?.backgroundColor">
+                                                            @if
+                                                            (getSubcategoryIcon(i)?.type
+                                                            ===
+                                                            IconType.BOOTSTRAP_ICON)
+                                                            {
+                                                            <i
+                                                                [class]="getSubcategoryIcon(i)?.value"
+                                                                [style.color]="getSubcategoryIcon(i)?.color"></i>
+                                                            }
+                                                            @if
+                                                            (getSubcategoryIcon(i)?.type
+                                                            === IconType.EMOJI)
+                                                            {
+                                                            <span
+                                                                class="emoji-small">{{
+                                                                getSubcategoryIcon(i)?.value
+                                                                }}</span>
+                                                            }
+                                                            @if
+                                                            (getSubcategoryIcon(i)?.type
+                                                            ===
+                                                            IconType.CUSTOM_IMAGE)
+                                                            {
+                                                            <img
+                                                                [src]="getSubcategoryIcon(i)?.value"
+                                                                alt="Icon">
+                                                            }
+                                                        </div>
+                                                        } @else {
+                                                        <div
+                                                            class="icon-preview-small empty">
+                                                            <i
+                                                                class="bi bi-question-circle"></i>
+                                                        </div>
+                                                        }
+                                                    </div>
+
+                                                    <!-- Icon Selection Buttons -->
+                                                    <div class="btn-group"
+                                                        role="group">
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-sm btn-outline-secondary"
+                                                            (click)="openIconPicker('subcategory', i)"
+                                                            title="Bootstrap Icons">
+                                                            <i
+                                                                class="bi bi-bootstrap"></i>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-sm btn-outline-secondary"
+                                                            (click)="openEmojiPicker('subcategory', i)"
+                                                            title="Emojis">
+                                                            <i
+                                                                class="bi bi-emoji-smile"></i>
+                                                        </button>
+                                                        <button
+                                                            type="button"
+                                                            class="btn btn-sm btn-outline-secondary"
+                                                            (click)="openImageUpload('subcategory', i)"
+                                                            title="Upload Image">
+                                                            <i
+                                                                class="bi bi-upload"></i>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Subcategory Color -->
+                                        <div class="col-12 col-md-6 col-lg-3">
+                                            <div class="form-group">
+                                                <label
+                                                    class="form-label">Color</label>
+                                                <div class="color-quick-select">
+                                                    @for (color of
+                                                    colorPresets.slice(0, 8);
+                                                    track color) {
+                                                    <button
+                                                        type="button"
+                                                        class="color-quick-btn"
+                                                        [style.background-color]="color"
+                                                        (click)="selectSubcategoryColor(i, color)">
+                                                    </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Remove Button -->
+                                        <div class="col-12 col-md-6 col-lg-1">
+                                            <div class="form-group">
+                                                <label
+                                                    class="form-label">&nbsp;</label>
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-sm btn-outline-danger w-100"
+                                                    (click)="removeSubcategory(i)"
+                                                    title="Remove subcategory">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Subcategory Description -->
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label
+                                                    class="form-label">Description</label>
+                                                <input
+                                                    type="text"
+                                                    class="form-control form-control-sm"
+                                                    formControlName="description"
+                                                    placeholder="Optional description for this subcategory">
+                                            </div>
+                                        </div>
+
+                                        <!-- Advanced Options Toggle -->
+                                        <div class="col-12">
+                                            <div
+                                                class="accordion accordion-flush"
+                                                [id]="'accordion-' + i">
+                                                <div class="accordion-item">
+                                                    <h2
+                                                        class="accordion-header">
+                                                        <button
+                                                            class="accordion-button collapsed"
+                                                            type="button"
+                                                            (click)="toggleSubcategoryAccordion(i)">
+                                                            <i
+                                                                class="bi bi-gear me-2"></i>
+                                                            Advanced Options
+                                                        </button>
+                                                    </h2>
+                                                    <div
+                                                        [id]="'collapse-' + i"
+                                                        class="accordion-collapse collapse"
+                                                        [class.show]="isSubcategoryExpanded(i)">
+                                                        <div
+                                                            class="accordion-body">
+                                                            <div
+                                                                class="row g-3">
+
+                                                                <!-- Budget Limit -->
+                                                                <div
+                                                                    class="col-12 col-md-6">
+                                                                    <div
+                                                                        class="form-group">
+                                                                        <label
+                                                                            class="form-label">
+                                                                            <i
+                                                                                class="bi bi-piggy-bank me-2"></i>
+                                                                            Budget
+                                                                            Limit
+                                                                            (Optional)
+                                                                        </label>
+                                                                        <div
+                                                                            class="input-group input-group-sm">
+                                                                            <span
+                                                                                class="input-group-text">₹</span>
+                                                                            <input
+                                                                                type="number"
+                                                                                class="form-control"
+                                                                                formControlName="budgetLimit"
+                                                                                placeholder="0.00"
+                                                                                min="0"
+                                                                                step="0.01">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Tax Deductible -->
+                                                                <div
+                                                                    class="col-12 col-md-6">
+                                                                    <div
+                                                                        class="form-group">
+                                                                        <label
+                                                                            class="form-label">
+                                                                            <i
+                                                                                class="bi bi-receipt me-2"></i>
+                                                                            Tax
+                                                                            Settings
+                                                                        </label>
+                                                                        <div
+                                                                            class="form-check form-switch">
+                                                                            <input
+                                                                                class="form-check-input"
+                                                                                type="checkbox"
+                                                                                formControlName="isTaxDeductible"
+                                                                                [id]="'taxDeductible-sub-' + i">
+                                                                            <label
+                                                                                class="form-check-label"
+                                                                                [for]="'taxDeductible-sub-' + i">
+                                                                                Tax
+                                                                                Deductible
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Tax Category (if tax deductible) -->
+                                                                @if
+                                                                (subcategoriesArray.at(i).get('isTaxDeductible')?.value)
+                                                                {
+                                                                <div
+                                                                    class="col-12">
+                                                                    <div
+                                                                        class="form-group">
+                                                                        <label
+                                                                            class="form-label">Tax
+                                                                            Category</label>
+                                                                        <select
+                                                                            class="form-select form-select-sm"
+                                                                            formControlName="taxCategory">
+                                                                            <option
+                                                                                value>Select
+                                                                                tax
+                                                                                category</option>
+                                                                            @for
+                                                                            (taxCat
+                                                                            of
+                                                                            taxCategories;
+                                                                            track
+                                                                            taxCat.value)
+                                                                            {
+                                                                            <option
+                                                                                [value]="taxCat.value">{{
+                                                                                taxCat.label
+                                                                                }}</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                }
+
+                                                                <!-- Default Account -->
+                                                                <div
+                                                                    class="col-12 col-md-6">
+                                                                    <div
+                                                                        class="form-group">
+                                                                        <label
+                                                                            class="form-label">
+                                                                            <i
+                                                                                class="bi bi-wallet2 me-2"></i>
+                                                                            Default
+                                                                            Account
+                                                                        </label>
+                                                                        <select
+                                                                            class="form-select form-select-sm"
+                                                                            formControlName="defaultAccountId">
+                                                                            <option
+                                                                                value>None</option>
+                                                                            @for
+                                                                            (account
+                                                                            of
+                                                                            accounts();
+                                                                            track
+                                                                            account.id)
+                                                                            {
+                                                                            <option
+                                                                                [value]="account.id">{{
+                                                                                account.name
+                                                                                }}</option>
+                                                                            }
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!-- Active Status -->
+                                                                <div
+                                                                    class="col-12 col-md-6">
+                                                                    <div
+                                                                        class="form-group">
+                                                                        <label
+                                                                            class="form-label">
+                                                                            <i
+                                                                                class="bi bi-toggle-on me-2"></i>
+                                                                            Status
+                                                                        </label>
+                                                                        <div
+                                                                            class="form-check form-switch">
+                                                                            <input
+                                                                                class="form-check-input"
+                                                                                type="checkbox"
+                                                                                formControlName="isActive"
+                                                                                [id]="'active-sub-' + i">
+                                                                            <label
+                                                                                class="form-check-label"
+                                                                                [for]="'active-sub-' + i">
+                                                                                Active
+                                                                            </label>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Drag Preview (shown while dragging) -->
+                                <div class="subcategory-drag-preview"
+                                    *cdkDragPreview>
+                                    <i class="bi bi-grip-vertical me-2"></i>
+                                    {{
+                                    subcategoriesArray.at(i).get('name')?.value
+                                    || 'Subcategory' }}
+                                </div>
+                            </div>
+                            }
+                        </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <i class="bi bi-sliders"></i>
+                        </div>
+                        <div class="section-title-group">
+                            <h2 class="section-title">Category Settings</h2>
+                            <p class="section-subtitle">Configure budget limits,
+                                tax settings, and account linking</p>
+                        </div>
+                    </div>
+
+                    <div class="section-content">
+                        <div class="row g-4">
+
+                            <!-- Budget Limit -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-piggy-bank me-2"></i>
+                                        Monthly Budget Limit
+                                    </label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">₹</span>
+                                        <input
+                                            type="number"
+                                            class="form-control"
+                                            formControlName="budgetLimit"
+                                            placeholder="0.00"
+                                            min="0"
+                                            step="0.01">
+                                    </div>
+                                    <div class="form-text">
+                                        Set a monthly budget limit for this
+                                        category (optional)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Sort Order -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i
+                                            class="bi bi-sort-numeric-down me-2"></i>
+                                        Sort Order
+                                    </label>
+                                    <input
+                                        type="number"
+                                        class="form-control"
+                                        formControlName="sortOrder"
+                                        placeholder="0"
+                                        min="0">
+                                    <div class="form-text">
+                                        Lower numbers appear first (0 = first)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Status Switches -->
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        <i class="bi bi-toggles me-2"></i>
+                                        Status
+                                    </label>
+                                    <div class="status-switches">
+                                        <div class="form-check form-switch">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                formControlName="isActive"
+                                                id="isActive">
+                                            <label class="form-check-label"
+                                                for="isActive">
+                                                Active
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch">
+                                            <input
+                                                class="form-check-input"
+                                                type="checkbox"
+                                                formControlName="isDefault"
+                                                id="isDefault">
+                                            <label class="form-check-label"
+                                                for="isDefault">
+                                                Set as Default
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tax Settings -->
+                            <div class="col-12">
+                                <div class="tax-settings-card">
+                                    <div class="tax-header">
+                                        <i
+                                            class="bi bi-receipt-cutoff me-2"></i>
+                                        <span class="tax-title">Tax
+                                            Settings</span>
+                                    </div>
+                                    <div class="tax-body">
+                                        <div class="row g-3">
+                                            <div class="col-12 col-md-4">
+                                                <div
+                                                    class="form-check form-switch">
+                                                    <input
+                                                        class="form-check-input"
+                                                        type="checkbox"
+                                                        formControlName="isTaxDeductible"
+                                                        id="isTaxDeductible">
+                                                    <label
+                                                        class="form-check-label"
+                                                        for="isTaxDeductible">
+                                                        Tax Deductible
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            @if
+                                            (categoryForm.get('isTaxDeductible')?.value)
+                                            {
+                                            <div class="col-12 col-md-8">
+                                                <select class="form-select"
+                                                    formControlName="taxCategory">
+                                                    <option value>Select tax
+                                                        category</option>
+                                                    @for (taxCat of
+                                                    taxCategories; track
+                                                    taxCat.value) {
+                                                    <option
+                                                        [value]="taxCat.value">{{
+                                                        taxCat.label }}</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Account Linking -->
+                            <div class="col-12">
+                                <div class="account-linking-card">
+                                    <div class="account-header">
+                                        <i class="bi bi-link-45deg me-2"></i>
+                                        <span class="account-title">Link
+                                            Accounts (Optional)</span>
+                                    </div>
+                                    <div class="account-body">
+                                        <div class="row g-3">
+
+                                            <!-- Default Account -->
+                                            <div class="col-12 col-md-6">
+                                                <label
+                                                    class="form-label">Default
+                                                    Account</label>
+                                                <select class="form-select"
+                                                    formControlName="defaultAccountId">
+                                                    <option value>None</option>
+                                                    @for (account of accounts();
+                                                    track account.id) {
+                                                    <option
+                                                        [value]="account.id">
+                                                        {{ account.name }} ({{
+                                                        account.accountType }})
+                                                    </option>
+                                                    }
+                                                </select>
+                                                <div class="form-text">
+                                                    Transactions will default to
+                                                    this account
+                                                </div>
+                                            </div>
+
+                                            <!-- Linked Accounts -->
+                                            <div class="col-12 col-md-6">
+                                                <label
+                                                    class="form-label">Allowed
+                                                    Accounts</label>
+                                                <div
+                                                    class="linked-accounts-list">
+                                                    @if (accounts().length ===
+                                                    0) {
+                                                    <div
+                                                        class="no-accounts-message">
+                                                        <i
+                                                            class="bi bi-info-circle me-2"></i>
+                                                        No accounts available
+                                                    </div>
+                                                    } @else {
+                                                    @for (account of accounts();
+                                                    track account.id) {
+                                                    <div
+                                                        class="account-checkbox">
+                                                        <input
+                                                            type="checkbox"
+                                                            class="form-check-input"
+                                                            [id]="'account-' + account.id"
+                                                            [checked]="isAccountLinked(account.id)"
+                                                            (change)="toggleLinkedAccount(account.id)">
+                                                        <label
+                                                            class="form-check-label"
+                                                            [for]="'account-' + account.id">
+                                                            {{ account.name }}
+                                                        </label>
+                                                    </div>
+                                                    }
+                                                    }
+                                                </div>
+                                                <div class="form-text">
+                                                    Restrict this category to
+                                                    specific accounts
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="form-actions">
+                    <div class="container-fluid">
+                        <div class="actions-content">
+                            <div class="actions-left">
+                                <button
+                                    type="button"
+                                    class="btn btn-lg btn-outline-secondary"
+                                    (click)="resetForm()"
+                                    [disabled]="isSubmitting()">
+                                    <i
+                                        class="bi bi-arrow-counterclockwise me-2"></i>
+                                    Reset Form
+                                </button>
+                            </div>
+                            <div class="actions-right">
+                                <button
+                                    type="button"
+                                    class="btn btn-lg btn-outline-danger"
+                                    (click)="onCancel()">
+                                    <i class="bi bi-x-lg me-2"></i>
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    class="btn btn-lg btn-primary">
+                                    @if (isSubmitting()) {
+                                    <span
+                                        class="spinner-border spinner-border-sm me-2"></span>
+                                    Saving...
+                                    } @else {
+                                    <i class="bi bi-check-lg me-2"></i>
+                                    Save Category
+                                    }
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Icon Picker Modal -->
+@if (showIconPicker()) {
+<div class="modal-backdrop fade show" (click)="closeIconPicker()"></div>
+<div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-bootstrap me-2"></i>
+                    Select Bootstrap Icon
+                </h5>
+                <button type="button" class="btn-close"
+                    (click)="closeIconPicker()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search -->
+                <div class="icon-search mb-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search icons..."
+                        [value]="iconSearchQuery()"
+                        (input)="iconSearchQuery.set($any($event.target).value)">
+                </div>
+
+                <!-- Icons Grid -->
+                <div class="icons-grid">
+                    @for (icon of filteredBootstrapIcons(); track icon.class) {
+                    <button
+                        type="button"
+                        class="icon-item"
+                        (click)="selectBootstrapIcon(icon)"
+                        [title]="icon.name">
+                        <i [class]="'bi ' + icon.class"></i>
+                        <span class="icon-name">{{ icon.name }}</span>
+                    </button>
+                    }
+                </div>
+
+                @if (filteredBootstrapIcons().length === 0) {
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    <p>No icons found</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Emoji Picker Modal -->
+@if (showEmojiPicker()) {
+<div class="modal-backdrop fade show" (click)="closeEmojiPicker()"></div>
+<div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-emoji-smile me-2"></i>
+                    Select Emoji
+                </h5>
+                <button type="button" class="btn-close"
+                    (click)="closeEmojiPicker()"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Search -->
+                <div class="emoji-search mb-4">
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Search emojis..."
+                        [value]="emojiSearchQuery()"
+                        (input)="emojiSearchQuery.set($any($event.target).value)">
+                </div>
+
+                <!-- Emojis Grid -->
+                <div class="emojis-grid">
+                    @for (emoji of filteredEmojis(); track emoji.emoji) {
+                    <button
+                        type="button"
+                        class="emoji-item"
+                        (click)="selectEmoji(emoji)"
+                        [title]="emoji.name">
+                        <span class="emoji-char">{{ emoji.emoji }}</span>
+                        <span class="emoji-name">{{ emoji.name }}</span>
+                    </button>
+                    }
+                </div>
+
+                @if (filteredEmojis().length === 0) {
+                <div class="no-results">
+                    <i class="bi bi-search"></i>
+                    <p>No emojis found</p>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+}
+
+<!-- Image Upload Modal -->
+@if (showImageUpload()) {
+<div class="modal-backdrop fade show" (click)="closeImageUpload()"></div>
+<div class="modal fade show d-block" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-upload me-2"></i>
+                    Upload Custom Icon
+                </h5>
+                <button type="button" class="btn-close"
+                    (click)="closeImageUpload()"></button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area">
+                    <div class="upload-icon">
+                        <i class="bi bi-cloud-upload"></i>
+                    </div>
+                    <h4>Upload Icon Image</h4>
+                    <p>Supported formats: PNG, JPG, SVG (Max 2MB)</p>
+                    <input
+                        type="file"
+                        class="form-control"
+                        accept="image/*"
+                        (change)="onImageFileSelected($event)">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+}

@@ -1,0 +1,721 @@
+<!-- Main Container -->
+<div class="categories-list-container">
+    
+    <!-- Header Section -->
+    <div class="categories-header">
+        <div class="header-left">
+            <h1 class="page-title">
+                <i class="bi bi-folder2-open me-2"></i>
+                Categories
+                <span class="badge bg-primary ms-2">{{ pagination().totalItems }}</span>
+            </h1>
+            <p class="page-subtitle text-muted">
+                Manage your transaction categories and subcategories
+            </p>
+        </div>
+        
+        <div class="header-right">
+            <!-- Create New Category Button -->
+            <button 
+                class="btn btn-primary btn-lg shadow-sm"
+                (click)="createCategory()"
+                [disabled]="loadingState().isSaving">
+                <i class="bi bi-plus-circle me-2"></i>
+                Create Category
+            </button>
+        </div>
+    </div>
+
+    <!-- Toolbar Section -->
+    <div class="categories-toolbar">
+        <div class="toolbar-left">
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="bi bi-search search-icon"></i>
+                <input 
+                    type="text"
+                    class="form-control form-control-lg"
+                    placeholder="Search categories, descriptions, subcategories..."
+                    [value]="filter().searchQuery"
+                    (input)="onSearch($any($event.target).value)"
+                    [disabled]="loadingState().isLoading">
+                @if (filter().searchQuery) {
+                    <button 
+                        class="btn-clear"
+                        (click)="clearSearch()"
+                        title="Clear search">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                }
+            </div>
+
+            <!-- Filter Toggle Button -->
+            <button 
+                class="btn btn-outline-secondary btn-lg"
+                [class.active]="showFilterPanel()"
+                (click)="toggleFilterPanel()"
+                title="Toggle filters">
+                <i class="bi bi-funnel me-2"></i>
+                Filters
+                @if (hasActiveFilters()) {
+                    <span class="badge bg-danger ms-2">{{ 
+                        (filter().transactionTypes.length || 0) + 
+                        (filter().isActive !== null ? 1 : 0) +
+                        (filter().hasBudgetLimit !== null ? 1 : 0) +
+                        (filter().isTaxDeductible !== null ? 1 : 0)
+                    }}</span>
+                }
+            </button>
+
+            <!-- Clear Filters Button -->
+            @if (hasActiveFilters()) {
+                <button 
+                    class="btn btn-outline-danger btn-lg"
+                    (click)="clearAllFilters()"
+                    title="Clear all filters">
+                    <i class="bi bi-x-circle me-2"></i>
+                    Clear Filters
+                </button>
+            }
+        </div>
+
+        <div class="toolbar-right">
+            <!-- View Mode Switcher -->
+            <div class="btn-group view-mode-switcher" role="group">
+                <button 
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [class.active]="viewConfig().mode === ViewMode.CARD"
+                    (click)="changeViewMode(ViewMode.CARD)"
+                    title="Card view">
+                    <i class="bi bi-grid-3x3-gap"></i>
+                </button>
+                <button 
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [class.active]="viewConfig().mode === ViewMode.COMPACT"
+                    (click)="changeViewMode(ViewMode.COMPACT)"
+                    title="Compact view">
+                    <i class="bi bi-grid"></i>
+                </button>
+                <button 
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [class.active]="viewConfig().mode === ViewMode.LIST"
+                    (click)="changeViewMode(ViewMode.LIST)"
+                    title="List view">
+                    <i class="bi bi-list-ul"></i>
+                </button>
+                <button 
+                    type="button"
+                    class="btn btn-outline-secondary"
+                    [class.active]="viewConfig().mode === ViewMode.PANEL"
+                    (click)="changeViewMode(ViewMode.PANEL)"
+                    title="Panel view">
+                    <i class="bi bi-layout-split"></i>
+                </button>
+            </div>
+
+            <!-- Sort Dropdown -->
+            <div class="dropdown sort-dropdown">
+                <button 
+                    class="btn btn-outline-secondary btn-lg dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+                    <i class="bi bi-sort-down me-2"></i>
+                    Sort: {{ getSortLabel(sort().field) }}
+                    <i class="bi" [class]="sort().direction === SortDirection.ASC ? 'bi-arrow-up' : 'bi-arrow-down'"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.NAME)">
+                            <i class="bi bi-sort-alpha-down me-2"></i>
+                            Name
+                            @if (sort().field === SortField.NAME) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.CREATED_DATE)">
+                            <i class="bi bi-calendar-plus me-2"></i>
+                            Date Created
+                            @if (sort().field === SortField.CREATED_DATE) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.TRANSACTION_TYPE)">
+                            <i class="bi bi-tag me-2"></i>
+                            Transaction Type
+                            @if (sort().field === SortField.TRANSACTION_TYPE) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.BUDGET_AMOUNT)">
+                            <i class="bi bi-cash me-2"></i>
+                            Budget Amount
+                            @if (sort().field === SortField.BUDGET_AMOUNT) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.SUBCATEGORY_COUNT)">
+                            <i class="bi bi-folder me-2"></i>
+                            Subcategory Count
+                            @if (sort().field === SortField.SUBCATEGORY_COUNT) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="changeSort(SortField.SORT_ORDER)">
+                            <i class="bi bi-arrow-down-up me-2"></i>
+                            Custom Order
+                            @if (sort().field === SortField.SORT_ORDER) {
+                                <i class="bi bi-check text-primary float-end"></i>
+                            }
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- More Actions Dropdown -->
+            <div class="dropdown">
+                <button 
+                    class="btn btn-outline-secondary btn-lg dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <button class="dropdown-item" (click)="refreshCategories()">
+                            <i class="bi bi-arrow-clockwise me-2"></i>
+                            Refresh
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item" (click)="toggleAutoRefresh()">
+                            <i class="bi" [class]="autoRefresh().enabled ? 'bi-pause-circle' : 'bi-play-circle'" [class.me-2]="true"></i>
+                            Auto-refresh: {{ autoRefresh().enabled ? 'ON' : 'OFF' }}
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button class="dropdown-item" (click)="toggleDragMode()">
+                            <i class="bi bi-grip-vertical me-2"></i>
+                            {{ isDraggingEnabled() ? 'Exit' : 'Enable' }} Reorder Mode
+                        </button>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button class="dropdown-item" (click)="handleBulkAction(BulkAction.EXPORT)">
+                            <i class="bi bi-download me-2"></i>
+                            Export All
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Filters Display -->
+    @if (hasActiveFilters()) {
+        <div class="active-filters">
+            <div class="filter-chips">
+                <span class="filter-label">Active Filters:</span>
+                
+                @for (type of filter().transactionTypes; track type) {
+                    <span class="filter-chip">
+                        {{ type }}
+                        <button class="btn-remove" (click)="removeTransactionTypeFilter(type)">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </span>
+                }
+                
+                @if (filter().isActive !== null) {
+                    <span class="filter-chip">
+                        Status: {{ filter().isActive ? 'Active' : 'Inactive' }}
+                        <button class="btn-remove" (click)="removeStatusFilter()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </span>
+                }
+                
+                @if (filter().hasBudgetLimit !== null) {
+                    <span class="filter-chip">
+                        {{ filter().hasBudgetLimit ? 'Has Budget' : 'No Budget' }}
+                        <button class="btn-remove" (click)="removeBudgetFilter()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </span>
+                }
+                
+                @if (filter().isTaxDeductible !== null) {
+                    <span class="filter-chip">
+                        {{ filter().isTaxDeductible ? 'Tax Deductible' : 'Not Tax Deductible' }}
+                        <button class="btn-remove" (click)="removeTaxFilter()">
+                            <i class="bi bi-x"></i>
+                        </button>
+                    </span>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Filter Panel (Collapsible) -->
+    @if (showFilterPanel()) {
+        <div class="filter-panel" @slideDown>
+            <app-category-filters
+                [filter]="filter()"
+                (filterChange)="onFiltersChange($event)"
+                (close)="toggleFilterPanel()">
+            </app-category-filters>
+        </div>
+    }
+
+    <!-- Bulk Actions Bar -->
+    @if (showBulkActionsBar()) {
+        <div class="bulk-actions-bar" @slideDown>
+            <div class="bulk-info">
+                <input 
+                    type="checkbox"
+                    class="form-check-input me-2"
+                    [checked]="isAllSelected()"
+                    (change)="toggleSelectAll()">
+                <strong>{{ selectedCategories().length }}</strong> selected
+            </div>
+            
+            <div class="bulk-actions">
+                <button 
+                    class="btn btn-sm btn-outline-success"
+                    (click)="handleBulkAction(BulkAction.ACTIVATE)">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Activate
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-warning"
+                    (click)="handleBulkAction(BulkAction.DEACTIVATE)">
+                    <i class="bi bi-dash-circle me-1"></i>
+                    Deactivate
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-primary"
+                    (click)="handleBulkAction(BulkAction.CHANGE_TRANSACTION_TYPE)">
+                    <i class="bi bi-arrow-left-right me-1"></i>
+                    Change Type
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-info"
+                    (click)="handleBulkAction(BulkAction.EXPORT)">
+                    <i class="bi bi-download me-1"></i>
+                    Export
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-danger"
+                    (click)="handleBulkAction(BulkAction.DELETE)">
+                    <i class="bi bi-trash me-1"></i>
+                    Delete
+                </button>
+                <button 
+                    class="btn btn-sm btn-outline-secondary"
+                    (click)="clearSelection()">
+                    <i class="bi bi-x me-1"></i>
+                    Clear
+                </button>
+            </div>
+        </div>
+    }
+
+    <!-- Loading State -->
+    @if (loadingState().isLoading) {
+        <div class="loading-container">
+            <div class="loading-spinner">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="mt-3">{{ loadingState().loadingMessage }}</p>
+            </div>
+        </div>
+    }
+
+    <!-- Main Content Area -->
+    @else {
+        <!-- Empty State -->
+        @if (displayedCategories().length === 0) {
+            <div class="empty-state" @fadeIn>
+                <div class="empty-state-content">
+                    <i class="bi {{ emptyStateConfig().icon }} empty-icon"></i>
+                    <h3 class="empty-title">{{ emptyStateConfig().title }}</h3>
+                    <p class="empty-description">{{ emptyStateConfig().description }}</p>
+                    @if (hasActiveFilters()) {
+                        <button 
+                            class="btn btn-primary btn-lg"
+                            (click)="clearAllFilters()">
+                            <i class="bi bi-x-circle me-2"></i>
+                            Clear Filters
+                        </button>
+                    } @else {
+                        <button 
+                            class="btn btn-primary btn-lg"
+                            (click)="createCategory()">
+                            <i class="bi bi-plus-circle me-2"></i>
+                            {{ emptyStateConfig().actionLabel }}
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Categories Grid/List -->
+        @else {
+            <!-- Data Strategy Info (Development Only) -->
+            <!-- <div class="data-strategy-info mb-3">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Strategy: <strong>{{ dataStrategy() }}</strong> 
+                    ({{ displayedCategories().length }} of {{ filteredCategories().length }} items)
+                </small>
+            </div> -->
+
+            <!-- Standard Rendering (< 50 items) -->
+            @if (dataStrategy() === DataStrategy.STANDARD) {
+                <div 
+                    class="categories-grid"
+                    [class.view-card]="viewConfig().mode === ViewMode.CARD"
+                    [class.view-compact]="viewConfig().mode === ViewMode.COMPACT"
+                    [class.view-list]="viewConfig().mode === ViewMode.LIST"
+                    [class.view-panel]="viewConfig().mode === ViewMode.PANEL"
+                    [class.drag-mode]="isDraggingEnabled()"
+                    cdkDropList
+                    (cdkDropListDropped)="onDrop($event)"
+                    @fadeIn>
+                    
+                    @for (category of displayedCategories(); track trackByCategory($index, category)) {
+                        <div 
+                            class="category-item-wrapper"
+                            [cdkDragDisabled]="!isDraggingEnabled()"
+                            cdkDrag>
+                            
+                            <!-- Drag Handle -->
+                            @if (isDraggingEnabled()) {
+                                <div class="drag-handle" cdkDragHandle>
+                                    <i class="bi bi-grip-vertical"></i>
+                                </div>
+                            }
+
+                            <!-- Card View -->
+                            @if (viewConfig().mode === ViewMode.CARD) {
+                                <app-category-card
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-card>
+                            }
+
+                            <!-- Compact View -->
+                            @if (viewConfig().mode === ViewMode.COMPACT) {
+                                <app-category-card
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [isCompact]="true"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-card>
+                            }
+
+                            <!-- List View -->
+                            @if (viewConfig().mode === ViewMode.LIST) {
+                                <app-category-list-item
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-list-item>
+                            }
+
+                            <!-- Panel View -->
+                            @if (viewConfig().mode === ViewMode.PANEL) {
+                                <app-category-panel-item
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-panel-item>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+
+            <!-- Paginated Rendering (50-500 items) -->
+            @if (dataStrategy() === DataStrategy.PAGINATED) {
+                <div 
+                    class="categories-grid"
+                    [class.view-card]="viewConfig().mode === ViewMode.CARD"
+                    [class.view-compact]="viewConfig().mode === ViewMode.COMPACT"
+                    [class.view-list]="viewConfig().mode === ViewMode.LIST"
+                    [class.view-panel]="viewConfig().mode === ViewMode.PANEL"
+                    @fadeIn>
+                    
+                    @for (category of displayedCategories(); track trackByCategory($index, category)) {
+                        <div class="category-item-wrapper">
+                            @if (viewConfig().mode === ViewMode.CARD || viewConfig().mode === ViewMode.COMPACT) {
+                                <app-category-card
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [isCompact]="viewConfig().mode === ViewMode.COMPACT"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-card>
+                            }
+                            @if (viewConfig().mode === ViewMode.LIST) {
+                                <app-category-list-item
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-list-item>
+                            }
+                            @if (viewConfig().mode === ViewMode.PANEL) {
+                                <app-category-panel-item
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-panel-item>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Pagination Controls -->
+                <div class="pagination-controls">
+                    <div class="pagination-info">
+                        Showing {{ (pagination().currentPage - 1) * pagination().pageSize + 1 }} - 
+                        {{ Math.min(pagination().currentPage * pagination().pageSize, pagination().totalItems) }}
+                        of {{ pagination().totalItems }}
+                    </div>
+
+                    <nav>
+                        <ul class="pagination pagination-lg">
+                            <li class="page-item" [class.disabled]="pagination().currentPage === 1">
+                                <button class="page-link" (click)="changePage(1)">
+                                    <i class="bi bi-chevron-double-left"></i>
+                                </button>
+                            </li>
+                            <li class="page-item" [class.disabled]="pagination().currentPage === 1">
+                                <button class="page-link" (click)="changePage(pagination().currentPage - 1)">
+                                    <i class="bi bi-chevron-left"></i>
+                                </button>
+                            </li>
+                            
+                            @for (page of getPaginationPages(); track page) {
+                                <li class="page-item" [class.active]="page === pagination().currentPage">
+                                    <button class="page-link" (click)="changePage(page)">
+                                        {{ page }}
+                                    </button>
+                                </li>
+                            }
+                            
+                            <li class="page-item" [class.disabled]="pagination().currentPage === pagination().totalPages">
+                                <button class="page-link" (click)="changePage(pagination().currentPage + 1)">
+                                    <i class="bi bi-chevron-right"></i>
+                                </button>
+                            </li>
+                            <li class="page-item" [class.disabled]="pagination().currentPage === pagination().totalPages">
+                                <button class="page-link" (click)="changePage(pagination().totalPages)">
+                                    <i class="bi bi-chevron-double-right"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="page-size-selector">
+                        <label>Items per page:</label>
+                        <select 
+                            class="form-select"
+                            [value]="pagination().pageSize"
+                            (change)="changePageSize(+$any($event.target).value)">
+                            <option [value]="12">12</option>
+                            <option [value]="24">24</option>
+                            <option [value]="48">48</option>
+                            <option [value]="96">96</option>
+                        </select>
+                    </div>
+                </div>
+            }
+
+            <!-- Virtual Scroll (500-5000 items) -->
+            @if (dataStrategy() === DataStrategy.VIRTUAL_SCROLL) {
+                <cdk-virtual-scroll-viewport 
+                    [itemSize]="getItemSize()"
+                    class="virtual-scroll-viewport">
+                    <div 
+                        class="categories-grid"
+                        [class.view-card]="viewConfig().mode === ViewMode.CARD"
+                        [class.view-list]="viewConfig().mode === ViewMode.LIST">
+                        
+                        @for (category of filteredCategories(); track trackByCategory($index, category)) {
+                            <div class="category-item-wrapper">
+                                @if (viewConfig().mode === ViewMode.CARD) {
+                                    <app-category-card
+                                        [category]="category"
+                                        [isSelected]="category.isSelected"
+                                        [showCheckbox]="hasSelectedItems()"
+                                        (select)="toggleSelection(category)"
+                                        (view)="openDetailModal(category)"
+                                        (edit)="editCategory(category)"
+                                        (quickEdit)="openQuickEditModal(category)"
+                                        (duplicate)="duplicateCategory(category)"
+                                        (delete)="deleteCategory(category)">
+                                    </app-category-card>
+                                }
+                                @if (viewConfig().mode === ViewMode.LIST) {
+                                    <app-category-list-item
+                                        [category]="category"
+                                        [isSelected]="category.isSelected"
+                                        [showCheckbox]="hasSelectedItems()"
+                                        (select)="toggleSelection(category)"
+                                        (view)="openDetailModal(category)"
+                                        (edit)="editCategory(category)"
+                                        (quickEdit)="openQuickEditModal(category)"
+                                        (duplicate)="duplicateCategory(category)"
+                                        (delete)="deleteCategory(category)">
+                                    </app-category-list-item>
+                                }
+                            </div>
+                        }
+                    </div>
+                </cdk-virtual-scroll-viewport>
+            }
+
+            <!-- Lazy Load / Infinite Scroll (5000+ items) -->
+            @if (dataStrategy() === DataStrategy.LAZY_LOAD) {
+                <div 
+                    class="categories-grid infinite-scroll"
+                    [class.view-card]="viewConfig().mode === ViewMode.CARD"
+                    [class.view-list]="viewConfig().mode === ViewMode.LIST"
+                    (scroll)="onScroll($event)">
+                    
+                    @for (category of displayedCategories(); track trackByCategory($index, category)) {
+                        <div class="category-item-wrapper">
+                            @if (viewConfig().mode === ViewMode.CARD) {
+                                <app-category-card
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-card>
+                            }
+                            @if (viewConfig().mode === ViewMode.LIST) {
+                                <app-category-list-item
+                                    [category]="category"
+                                    [isSelected]="category.isSelected"
+                                    [showCheckbox]="hasSelectedItems()"
+                                    (select)="toggleSelection(category)"
+                                    (view)="openDetailModal(category)"
+                                    (edit)="editCategory(category)"
+                                    (quickEdit)="openQuickEditModal(category)"
+                                    (duplicate)="duplicateCategory(category)"
+                                    (delete)="deleteCategory(category)">
+                                </app-category-list-item>
+                            }
+                        </div>
+                    }
+
+                    <!-- Loading More Indicator -->
+                    @if (loadingState().isRefreshing) {
+                        <div class="loading-more">
+                            <div class="spinner-border spinner-border-sm" role="status"></div>
+                            <span class="ms-2">Loading more...</span>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    }
+</div>
+
+<!-- Modals -->
+<app-category-detail-modal #detailModal></app-category-detail-modal>
+<app-category-quick-edit-modal #quickEditModal></app-category-quick-edit-modal>
+
+<!-- Toast Notifications -->
+@if (toastMessage()) {
+    <div 
+        class="toast-notification"
+        [class.toast-success]="toastMessage()!.type === 'success'"
+        [class.toast-error]="toastMessage()!.type === 'error'"
+        [class.toast-info]="toastMessage()!.type === 'info'"
+        @slideInOut>
+        <i class="bi" 
+           [class.bi-check-circle-fill]="toastMessage()!.type === 'success'"
+           [class.bi-x-circle-fill]="toastMessage()!.type === 'error'"
+           [class.bi-info-circle-fill]="toastMessage()!.type === 'info'"></i>
+        <span>{{ toastMessage()!.message }}</span>
+    </div>
+}
+
+<!-- Refreshing Indicator -->
+@if (loadingState().isRefreshing && !loadingState().isLoading) {
+    <div class="refreshing-indicator" @fadeIn>
+        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+        <span class="ms-2">Refreshing...</span>
+    </div>
+}
+
+<!-- Auto-refresh Status -->
+@if (autoRefresh().enabled) {
+    <div class="auto-refresh-status" @fadeIn>
+        <i class="bi bi-arrow-repeat spin-animation"></i>
+        Auto-refresh: ON
+    </div>
+}

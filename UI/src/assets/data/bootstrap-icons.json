@@ -1,0 +1,1068 @@
+[
+    {
+        "name": "Wallet",
+        "class": "bi-wallet2",
+        "category": "Finance",
+        "tags": [
+            "money",
+            "payment",
+            "finance",
+            "cash"
+        ]
+    },
+    {
+        "name": "Cash",
+        "class": "bi-cash-coin",
+        "category": "Finance",
+        "tags": [
+            "money",
+            "currency",
+            "finance",
+            "payment"
+        ]
+    },
+    {
+        "name": "Credit Card",
+        "class": "bi-credit-card",
+        "category": "Finance",
+        "tags": [
+            "payment",
+            "card",
+            "finance"
+        ]
+    },
+    {
+        "name": "Credit Card 2",
+        "class": "bi-credit-card-2-front",
+        "category": "Finance",
+        "tags": [
+            "payment",
+            "card",
+            "finance"
+        ]
+    },
+    {
+        "name": "Piggy Bank",
+        "class": "bi-piggy-bank",
+        "category": "Finance",
+        "tags": [
+            "savings",
+            "money",
+            "finance",
+            "save"
+        ]
+    },
+    {
+        "name": "Bank",
+        "class": "bi-bank",
+        "category": "Finance",
+        "tags": [
+            "finance",
+            "building",
+            "institution"
+        ]
+    },
+    {
+        "name": "Currency Dollar",
+        "class": "bi-currency-dollar",
+        "category": "Finance",
+        "tags": [
+            "money",
+            "usd",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "name": "Currency Exchange",
+        "class": "bi-currency-exchange",
+        "category": "Finance",
+        "tags": [
+            "money",
+            "exchange",
+            "currency",
+            "finance"
+        ]
+    },
+    {
+        "name": "Currency Rupee",
+        "class": "bi-currency-rupee",
+        "category": "Finance",
+        "tags": [
+            "money",
+            "inr",
+            "currency",
+            "finance",
+            "india"
+        ]
+    },
+    {
+        "name": "Safe",
+        "class": "bi-safe",
+        "category": "Finance",
+        "tags": [
+            "security",
+            "money",
+            "finance",
+            "vault"
+        ]
+    },
+    {
+        "name": "Graph Up",
+        "class": "bi-graph-up",
+        "category": "Finance",
+        "tags": [
+            "chart",
+            "growth",
+            "finance",
+            "analytics"
+        ]
+    },
+    {
+        "name": "Graph Up Arrow",
+        "class": "bi-graph-up-arrow",
+        "category": "Finance",
+        "tags": [
+            "chart",
+            "growth",
+            "finance",
+            "increase"
+        ]
+    },
+    {
+        "name": "Graph Down",
+        "class": "bi-graph-down",
+        "category": "Finance",
+        "tags": [
+            "chart",
+            "decline",
+            "finance",
+            "analytics"
+        ]
+    },
+    {
+        "name": "Graph Down Arrow",
+        "class": "bi-graph-down-arrow",
+        "category": "Finance",
+        "tags": [
+            "chart",
+            "decline",
+            "finance",
+            "decrease"
+        ]
+    },
+    {
+        "name": "Receipt",
+        "class": "bi-receipt",
+        "category": "Finance",
+        "tags": [
+            "bill",
+            "invoice",
+            "finance",
+            "payment"
+        ]
+    },
+    {
+        "name": "Receipt Cutoff",
+        "class": "bi-receipt-cutoff",
+        "category": "Finance",
+        "tags": [
+            "bill",
+            "invoice",
+            "finance",
+            "payment"
+        ]
+    },
+    {
+        "name": "Cart",
+        "class": "bi-cart",
+        "category": "Shopping",
+        "tags": [
+            "shop",
+            "buy",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "name": "Cart Fill",
+        "class": "bi-cart-fill",
+        "category": "Shopping",
+        "tags": [
+            "shop",
+            "buy",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "name": "Basket",
+        "class": "bi-basket",
+        "category": "Shopping",
+        "tags": [
+            "shop",
+            "buy",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "name": "Bag",
+        "class": "bi-bag",
+        "category": "Shopping",
+        "tags": [
+            "shop",
+            "buy",
+            "shopping",
+            "purchase"
+        ]
+    },
+    {
+        "name": "Tag",
+        "class": "bi-tag",
+        "category": "Shopping",
+        "tags": [
+            "label",
+            "price",
+            "shopping"
+        ]
+    },
+    {
+        "name": "Tags",
+        "class": "bi-tags",
+        "category": "Shopping",
+        "tags": [
+            "label",
+            "price",
+            "shopping"
+        ]
+    },
+    {
+        "name": "Gift",
+        "class": "bi-gift",
+        "category": "Shopping",
+        "tags": [
+            "present",
+            "shopping",
+            "celebration"
+        ]
+    },
+    {
+        "name": "House",
+        "class": "bi-house-door",
+        "category": "Home",
+        "tags": [
+            "home",
+            "building",
+            "property",
+            "residence"
+        ]
+    },
+    {
+        "name": "House Fill",
+        "class": "bi-house-fill",
+        "category": "Home",
+        "tags": [
+            "home",
+            "building",
+            "property",
+            "residence"
+        ]
+    },
+    {
+        "name": "Building",
+        "class": "bi-building",
+        "category": "Home",
+        "tags": [
+            "property",
+            "home",
+            "real-estate"
+        ]
+    },
+    {
+        "name": "Lightning",
+        "class": "bi-lightning",
+        "category": "Utilities",
+        "tags": [
+            "electricity",
+            "utility",
+            "power",
+            "energy"
+        ]
+    },
+    {
+        "name": "Lightning Charge",
+        "class": "bi-lightning-charge",
+        "category": "Utilities",
+        "tags": [
+            "electricity",
+            "utility",
+            "power",
+            "energy"
+        ]
+    },
+    {
+        "name": "Droplet",
+        "class": "bi-droplet",
+        "category": "Utilities",
+        "tags": [
+            "water",
+            "utility",
+            "liquid"
+        ]
+    },
+    {
+        "name": "Droplet Fill",
+        "class": "bi-droplet-fill",
+        "category": "Utilities",
+        "tags": [
+            "water",
+            "utility",
+            "liquid"
+        ]
+    },
+    {
+        "name": "Fire",
+        "class": "bi-fire",
+        "category": "Utilities",
+        "tags": [
+            "gas",
+            "utility",
+            "energy"
+        ]
+    },
+    {
+        "name": "Fuel Pump",
+        "class": "bi-fuel-pump",
+        "category": "Transport",
+        "tags": [
+            "gas",
+            "fuel",
+            "transport",
+            "vehicle"
+        ]
+    },
+    {
+        "name": "Car",
+        "class": "bi-car-front",
+        "category": "Transport",
+        "tags": [
+            "vehicle",
+            "transport",
+            "automobile"
+        ]
+    },
+    {
+        "name": "Car Fill",
+        "class": "bi-car-front-fill",
+        "category": "Transport",
+        "tags": [
+            "vehicle",
+            "transport",
+            "automobile"
+        ]
+    },
+    {
+        "name": "Bicycle",
+        "class": "bi-bicycle",
+        "category": "Transport",
+        "tags": [
+            "bike",
+            "transport",
+            "vehicle"
+        ]
+    },
+    {
+        "name": "Bus",
+        "class": "bi-bus-front",
+        "category": "Transport",
+        "tags": [
+            "public-transport",
+            "vehicle",
+            "transport"
+        ]
+    },
+    {
+        "name": "Train",
+        "class": "bi-train-front",
+        "category": "Transport",
+        "tags": [
+            "rail",
+            "transport",
+            "vehicle"
+        ]
+    },
+    {
+        "name": "Airplane",
+        "class": "bi-airplane",
+        "category": "Transport",
+        "tags": [
+            "flight",
+            "travel",
+            "transport"
+        ]
+    },
+    {
+        "name": "Taxi",
+        "class": "bi-taxi-front",
+        "category": "Transport",
+        "tags": [
+            "cab",
+            "transport",
+            "vehicle"
+        ]
+    },
+    {
+        "name": "Scooter",
+        "class": "bi-scooter",
+        "category": "Transport",
+        "tags": [
+            "bike",
+            "transport",
+            "vehicle"
+        ]
+    },
+    {
+        "name": "Cup Straw",
+        "class": "bi-cup-straw",
+        "category": "Food",
+        "tags": [
+            "drink",
+            "beverage",
+            "food"
+        ]
+    },
+    {
+        "name": "Cup Hot",
+        "class": "bi-cup-hot",
+        "category": "Food",
+        "tags": [
+            "coffee",
+            "tea",
+            "beverage",
+            "food"
+        ]
+    },
+    {
+        "name": "Egg Fried",
+        "class": "bi-egg-fried",
+        "category": "Food",
+        "tags": [
+            "food",
+            "breakfast",
+            "meal"
+        ]
+    },
+    {
+        "name": "Pizza",
+        "class": "bi-pizza",
+        "category": "Food",
+        "tags": [
+            "food",
+            "meal",
+            "restaurant"
+        ]
+    },
+    {
+        "name": "Activity",
+        "class": "bi-activity",
+        "category": "Health",
+        "tags": [
+            "health",
+            "fitness",
+            "medical"
+        ]
+    },
+    {
+        "name": "Heart Pulse",
+        "class": "bi-heart-pulse",
+        "category": "Health",
+        "tags": [
+            "health",
+            "medical",
+            "heartbeat"
+        ]
+    },
+    {
+        "name": "Bandaid",
+        "class": "bi-bandaid",
+        "category": "Health",
+        "tags": [
+            "medical",
+            "health",
+            "first-aid"
+        ]
+    },
+    {
+        "name": "Hospital",
+        "class": "bi-hospital",
+        "category": "Health",
+        "tags": [
+            "medical",
+            "health",
+            "building"
+        ]
+    },
+    {
+        "name": "Capsule",
+        "class": "bi-capsule",
+        "category": "Health",
+        "tags": [
+            "medicine",
+            "health",
+            "medical",
+            "pill"
+        ]
+    },
+    {
+        "name": "Film",
+        "class": "bi-film",
+        "category": "Entertainment",
+        "tags": [
+            "movie",
+            "entertainment",
+            "cinema"
+        ]
+    },
+    {
+        "name": "Camera Reels",
+        "class": "bi-camera-reels",
+        "category": "Entertainment",
+        "tags": [
+            "movie",
+            "entertainment",
+            "cinema"
+        ]
+    },
+    {
+        "name": "Music Note Beamed",
+        "class": "bi-music-note-beamed",
+        "category": "Entertainment",
+        "tags": [
+            "music",
+            "entertainment",
+            "audio"
+        ]
+    },
+    {
+        "name": "Controller",
+        "class": "bi-controller",
+        "category": "Entertainment",
+        "tags": [
+            "game",
+            "entertainment",
+            "gaming"
+        ]
+    },
+    {
+        "name": "TV",
+        "class": "bi-tv",
+        "category": "Entertainment",
+        "tags": [
+            "television",
+            "entertainment",
+            "media"
+        ]
+    },
+    {
+        "name": "Book",
+        "class": "bi-book",
+        "category": "Education",
+        "tags": [
+            "education",
+            "learning",
+            "reading"
+        ]
+    },
+    {
+        "name": "Backpack",
+        "class": "bi-backpack",
+        "category": "Education",
+        "tags": [
+            "school",
+            "education",
+            "bag"
+        ]
+    },
+    {
+        "name": "Mortarboard",
+        "class": "bi-mortarboard",
+        "category": "Education",
+        "tags": [
+            "education",
+            "graduation",
+            "school"
+        ]
+    },
+    {
+        "name": "Laptop",
+        "class": "bi-laptop",
+        "category": "Technology",
+        "tags": [
+            "computer",
+            "technology",
+            "device"
+        ]
+    },
+    {
+        "name": "Phone",
+        "class": "bi-phone",
+        "category": "Technology",
+        "tags": [
+            "mobile",
+            "technology",
+            "device"
+        ]
+    },
+    {
+        "name": "Wifi",
+        "class": "bi-wifi",
+        "category": "Technology",
+        "tags": [
+            "internet",
+            "technology",
+            "network"
+        ]
+    },
+    {
+        "name": "Globe",
+        "class": "bi-globe",
+        "category": "Technology",
+        "tags": [
+            "internet",
+            "world",
+            "technology"
+        ]
+    },
+    {
+        "name": "Palette",
+        "class": "bi-palette",
+        "category": "Hobbies",
+        "tags": [
+            "art",
+            "hobby",
+            "creative"
+        ]
+    },
+    {
+        "name": "Brush",
+        "class": "bi-brush",
+        "category": "Hobbies",
+        "tags": [
+            "art",
+            "hobby",
+            "creative"
+        ]
+    },
+    {
+        "name": "Camera",
+        "class": "bi-camera",
+        "category": "Hobbies",
+        "tags": [
+            "photography",
+            "hobby",
+            "creative"
+        ]
+    },
+    {
+        "name": "Scissors",
+        "class": "bi-scissors",
+        "category": "Hobbies",
+        "tags": [
+            "craft",
+            "hobby",
+            "creative"
+        ]
+    },
+    {
+        "name": "Handbag",
+        "class": "bi-handbag",
+        "category": "Fashion",
+        "tags": [
+            "bag",
+            "fashion",
+            "shopping"
+        ]
+    },
+    {
+        "name": "Watch",
+        "class": "bi-watch",
+        "category": "Fashion",
+        "tags": [
+            "time",
+            "fashion",
+            "accessory"
+        ]
+    },
+    {
+        "name": "Gem",
+        "class": "bi-gem",
+        "category": "Fashion",
+        "tags": [
+            "jewelry",
+            "fashion",
+            "luxury"
+        ]
+    },
+    {
+        "name": "People",
+        "class": "bi-people",
+        "category": "Social",
+        "tags": [
+            "social",
+            "group",
+            "community"
+        ]
+    },
+    {
+        "name": "Person Hearts",
+        "class": "bi-person-hearts",
+        "category": "Social",
+        "tags": [
+            "love",
+            "social",
+            "relationship"
+        ]
+    },
+    {
+        "name": "Chat",
+        "class": "bi-chat",
+        "category": "Social",
+        "tags": [
+            "message",
+            "social",
+            "communication"
+        ]
+    },
+    {
+        "name": "Calendar",
+        "class": "bi-calendar",
+        "category": "Office",
+        "tags": [
+            "date",
+            "schedule",
+            "office"
+        ]
+    },
+    {
+        "name": "Calendar Event",
+        "class": "bi-calendar-event",
+        "category": "Office",
+        "tags": [
+            "date",
+            "schedule",
+            "office",
+            "meeting"
+        ]
+    },
+    {
+        "name": "Briefcase",
+        "class": "bi-briefcase",
+        "category": "Office",
+        "tags": [
+            "work",
+            "office",
+            "business"
+        ]
+    },
+    {
+        "name": "Clipboard",
+        "class": "bi-clipboard",
+        "category": "Office",
+        "tags": [
+            "document",
+            "office",
+            "note"
+        ]
+    },
+    {
+        "name": "Folder",
+        "class": "bi-folder",
+        "category": "Office",
+        "tags": [
+            "file",
+            "office",
+            "document"
+        ]
+    },
+    {
+        "name": "File Earmark",
+        "class": "bi-file-earmark",
+        "category": "Office",
+        "tags": [
+            "document",
+            "office",
+            "file"
+        ]
+    },
+    {
+        "name": "Envelope",
+        "class": "bi-envelope",
+        "category": "Office",
+        "tags": [
+            "mail",
+            "office",
+            "communication"
+        ]
+    },
+    {
+        "name": "Telephone",
+        "class": "bi-telephone",
+        "category": "Office",
+        "tags": [
+            "phone",
+            "office",
+            "communication"
+        ]
+    },
+    {
+        "name": "Printer",
+        "class": "bi-printer",
+        "category": "Office",
+        "tags": [
+            "print",
+            "office",
+            "device"
+        ]
+    },
+    {
+        "name": "Arrow Repeat",
+        "class": "bi-arrow-repeat",
+        "category": "Actions",
+        "tags": [
+            "refresh",
+            "repeat",
+            "recurring"
+        ]
+    },
+    {
+        "name": "Arrow Left Right",
+        "class": "bi-arrow-left-right",
+        "category": "Actions",
+        "tags": [
+            "transfer",
+            "exchange",
+            "swap"
+        ]
+    },
+    {
+        "name": "Arrow Down Circle",
+        "class": "bi-arrow-down-circle",
+        "category": "Actions",
+        "tags": [
+            "income",
+            "receive",
+            "download"
+        ]
+    },
+    {
+        "name": "Arrow Up Circle",
+        "class": "bi-arrow-up-circle",
+        "category": "Actions",
+        "tags": [
+            "expense",
+            "send",
+            "upload"
+        ]
+    },
+    {
+        "name": "Hand Thumbs Up",
+        "class": "bi-hand-thumbs-up",
+        "category": "Actions",
+        "tags": [
+            "loan",
+            "debt",
+            "give"
+        ]
+    },
+    {
+        "name": "Hand Thumbs Down",
+        "class": "bi-hand-thumbs-down",
+        "category": "Actions",
+        "tags": [
+            "debt",
+            "receive",
+            "borrow"
+        ]
+    },
+    {
+        "name": "Star",
+        "class": "bi-star",
+        "category": "General",
+        "tags": [
+            "favorite",
+            "rating",
+            "important"
+        ]
+    },
+    {
+        "name": "Star Fill",
+        "class": "bi-star-fill",
+        "category": "General",
+        "tags": [
+            "favorite",
+            "rating",
+            "important"
+        ]
+    },
+    {
+        "name": "Heart",
+        "class": "bi-heart",
+        "category": "General",
+        "tags": [
+            "love",
+            "like",
+            "favorite"
+        ]
+    },
+    {
+        "name": "Heart Fill",
+        "class": "bi-heart-fill",
+        "category": "General",
+        "tags": [
+            "love",
+            "like",
+            "favorite"
+        ]
+    },
+    {
+        "name": "Award",
+        "class": "bi-award",
+        "category": "General",
+        "tags": [
+            "achievement",
+            "success",
+            "reward"
+        ]
+    },
+    {
+        "name": "Trophy",
+        "class": "bi-trophy",
+        "category": "General",
+        "tags": [
+            "achievement",
+            "success",
+            "reward"
+        ]
+    },
+    {
+        "name": "Shield",
+        "class": "bi-shield",
+        "category": "General",
+        "tags": [
+            "security",
+            "protection",
+            "insurance"
+        ]
+    },
+    {
+        "name": "Shield Check",
+        "class": "bi-shield-check",
+        "category": "General",
+        "tags": [
+            "security",
+            "protection",
+            "insurance"
+        ]
+    },
+    {
+        "name": "Gear",
+        "class": "bi-gear",
+        "category": "General",
+        "tags": [
+            "settings",
+            "config",
+            "options"
+        ]
+    },
+    {
+        "name": "Tools",
+        "class": "bi-tools",
+        "category": "General",
+        "tags": [
+            "repair",
+            "maintenance",
+            "tools"
+        ]
+    },
+    {
+        "name": "Wrench",
+        "class": "bi-wrench",
+        "category": "General",
+        "tags": [
+            "repair",
+            "maintenance",
+            "tools"
+        ]
+    },
+    {
+        "name": "Plug",
+        "class": "bi-plug",
+        "category": "General",
+        "tags": [
+            "electric",
+            "power",
+            "connection"
+        ]
+    },
+    {
+        "name": "Tree",
+        "class": "bi-tree",
+        "category": "Nature",
+        "tags": [
+            "nature",
+            "plant",
+            "environment"
+        ]
+    },
+    {
+        "name": "Flower",
+        "class": "bi-flower1",
+        "category": "Nature",
+        "tags": [
+            "nature",
+            "plant",
+            "garden"
+        ]
+    },
+    {
+        "name": "Sun",
+        "class": "bi-sun",
+        "category": "Nature",
+        "tags": [
+            "weather",
+            "nature",
+            "light"
+        ]
+    },
+    {
+        "name": "Moon",
+        "class": "bi-moon",
+        "category": "Nature",
+        "tags": [
+            "weather",
+            "nature",
+            "night"
+        ]
+    },
+    {
+        "name": "Cloud",
+        "class": "bi-cloud",
+        "category": "Nature",
+        "tags": [
+            "weather",
+            "nature",
+            "sky"
+        ]
+    },
+    {
+        "name": "Umbrella",
+        "class": "bi-umbrella",
+        "category": "Nature",
+        "tags": [
+            "weather",
+            "rain",
+            "protection"
+        ]
+    }
+]

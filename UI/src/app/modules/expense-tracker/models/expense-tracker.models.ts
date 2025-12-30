@@ -49,6 +49,7 @@ export interface Account {
     currency: string;
     icon: string;
     isActive: boolean;
+    accountType?: string;
 }
 
 export interface UpiProvider {

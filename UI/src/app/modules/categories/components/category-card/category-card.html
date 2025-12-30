@@ -1,0 +1,190 @@
+<div 
+    class="category-card"
+    [class.compact]="isCompact"
+    [class.selected]="isSelected"
+    [class.hovered]="isHovered()"
+    (mouseenter)="onMouseEnter()"
+    (mouseleave)="onMouseLeave()"
+    (click)="onView()">
+    
+    <!-- Selection Checkbox -->
+    @if (showCheckbox) {
+        <div class="card-checkbox" (click)="onSelect($event)">
+            <input 
+                type="checkbox"
+                class="form-check-input"
+                [checked]="isSelected"
+                (click)="$event.stopPropagation()">
+        </div>
+    }
+
+    <!-- Card Header -->
+    <div class="card-header" [style.background]="category.icon.backgroundColor">
+        <!-- Icon -->
+        <div class="category-icon" [style.background]="category.colorRgba">
+            @if (category.icon.type === 'BOOTSTRAP_ICON') {
+                <i 
+                    [class]="category.icon.value"
+                    [style.color]="category.icon.color"
+                    class="icon-lg"></i>
+            }
+            @if (category.icon.type === 'EMOJI') {
+                <span class="emoji-lg">{{ category.icon.value }}</span>
+            }
+            @if (category.icon.type === 'CUSTOM_IMAGE') {
+                <img [src]="category.icon.value" alt="Category icon" class="icon-img">
+            }
+        </div>
+
+        <!-- Quick Actions (on hover) -->
+        @if (isHovered() && !isCompact) {
+            <div class="quick-actions">
+                <button 
+                    class="btn-quick-action"
+                    (click)="onQuickEdit($event)"
+                    title="Quick Edit">
+                    <i class="bi bi-lightning-charge"></i>
+                </button>
+                <button 
+                    class="btn-quick-action"
+                    (click)="onEdit($event)"
+                    title="Edit">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <div class="dropdown">
+                    <button 
+                        class="btn-quick-action"
+                        (click)="toggleActions($event)"
+                        title="More actions">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    @if (showActions()) {
+                        <div class="dropdown-menu show" (click)="$event.stopPropagation()">
+                            <button class="dropdown-item" (click)="onDuplicate($event)">
+                                <i class="bi bi-files me-2"></i>
+                                Duplicate
+                            </button>
+                            <button class="dropdown-item text-danger" (click)="onDelete($event)">
+                                <i class="bi bi-trash me-2"></i>
+                                Delete
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        <!-- Status Badge -->
+        <div class="status-badge" [class]="getStatusBadgeClass()">
+            {{ getStatusText() }}
+        </div>
+
+        <!-- Default Badge -->
+        @if (category.isDefault) {
+            <div class="default-badge">
+                <i class="bi bi-star-fill"></i>
+            </div>
+        }
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+        <!-- Category Name -->
+        <h5 class="category-name" [title]="category.name">
+            {{ category.name }}
+        </h5>
+
+        <!-- Description (if not compact) -->
+        @if (!isCompact && category.description) {
+            <p class="category-description" [title]="category.description">
+                {{ category.description }}
+            </p>
+        }
+
+        <!-- Transaction Types -->
+        <div class="transaction-types">
+            @for (type of displayTransactionTypes(); track type) {
+                <span 
+                    class="type-badge"
+                    [style.background]="getTransactionTypeColor(type) + '20'"
+                    [style.color]="getTransactionTypeColor(type)"
+                    [style.border-color]="getTransactionTypeColor(type)"
+                    [title]="type">
+                    <i [class]="getTransactionTypeIcon(type)"></i>
+                    @if (!isCompact) {
+                        <span class="type-label">{{ type }}</span>
+                    }
+                </span>
+            }
+            @if (hasMoreTypes()) {
+                <span 
+                    class="type-badge more-badge"
+                    title="More transaction types">
+                    +{{ remainingTypesCount() }}
+                </span>
+            }
+        </div>
+
+        <!-- Stats (shown on hover or always in compact) -->
+        @if (isHovered() || isCompact) {
+            <div class="category-stats">
+                <!-- Subcategories Count -->
+                <div class="stat-item">
+                    <i class="bi bi-folder"></i>
+                    <span class="stat-value">{{ category.subcategoryCount }}</span>
+                    @if (!isCompact) {
+                        <span class="stat-label">Subcategories</span>
+                    }
+                </div>
+
+                <!-- Budget Limit -->
+                @if (category.budgetLimit) {
+                    <div class="stat-item">
+                        <i class="bi bi-piggy-bank"></i>
+                        <span class="stat-value">{{ formatCurrency(category.budgetLimit) }}</span>
+                        @if (!isCompact) {
+                            <span class="stat-label">Budget</span>
+                        }
+                    </div>
+                }
+
+                <!-- Tax Deductible -->
+                @if (category.isTaxDeductible) {
+                    <div class="stat-item tax-badge">
+                        <i class="bi bi-receipt"></i>
+                        @if (!isCompact) {
+                            <span class="stat-label">Tax Deductible</span>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+
+    <!-- Card Footer (Full info - shown on hover, not in compact) -->
+    @if (isHovered() && !isCompact) {
+        <div class="card-footer">
+            <div class="footer-info">
+                <div class="info-item">
+                    <i class="bi bi-calendar-plus text-muted"></i>
+                    <span class="text-muted">
+                        {{ category.createdAt | date: 'MMM d, yyyy' }}
+                    </span>
+                </div>
+                @if (category.updatedAt) {
+                    <div class="info-item">
+                        <i class="bi bi-clock-history text-muted"></i>
+                        <span class="text-muted">
+                            {{ category.updatedAt | date: 'short' }}
+                        </span>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Hover Overlay (for better visibility) -->
+    @if (isHovered()) {
+        <div class="hover-overlay"></div>
+    }
+</div>

@@ -1,0 +1,165 @@
+@if (isOpen()) {
+    <div class="modal-backdrop" (click)="close()">
+        <div class="quick-edit-modal" (click)="$event.stopPropagation()">
+            
+            <!-- Header -->
+            <div class="modal-header">
+                <div class="header-icon">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                </div>
+                <div class="header-title">
+                    <h4>Quick Edit Category</h4>
+                    <p>{{ category()?.name }}</p>
+                </div>
+                <button class="btn-close" (click)="close()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="modal-body">
+                
+                <!-- Name -->
+                <div class="form-group">
+                    <label class="form-label required">
+                        <i class="bi bi-tag me-2"></i>
+                        Category Name
+                    </label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        placeholder="Enter category name"
+                        [(ngModel)]="editedName"
+                        [value]="editedName()"
+                        (ngModelChange)="editedName.set($event)"
+                        maxlength="100">
+                    <small class="text-muted">{{ editedName().length }}/100 characters</small>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-text-paragraph me-2"></i>
+                        Description
+                    </label>
+                    <textarea
+                        class="form-control"
+                        rows="3"
+                        placeholder="Enter category description (optional)"
+                        [(ngModel)]="editedDescription"
+                        [value]="editedDescription()"
+                        (ngModelChange)="editedDescription.set($event)"
+                        maxlength="500"></textarea>
+                    <small class="text-muted">{{ editedDescription().length }}/500 characters</small>
+                </div>
+
+                <!-- Transaction Types -->
+                <div class="form-group">
+                    <label class="form-label required">
+                        <i class="bi bi-arrow-left-right me-2"></i>
+                        Transaction Types
+                    </label>
+                    <div class="transaction-types-selector">
+                        @for (type of allTransactionTypes; track type) {
+                            <button
+                                type="button"
+                                class="type-chip"
+                                [class.selected]="isTransactionTypeSelected(type)"
+                                [style.--type-color]="getTransactionTypeColor(type)"
+                                (click)="toggleTransactionType(type)">
+                                <i class="bi bi-check-circle-fill"></i>
+                                {{ type }}
+                            </button>
+                        }
+                    </div>
+                    <small class="text-muted">{{ editedTransactionTypes().length }} selected</small>
+                </div>
+
+                <!-- Status Toggle -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-toggle2-on me-2"></i>
+                        Status
+                    </label>
+                    <div class="toggle-group">
+                        <button
+                            type="button"
+                            class="toggle-btn"
+                            [class.active]="editedIsActive()"
+                            (click)="editedIsActive.set(true)">
+                            <i class="bi bi-check-circle me-2"></i>
+                            Active
+                        </button>
+                        <button
+                            type="button"
+                            class="toggle-btn"
+                            [class.active]="!editedIsActive()"
+                            (click)="editedIsActive.set(false)">
+                            <i class="bi bi-dash-circle me-2"></i>
+                            Inactive
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Budget Limit -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-piggy-bank me-2"></i>
+                        Budget Limit (₹)
+                    </label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        placeholder="Enter budget limit (optional)"
+                        [value]="editedBudgetLimit() || ''"
+                        (input)="editedBudgetLimit.set($any($event.target).value ? +$any($event.target).value : null)"
+                        min="0"
+                        step="100">
+                    <small class="text-muted">Leave empty for no budget limit</small>
+                </div>
+
+                <!-- Tax Deductible -->
+                <div class="form-group">
+                    <label class="form-label">
+                        <i class="bi bi-receipt me-2"></i>
+                        Tax Settings
+                    </label>
+                    <div class="checkbox-group">
+                        <label class="custom-checkbox">
+                            <input
+                                type="checkbox"
+                                [checked]="editedIsTaxDeductible()"
+                                (change)="editedIsTaxDeductible.set($any($event.target).checked)">
+                            <span class="checkbox-mark"></span>
+                            <span class="checkbox-label">Tax Deductible</span>
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="modal-footer">
+                <button
+                    class="btn btn-outline-secondary"
+                    (click)="close()"
+                    [disabled]="isSaving()">
+                    Cancel
+                </button>
+                <button
+                    class="btn btn-primary"
+                    (click)="onSave()"
+                    [disabled]="isSaving()">
+                    @if (isSaving()) {
+                        <span class="spinner-border spinner-border-sm me-2"></span>
+                        Saving...
+                    } @else {
+                        <i class="bi bi-check-circle me-2"></i>
+                        Save Changes
+                    }
+                </button>
+            </div>
+
+        </div>
+    </div>
+}
