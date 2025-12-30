@@ -1,13 +1,19 @@
-import os
+from decouple import Config, RepositoryEnv
+from pathlib import Path
 
-COGNITO_REGION = "eu-north-1"
-COGNITO_USER_POOL_ID = "eu-north-1_kLYhLL7bg"
+BASE_DIR = Path(__file__).resolve().parent
+ENV_PATH = BASE_DIR / "settings" / ".env"
 
-COGNITO_AUTHORITY = (
-    f"https://cognito-idp.{COGNITO_REGION}.amazonaws.com/{COGNITO_USER_POOL_ID}"
-)
+env_config = Config(RepositoryEnv(ENV_PATH))
 
-COGNITO_CLIENT_ID = "261grckd5dnsti9tvv7pcqr34v"
-COGNITO_CLIENT_SECRET = "eae49aam0hvq4qpeu7urg52po9p2q9tep5738b6goob4emk35a9"
+COGNITO_CLIENT_ID = env_config("COGNITO_CLIENT_ID")
 
-COGNITO_METADATA_URL = f"{COGNITO_AUTHORITY}/.well-known/openid-configuration"
+# AWS Cognito Configuration
+COGNITO_USER_POOL_ID = env_config("COGNITO_USER_POOL_ID", default="eu-north-1_XXXXXXXXX")
+COGNITO_CLIENT_ID = env_config("COGNITO_CLIENT_ID")
+COGNITO_CLIENT_SECRET = env_config("COGNITO_CLIENT_SECRET")
+COGNITO_REGION = env_config("COGNITO_REGION", default="eu-north-1")
+
+# MongoDB Configuration
+MONGO_URL = env_config("MONGO_URL", default="mongodb://localhost:27017")
+DB_NAME = env_config("DB_NAME", default="expense_tracker")

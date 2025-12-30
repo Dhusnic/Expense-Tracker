@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { Subject, interval, takeUntil } from 'rxjs';
+import { Subject, interval, takeUntil, map } from 'rxjs';
 import { ExpenseListService } from '../../services/expense-list.service';
 import { ExpenseTrackerService } from '../../services/expense-tracker.service';
 import {
@@ -15,6 +15,31 @@ import {
   BulkAction
 } from '../../models/expense-list.models';
 import { PaymentMethod, TransactionType } from '../../models/expense-tracker.models';
+import { queryObjects } from 'v8';
+
+
+interface ApiTransactionResponse {
+  success: boolean;
+  data: any[];
+  pagination: {
+    total: number;
+    skip: number;
+    limit: number;
+    pages: number;
+  };
+}
+
+interface TransformedResponse {
+  transactions: ExpenseListItem[];
+  pagination: PaginationConfig;
+  summary: {
+    totalIncome: number;
+    totalExpense: number;
+    netBalance: number;
+    pendingAmount: number;
+    recurringAmount: number;
+  };
+}
 
 @Component({
   selector: 'app-expense-list',
@@ -23,6 +48,11 @@ import { PaymentMethod, TransactionType } from '../../models/expense-tracker.mod
   templateUrl: './expense-list.html',
   styleUrl: './expense-list.scss'
 })
+
+// Add these interfaces at the top of your component or in a separate file
+
+
+
 export class ExpenseList implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   private autoRefreshInterval$ = new Subject<void>();
@@ -60,6 +90,7 @@ export class ExpenseList implements OnInit, OnDestroy {
     { value: 'account', label: 'Group by Account' },
     { value: 'type', label: 'Group by Type' }
   ];
+
 
   // Filters
   filters = signal<Partial<FilterOptions>>({
@@ -156,20 +187,58 @@ export class ExpenseList implements OnInit, OnDestroy {
   /**
    * Load transactions from service
    */
+  // loadTransactions(): void {
+  //   this.loading.set(true);
+  //   this.expenseListService.getTransactions(
+  //     this.filters(),
+  //     this.sortOptions(),
+  //     this.pagination()
+  //   )
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (response) => {
+  //         this.transactions.set(response.transactions);
+  //         this.pagination.set(response.pagination);
+  //         this.summary.set(response.summary);
+  //         this.loading.set(false);
+  //       },
+  //       error: (error) => {
+  //         console.error('Error loading transactions:', error);
+  //         this.loading.set(false);
+  //         this.showErrorMessage('Failed to load transactions');
+  //       }
+  //     });
+  // }
+
   loadTransactions(): void {
     this.loading.set(true);
-
     this.expenseListService.getTransactions(
       this.filters(),
       this.sortOptions(),
       this.pagination()
     )
-      .pipe(takeUntil(this.destroy$))
+      .pipe(
+        takeUntil(this.destroy$),
+        map((response: ApiTransactionResponse): TransformedResponse => {
+          // Transform the API response
+          return {
+            transactions: response.data ? response.data.map((item: any) => this.transformTransaction(item)) : [],
+            pagination: {
+              currentPage: Math.floor(response.pagination.skip / response.pagination.limit),
+              pageSize: response.pagination.limit,
+              totalItems: response.pagination.total,
+              totalPages: response.pagination.pages
+            },
+            summary: this.calculateSummary(response.data || [])
+          };
+        })
+      )
       .subscribe({
-        next: (response) => {
-          this.transactions.set(response.transactions);
-          this.pagination.set(response.pagination);
-          this.summary.set(response.summary);
+        next: (transformedResponse: TransformedResponse) => {
+          console.log('Transformed Response:', transformedResponse);
+          this.transactions.set(transformedResponse.transactions);
+          this.pagination.set(transformedResponse.pagination);
+          this.summary.set(transformedResponse.summary);
           this.loading.set(false);
         },
         error: (error) => {
@@ -179,6 +248,100 @@ export class ExpenseList implements OnInit, OnDestroy {
         }
       });
   }
+
+
+  /**
+   * Transform API response to ExpenseListItem
+   */
+  private transformTransaction(apiData: any): ExpenseListItem {
+    // debugger;
+    return {
+      transactionId: apiData.transactionId || apiData.id,
+      id: apiData._id || apiData.id,
+      transactionType: apiData.transactionType as TransactionType,
+      amount: apiData.amount,
+      currency: apiData.currency,
+      transactionDate: new Date(apiData.transactionDate), // Convert string to Date
+      categoryId: apiData.categoryId,
+      subcategoryId: apiData.subcategoryId,
+      description: apiData.description,
+      notes: apiData.notes || '',
+      tags: apiData.tags || [],
+      paymentMethod: apiData.paymentMethod as PaymentMethod,
+      fromAccountId: apiData.fromAccountId,
+      toAccountId: apiData.toAccountId,
+      upiProviderId: apiData.upiProviderId,
+      upiTransactionId: apiData.upiTransactionId,
+      cardLastFourDigits: apiData.cardLastFourDigits,
+      chequeNumber: apiData.chequeNumber,
+      referenceNumber: apiData.referenceNumber,
+      contactId: apiData.contactId,
+      dueDate: apiData.dueDate ? new Date(apiData.dueDate) : undefined,
+      isPaid: apiData.isPaid || false,
+      isRecurring: apiData.isRecurring || false,
+      recurringConfig: apiData.recurringConfig,
+      isTaxDeductible: apiData.isTaxDeductible || false,
+      taxCategory: apiData.taxCategory,
+      location: apiData.location,
+      attachments: apiData.attachments || [],
+      splitTransactions: apiData.splitTransactions || [],
+      transferFee: apiData.transferFee || 0,
+      createLinkedTransactions: apiData.createLinkedTransactions !== false,
+      // linkedTransactionId: apiData.linkedTransactionId,
+      createdAt: new Date(apiData.createdAt),
+      updatedAt: apiData.updatedAt ? new Date(apiData.updatedAt) : new Date(apiData.createdAt),
+      createdBy: apiData.createdBy,
+      status: this.determineStatus(apiData),
+      isReconciled: apiData.isReconciled || false,
+      isFavorite: apiData.isFavorite || false
+    };
+  }
+
+  /**
+   * Determine transaction status
+   */
+  private determineStatus(transaction: any): 'PAID' | 'PENDING' | 'OVERDUE' | 'RECURRING' {
+    if (transaction.isRecurring) return 'RECURRING';
+    if (transaction.isPaid) return 'PAID';
+    if (transaction.dueDate && new Date(transaction.dueDate) < new Date()) return 'OVERDUE';
+    return 'PENDING';
+  }
+
+  /**
+   * Calculate summary from transactions
+   */
+  private calculateSummary(transactions: any[]): any {
+    const summary = {
+      totalIncome: 0,
+      totalExpense: 0,
+      netBalance: 0,
+      pendingAmount: 0,
+      recurringAmount: 0
+    };
+
+    transactions.forEach(t => {
+      const amount = t.amount || 0;
+
+      if (t.transactionType === 'INCOME') {
+        summary.totalIncome += amount;
+      } else if (t.transactionType === 'EXPENSE') {
+        summary.totalExpense += amount;
+      }
+
+      if (!t.isPaid || this.determineStatus(t) === 'PENDING') {
+        summary.pendingAmount += amount;
+      }
+
+      if (t.isRecurring) {
+        summary.recurringAmount += amount;
+      }
+    });
+
+    summary.netBalance = summary.totalIncome - summary.totalExpense;
+
+    return summary;
+  }
+
 
   /**
    * Setup auto-refresh
@@ -570,7 +733,13 @@ export class ExpenseList implements OnInit, OnDestroy {
    * Edit transaction
    */
   editTransaction(transaction: ExpenseListItem): void {
-    this.router.navigate(['/expense-tracker/edit', transaction.id]);
+    // debugger;
+    this.router.navigate(['/expense_tracker/add'], {
+      queryParams: {
+        transaction_id: transaction.transactionId,
+        // Add more params as needed
+      }
+    });
   }
 
   /**
@@ -601,8 +770,8 @@ export class ExpenseList implements OnInit, OnDestroy {
    * Duplicate transaction
    */
   duplicateTransaction(transaction: ExpenseListItem): void {
-    this.router.navigate(['/expense-tracker/new'], {
-      queryParams: { duplicate: transaction.id }
+    this.router.navigate(['/expense_tracker/add'], {
+      queryParams: { transaction_id: transaction.transactionId, duplicate: true }
     });
   }
 

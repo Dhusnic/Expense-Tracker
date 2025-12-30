@@ -91,6 +91,7 @@ export interface RecurringConfig {
 }
 
 export interface TransactionFormData {
+    transactionId?: string;
     // Step 1: Transaction Type
     transactionType: TransactionType;
 
@@ -140,6 +141,7 @@ export interface TransactionFormData {
     createdAt?: Date;
     updatedAt?: Date;
     createdBy?: string;
+    is_duplicated ?: boolean;
 }
 
 export interface ApiResponse<T> {

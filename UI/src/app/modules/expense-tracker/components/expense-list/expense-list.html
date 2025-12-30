@@ -1,6 +1,6 @@
 <div class="expense-list-container">
     <!-- Page Header -->
-    <div class="page-header">
+    <!-- <div class="page-header">
         <div class="container-fluid">
             <div class="row align-items-center">
                 <div class="col">
@@ -12,18 +12,10 @@
                         Manage and track all your financial transactions
                     </p>
                 </div>
-                <div class="col-auto">
-                    <button
-                        type="button"
-                        class="btn btn-primary btn-lg"
-                        (click)="createNewTransaction()">
-                        <i class="bi bi-plus-lg me-2"></i>
-                        New Transaction
-                    </button>
-                </div>
+                
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Summary Cards (Expandable) -->
     @if (showSummary()) {
@@ -156,7 +148,7 @@
                         <i class="bi bi-search search-icon"></i>
                         <input
                             type="text"
-                            class="form-control search-input"
+                            class="form-control-sm search-input"
                             placeholder="Search transactions..."
                             [value]="filters().searchQuery"
                             (input)="onSearch($any($event.target).value)">
@@ -331,6 +323,15 @@
                             (click)="refreshData()">
                             <i class="bi bi-arrow-repeat"></i>
                         </button>
+                        <div class="col-auto">
+                            <button
+                                type="button"
+                                class="btn btn-primary btn-sm"
+                                (click)="createNewTransaction()">
+                                <i class="bi bi-plus-lg me-2"></i>
+                                New Transaction
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -740,10 +741,13 @@
                                                     <span class="tag-mini">{{
                                                         tag }}</span>
                                                     }
-                                                    @if ((transaction.tags?.length || 0)
+                                                    @if
+                                                    ((transaction.tags?.length
+                                                    || 0)
                                                     > 2) {
                                                     <span class="tag-mini">+{{
-                                                        (transaction.tags?.length || 0)
+                                                        (transaction.tags?.length
+                                                        || 0)
                                                         - 2 }}</span>
                                                     }
                                                 </div>
@@ -990,7 +994,8 @@
                                         []).slice(0, 2); track tag) {
                                         <span class="tag-badge">{{ tag }}</span>
                                         }
-                                        @if ((transaction.tags?.length || 0) > 3) {
+                                        @if ((transaction.tags?.length || 0) >
+                                        3) {
                                         <span class="tag-badge">+{{
                                             (transaction.tags?.length || 0) - 3
                                             }}</span>

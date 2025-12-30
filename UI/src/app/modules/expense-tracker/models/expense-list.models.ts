@@ -1,12 +1,13 @@
 import { TransactionFormData, TransactionType } from './expense-tracker.models';
 
 export interface ExpenseListItem extends TransactionFormData {
-    id: string;
-    createdAt: Date;
-    updatedAt: Date;
-    status: 'PAID' | 'PENDING' | 'OVERDUE' | 'RECURRING';
-    isReconciled: boolean;
-    isFavorite: boolean;
+  transactionId: string;
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status: 'PAID' | 'PENDING' | 'OVERDUE' | 'RECURRING';
+  isReconciled: boolean;
+  isFavorite: boolean;
 }
 
 // export type DatePreset = 'today' | 'yesterday' | 'thisWeek' | 'lastWeek' | 'thisMonth' | 'lastMonth' | 'thisYear' | 'all' | 'custom';
@@ -81,43 +82,43 @@ export interface FilterOptions {
 
 
 export interface SortOptions {
-    field: 'date' | 'amount' | 'description' | 'category' | 'type';
-    direction: 'asc' | 'desc';
+  field: 'date' | 'amount' | 'description' | 'category' | 'type';
+  direction: 'asc' | 'desc';
 }
 
 export interface GroupByOption {
-    value: 'none' | 'date' | 'month' | 'category' | 'account' | 'type';
-    label: string;
+  value: 'none' | 'date' | 'month' | 'category' | 'account' | 'type';
+  label: string;
 }
 
 export interface ViewMode {
-    value: 'table' | 'card' | 'compact' | 'timeline';
-    label: string;
-    icon: string;
+  value: 'table' | 'card' | 'compact' | 'timeline';
+  label: string;
+  icon: string;
 }
 
 export interface PaginationConfig {
-    currentPage: number;
-    pageSize: number;
-    totalItems: number;
-    totalPages: number;
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
 }
 
 export interface ExpenseListResponse {
-    transactions: ExpenseListItem[];
-    pagination: PaginationConfig;
-    summary: {
-        totalIncome: number;
-        totalExpense: number;
-        netBalance: number;
-        pendingAmount: number;
-        recurringAmount: number;
-    };
+  transactions: ExpenseListItem[];
+  pagination: PaginationConfig;
+  summary: {
+    totalIncome: number;
+    totalExpense: number;
+    netBalance: number;
+    pendingAmount: number;
+    recurringAmount: number;
+  };
 }
 
 export interface BulkAction {
-    type: 'delete' | 'export' | 'markPaid' | 'markUnpaid' | 'categorize';
-    label: string;
-    icon: string;
-    confirmRequired: boolean;
+  type: 'delete' | 'export' | 'markPaid' | 'markUnpaid' | 'categorize';
+  label: string;
+  icon: string;
+  confirmRequired: boolean;
 }

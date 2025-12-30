@@ -1,11 +1,17 @@
 <div class="app-container">
+    @if (isLoggedIn) {
     <!-- Just add the sidebar component - that's it! -->
     <app-sidebar (sidebarToggled)="onSidebarToggle($event)"></app-sidebar>
+    }
     <!-- Main Content -->
     <div class="app-main-content">
+        @if (isLoggedIn) {
         <app-navbar></app-navbar>
+        }
         <main class="app-content">
-            <router-outlet></router-outlet>
+            <div class="router-container">
+                <router-outlet></router-outlet>
+            </div>
         </main>
     </div>
 </div>

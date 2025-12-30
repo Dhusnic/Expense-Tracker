@@ -242,7 +242,7 @@
                                     </select>
                                     <input
                                         type="text"
-                                        class="form-control form-control-lg"
+                                        class="form-control form-control-sm"
                                         formControlName="amount"
                                         placeholder="0.00"
                                         (blur)="formatAmount($event)"
@@ -305,7 +305,7 @@
                                     Date</label>
                                 <input
                                     type="date"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="transactionDate"
                                     [max]="getCurrentDate()"
                                     [class.is-invalid]="transactionForm.get('step2.transactionDate')?.invalid && transactionForm.get('step2.transactionDate')?.touched">
@@ -415,7 +415,7 @@
                                     Date</label>
                                 <input
                                     type="date"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="dueDate"
                                     [class.is-invalid]="transactionForm.get('step2.dueDate')?.invalid && transactionForm.get('step2.dueDate')?.touched">
                                 @if
@@ -452,7 +452,7 @@
                                     class="form-label required">Description</label>
                                 <input
                                     type="text"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="description"
                                     placeholder="Enter transaction description"
                                     [class.is-invalid]="transactionForm.get('step2.description')?.invalid && transactionForm.get('step2.description')?.touched">
@@ -581,12 +581,13 @@
                                 <select
                                     class="form-select form-select-lg"
                                     formControlName="fromAccountId"
-                                    [class.is-invalid]="transactionForm.get('step3.fromAccountId')?.invalid && transactionForm.get('step3.fromAccountId')?.touched">
-                                    <option [value]="null">Select
+                                    [class.is-invalid]="transactionForm.get('step3.fromAccountId')?.invalid && 
+                        transactionForm.get('step3.fromAccountId')?.touched">
+                                    <option [ngValue]="null" disabled>Select
                                         Account</option>
                                     @for (account of accounts(); track
                                     account.id) {
-                                    <option [value]="account.id">
+                                    <option [ngValue]="account.id">
                                         {{ account.name }} ({{
                                         formatCurrency(account.balance,
                                         account.currency) }})
@@ -680,7 +681,7 @@
                                     ID</label>
                                 <input
                                     type="text"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="upiTransactionId"
                                     placeholder="Enter UPI Transaction ID (Optional)">
                             </div>
@@ -698,7 +699,7 @@
                                     Digits</label>
                                 <input
                                     type="text"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="cardLastFourDigits"
                                     placeholder="1234"
                                     maxlength="4"
@@ -725,7 +726,7 @@
                                     Number</label>
                                 <input
                                     type="text"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="chequeNumber"
                                     placeholder="Enter Cheque Number"
                                     [class.is-invalid]="transactionForm.get('step3.chequeNumber')?.invalid && transactionForm.get('step3.chequeNumber')?.touched">
@@ -749,7 +750,7 @@
                                     Number</label>
                                 <input
                                     type="text"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="referenceNumber"
                                     placeholder="Transaction Reference (Optional)">
                             </div>
@@ -763,7 +764,7 @@
                                 <label class="form-label">Transfer Fee</label>
                                 <input
                                     type="number"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="transferFee"
                                     placeholder="0.00"
                                     step="0.01"
@@ -835,7 +836,7 @@
                                     Date</label>
                                 <input
                                     type="date"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="recurringStartDate">
                             </div>
                         </div>
@@ -845,7 +846,7 @@
                                 <label class="form-label">End Date</label>
                                 <input
                                     type="date"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="recurringEndDate">
                             </div>
                         </div>
@@ -856,7 +857,7 @@
                                     Occurrences</label>
                                 <input
                                     type="number"
-                                    class="form-control form-control-lg"
+                                    class="form-control form-control-sm"
                                     formControlName="recurringOccurrences"
                                     placeholder="Leave empty for indefinite"
                                     min="1">
@@ -1212,7 +1213,7 @@
                                 @if (currentStep() > 1) {
                                 <button
                                     type="button"
-                                    class="btn btn-lg btn-outline-secondary"
+                                    class="btn btn-sm btn-outline-secondary"
                                     (click)="previousStep()"
                                     [disabled]="isSubmitting()">
                                     <i class="bi bi-arrow-left me-2"></i>
@@ -1224,9 +1225,9 @@
                                 @if (currentStep() < totalSteps) {
                                 <button
                                     type="button"
-                                    class="btn btn-lg btn-primary"
+                                    class="btn btn-sm btn-primary"
                                     (click)="nextStep()"
-                                    [disabled]="currentStepValid()">
+                                    >
                                     Next
                                     <i class="bi bi-arrow-right ms-2"></i>
                                 </button>
@@ -1234,7 +1235,8 @@
                                 <button
                                     type="submit"
                                     class="btn btn-lg btn-success"
-                                    [disabled]="transactionForm.invalid || isSubmitting()">
+                                    [disabled]="transactionForm.invalid || isSubmitting()"
+                                    (click)="submitTransaction()">
                                     @if (isSubmitting()) {
                                     <span
                                         class="spinner-border spinner-border-sm me-2"></span>

@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { ExpenseTrackerService } from '../../services/expense-tracker.service';
 import {
@@ -11,7 +11,7 @@ import {
   RecurrenceFrequency
 } from '../../models/expense-tracker.models';
 import { CustomValidators } from '../../validators/custom-validators';
-
+import { interval } from 'rxjs';
 interface WizardStep {
   id: number;
   title: string;
@@ -31,6 +31,8 @@ interface WizardStep {
 export class ExpenseForm implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
+  transaction_id = undefined;
+  is_duplicated:boolean = false;
   // Form Groups
   transactionForm!: FormGroup;
 
@@ -94,18 +96,171 @@ export class ExpenseForm implements OnInit, OnDestroy {
   constructor(
     public fb: FormBuilder,
     public router: Router,
-    public expenseService: ExpenseTrackerService
+    public expenseService: ExpenseTrackerService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
     this.initializeForm();
     this.setupFormListeners();
+    this.route.queryParams.subscribe(params => {
+      // debugger;
+      this.transaction_id = params['transaction_id'];
+
+      if (this.transaction_id) {
+        // Load the transaction to duplicate
+        this.loadTransactionForEditing(this.transaction_id);
+      }
+      if(params['duplicate'] === 'true' || params['duplicate'] === true){
+        this.is_duplicated = true;
+      }
+    });
+    setTimeout(() => {
+      this.transactionForm.updateValueAndValidity();
+    }, 0);
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
+
+  /**
+   * Load transaction for duplication
+   */
+  private loadTransactionForEditing(transactionId: string): void {
+    this.expenseService.getTransaction(transactionId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (transaction) => {
+          this.populateForm(transaction);
+          // Show a message that this is a duplicate
+          console.log('Duplicating transaction:', transaction.description);
+        },
+        error: (error) => {
+          console.error('Error loading transaction:', error);
+          // Handle error - maybe redirect back
+          this.router.navigate(['/expense_tracker/list']);
+        }
+      });
+  }
+
+  /**
+   * Populate form with transaction data
+   */
+  private populateForm(transaction: any): void {
+    // Convert date to YYYY-MM-DD format for input[type="date"]
+    transaction=transaction.data;
+    const transactionDate = transaction.transactionDate
+      ? new Date(transaction.transactionDate).toISOString().split('T')[0]
+      : new Date().toISOString().split('T')[0];
+
+    const dueDate = transaction.dueDate
+      ? new Date(transaction.dueDate).toISOString().split('T')[0]
+      : null;
+
+    // Step 1: Transaction Type
+    this.transactionForm.get('step1')?.patchValue({
+      transactionType: transaction.transactionType
+    });
+
+    // Trigger category loading based on transaction type
+    this.onTransactionTypeChange(transaction.transactionType);
+
+    // Step 2: Basic Information
+    this.transactionForm.get('step2')?.patchValue({
+      amount: transaction.amount,
+      currency: transaction.currency || 'INR',
+      transactionDate: transactionDate,
+      categoryId: transaction.categoryId,
+      subcategoryId: transaction.subcategoryId || null,
+      description: transaction.description + ' (Copy)', // Mark as copy
+      notes: transaction.notes || '',
+      tags: transaction.tags || [],
+      contactId: transaction.contactId || null,
+      dueDate: dueDate,
+      isPaid: false // Reset for duplicate
+    });
+
+    // Load subcategories if category is selected
+    if (transaction.categoryId) {
+      this.onCategoryChange(transaction.categoryId);
+    }
+
+    // Step 3: Payment Details
+    this.transactionForm.get('step3')?.patchValue({
+      paymentMethod: transaction.paymentMethod,
+      fromAccountId: transaction.fromAccountId || null,
+      toAccountId: transaction.toAccountId || null,
+      upiProviderId: transaction.upiProviderId || null,
+      upiTransactionId: '', // Clear for duplicate
+      cardLastFourDigits: '', // Clear for security
+      chequeNumber: '', // Clear for duplicate
+      referenceNumber: '', // Clear for duplicate
+      transferFee: transaction.transferFee || 0,
+      createLinkedTransactions: transaction.createLinkedTransactions !== false,
+      isRecurring: transaction.isRecurring || false,
+      isTaxDeductible: transaction.isTaxDeductible || false,
+      taxCategory: transaction.taxCategory || '',
+      attachments: [], // Don't copy attachments
+      splitTransactions: transaction.splitTransactions || []
+    });
+
+    // Handle recurring config if exists
+    if (transaction.isRecurring && transaction.recurringConfig) {
+      const config = transaction.recurringConfig;
+      this.transactionForm.get('step3')?.patchValue({
+        recurringFrequency: config.frequency || RecurrenceFrequency.NONE,
+        recurringStartDate: config.startDate
+          ? new Date(config.startDate).toISOString().split('T')[0]
+          : null,
+        recurringEndDate: config.endDate
+          ? new Date(config.endDate).toISOString().split('T')[0]
+          : null,
+        recurringOccurrences: config.occurrences || null
+      });
+    }
+
+    // Move to appropriate step (optional)
+    this.currentStep.set(1); // Start at step 2 since type is already set
+  }
+
+  /**
+ * Handle category change
+ */
+  private onCategoryChange(categoryId: string): void {
+    // Reset subcategory when category changes
+    const subcategoryControl = this.transactionForm.get('step2.subcategoryId');
+    if (subcategoryControl && subcategoryControl.value) {
+      // Only reset if there's already a value
+      const selectedCategory = this.categories().find(cat => cat.id === categoryId);
+      const hasSubcategory = selectedCategory?.subcategories?.find(
+        sub => sub.id === subcategoryControl.value
+      );
+
+      // Reset if current subcategory doesn't belong to new category
+      if (!hasSubcategory) {
+        subcategoryControl.setValue(null);
+      }
+    }
+  }
+
+
+  // /**
+  //  * Handle transaction type change
+  //  */
+  // private onTransactionTypeChange(type: TransactionType): void {
+  //   // Your existing logic to load categories based on type
+  //   this.loadCategoriesByType(type);
+  // }
+
+  // /**
+  //  * Handle category change
+  //  */
+  // private onCategoryChange(categoryId: string): void {
+  //   // Your existing logic to load subcategories
+  //   this.loadSubcategories(categoryId);
+  // }
 
   /**
    * Initialize the form with all steps
@@ -212,16 +367,19 @@ export class ExpenseForm implements OnInit, OnDestroy {
 
     // Update validators based on transaction type
     if (type === TransactionType.TRANSFER) {
-      step3.get('fromAccountId')?.setValidators([Validators.required]);
+      // step3.get('fromAccountId')?.setValidators([Validators.required]);
       step3.get('toAccountId')?.setValidators([Validators.required]);
       step2.get('categoryId')?.clearValidators();
     } else if ([TransactionType.DEBT_GIVEN, TransactionType.DEBT_RECEIVED,
     TransactionType.DEBT_REPAYMENT, TransactionType.DEBT_COLLECTION].includes(type)) {
       step2.get('contactId')?.setValidators([Validators.required]);
       step2.get('dueDate')?.setValidators([Validators.required]);
+      step3.get('fromAccountId')?.clearValidators();  // ← ADD THIS LINE
+      step3.get('toAccountId')?.clearValidators();
     } else {
       step2.get('categoryId')?.setValidators([Validators.required]);
-      step3.get('fromAccountId')?.setValidators([Validators.required]);
+      // step3.get('fromAccountId')?.setValidators([Validators.required]);
+      step3.get('toAccountId')?.clearValidators();
       step3.get('toAccountId')?.clearValidators();
       step2.get('contactId')?.clearValidators();
       step2.get('dueDate')?.clearValidators();
@@ -241,32 +399,59 @@ export class ExpenseForm implements OnInit, OnDestroy {
   private onPaymentMethodChange(method: PaymentMethod): void {
     const step3 = this.transactionForm.get('step3') as FormGroup;
 
-    // Clear all payment-specific validators
+    // Clear all payment-specific validators first
+    step3.get('fromAccountId')?.clearValidators();
+    step3.get('toAccountId')?.clearValidators();
     step3.get('upiProviderId')?.clearValidators();
-    step3.get('upiTransactionId')?.clearValidators();
     step3.get('cardLastFourDigits')?.clearValidators();
     step3.get('chequeNumber')?.clearValidators();
 
+    // Only add validators if a payment method is actually selected
+    if (!method) {
+      // No payment method selected yet, don't require anything
+      step3.get('fromAccountId')?.updateValueAndValidity();
+      step3.get('toAccountId')?.updateValueAndValidity();
+      step3.get('upiProviderId')?.updateValueAndValidity();
+      step3.get('cardLastFourDigits')?.updateValueAndValidity();
+      step3.get('chequeNumber')?.updateValueAndValidity();
+      return;
+    }
+
     // Add validators based on payment method
     switch (method) {
-      case PaymentMethod.UPI:
-        step3.get('upiProviderId')?.setValidators([Validators.required]);
+      case PaymentMethod.CASH:
+      case PaymentMethod.BANK_TRANSFER:
+        // step3.get('fromAccountId')?.setValidators([Validators.required]);
         break;
+
       case PaymentMethod.CREDIT_CARD:
       case PaymentMethod.DEBIT_CARD:
-        step3.get('cardLastFourDigits')?.setValidators([Validators.required, Validators.pattern(/^\d{4}$/)]);
+        // step3.get('fromAccountId')?.setValidators([Validators.required]);
+        step3.get('cardLastFourDigits')?.setValidators([
+          Validators.required,
+          Validators.pattern(/^\d{4}$/)
+        ]);
         break;
+
+      case PaymentMethod.UPI:
+        // step3.get('fromAccountId')?.setValidators([Validators.required]);
+        step3.get('upiProviderId')?.setValidators([Validators.required]);
+        break;
+
       case PaymentMethod.CHEQUE:
+        // step3.get('fromAccountId')?.setValidators([Validators.required]);
         step3.get('chequeNumber')?.setValidators([Validators.required]);
         break;
     }
 
-    // Update validators
+    // Update validity
+    step3.get('fromAccountId')?.updateValueAndValidity();
+    step3.get('toAccountId')?.updateValueAndValidity();
     step3.get('upiProviderId')?.updateValueAndValidity();
-    step3.get('upiTransactionId')?.updateValueAndValidity();
     step3.get('cardLastFourDigits')?.updateValueAndValidity();
     step3.get('chequeNumber')?.updateValueAndValidity();
   }
+
 
   /**
    * Update recurring validators
@@ -301,10 +486,7 @@ export class ExpenseForm implements OnInit, OnDestroy {
       // Mark all fields in current step as touched to show validation errors
       const stepGroup = this.transactionForm.get(`step${currentStepNumber}`);
       if (stepGroup) {
-        Object.keys((stepGroup as FormGroup).controls).forEach(key => {
-          const control = stepGroup.get(key);
-          control?.markAsTouched();
-        });
+        this.markFormGroupTouched(stepGroup as FormGroup);
       }
       return;
     }
@@ -316,6 +498,21 @@ export class ExpenseForm implements OnInit, OnDestroy {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }
+
+  /**
+   * Recursively mark all controls in a form group as touched
+   */
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
+
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      }
+    });
+  }
+
 
   /**
    * Navigate to previous step
@@ -353,20 +550,72 @@ export class ExpenseForm implements OnInit, OnDestroy {
    * Check if step is valid
    */
   isStepValid(stepNumber: number): boolean {
-    // Check if form is initialized
     if (!this.transactionForm) {
+      console.log('Form not initialized');
       return false;
     }
 
     const stepGroup = this.transactionForm.get(`step${stepNumber}`);
 
-    // Check if step group exists
     if (!stepGroup) {
+      console.log(`Step ${stepNumber} group not found`);
       return false;
+    }
+
+    // DEBUG: Log validation details
+    if (stepNumber === 3 && !stepGroup.valid) {
+      console.log('=== Step 3 Validation Debug ===');
+      console.log('Step 3 Valid:', stepGroup.valid);
+      console.log('Step 3 Status:', stepGroup.status);
+
+      Object.keys((stepGroup as FormGroup).controls).forEach(key => {
+        const control = stepGroup.get(key);
+
+        if (control?.invalid) {
+          console.log(`❌ ${key}:`, {
+            value: control.value,
+            errors: control.errors,
+            touched: control.touched,
+            dirty: control.dirty,
+            validators: this.getValidatorNames(control),
+            hasValidator: control.validator ? 'YES' : 'NO'
+          });
+        } else {
+          // Also log valid fields to see the difference
+          if (control?.validator) {
+            console.log(`✅ ${key}:`, {
+              value: control.value,
+              validators: this.getValidatorNames(control)
+            });
+            return;
+          }
+        }
+      });
     }
 
     return stepGroup.valid;
   }
+
+  /**
+   * Get validator names from a control
+   */
+  private getValidatorNames(control: AbstractControl): string[] {
+    if (!control.validator) {
+      return ['No validators'];
+    }
+
+    // Get validator result by passing empty value
+    const validatorResult = control.validator(control);
+
+    if (!validatorResult) {
+      return ['Valid (no errors)'];
+    }
+
+    // Return the error keys which indicate which validators failed
+    return Object.keys(validatorResult);
+  }
+
+
 
   /**
    * Format amount with commas
@@ -489,16 +738,15 @@ export class ExpenseForm implements OnInit, OnDestroy {
   onSubmit(): void {
     if (this.transactionForm.valid && !this.isSubmitting()) {
       this.isSubmitting.set(true);
-
       const formData = this.buildTransactionData();
-
+      // debugger;
       this.expenseService.saveTransaction(formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
           next: (response) => {
             if (response.success) {
               this.showSuccessMessage();
-              this.router.navigate(['/expense-tracker/list']);
+              this.router.navigate(['/expense_tracker']);
             } else {
               this.showErrorMessage(response.message || 'Failed to save transaction');
             }
@@ -521,6 +769,7 @@ export class ExpenseForm implements OnInit, OnDestroy {
     const step3 = this.transactionForm.get('step3')?.value;
 
     return {
+      transactionId: this.transaction_id,
       transactionType: step1.transactionType,
       amount: step2.amount,
       currency: step2.currency,
@@ -553,7 +802,8 @@ export class ExpenseForm implements OnInit, OnDestroy {
       isTaxDeductible: step3.isTaxDeductible,
       taxCategory: step3.taxCategory,
       attachments: step3.attachments,
-      splitTransactions: step3.splitTransactions
+      splitTransactions: step3.splitTransactions,
+      is_duplicated : this.is_duplicated
     };
   }
 
@@ -656,5 +906,9 @@ export class ExpenseForm implements OnInit, OnDestroy {
 
   getCurrentDate(): string {
     return new Date().toISOString().split('T')[0];
+  }
+
+  submitTransaction(): void {
+    this.onSubmit();
   }
 }

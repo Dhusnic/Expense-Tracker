@@ -48,7 +48,6 @@ export class ApiService {
 
         // Temporary: store refresh token in localStorage
         if (res.refresh_token) localStorage.setItem('refresh_token', res.refresh_token);
-        debugger;
         this.router.navigate(['/dashboard']);
         // Store expiration timestamp
         const expiresAt = Date.now() + res.expires_in * 1000;

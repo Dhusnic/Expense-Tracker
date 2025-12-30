@@ -12,13 +12,13 @@ import {
     ApiResponse,
     PaymentMethod
 } from '../models/expense-tracker.models';
-
+import { ApiService } from '../../../core/services/api.service';
+import { environment } from '../../../../environments/environment';
 @Injectable({
     providedIn: 'root'
 })
 export class ExpenseTrackerService {
-    private readonly API_BASE_URL = '/api/expense-tracker'; // Update with your actual API URL
-
+    private readonly API_BASE_URL = environment.apiBaseUrl + '/transactions'; // Update with your actual API URL
     // Signals for reactive state management
     categories = signal<Category[]>([]);
     accounts = signal<Account[]>([]);
@@ -32,7 +32,9 @@ export class ExpenseTrackerService {
     categories$ = this.categoriesSubject.asObservable();
     accounts$ = this.accountsSubject.asObservable();
 
-    constructor(private http: HttpClient) {
+    constructor(private http: HttpClient,
+        private api: ApiService
+    ) {
         this.initializeMockData();
     }
 
@@ -53,21 +55,8 @@ export class ExpenseTrackerService {
      * Save transaction
      */
     saveTransaction(transaction: TransactionFormData): Observable<ApiResponse<TransactionFormData>> {
-        const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-
-        // TODO: Replace with actual API call
-        // return this.http.post<ApiResponse<TransactionFormData>>(
-        //   `${this.API_BASE_URL}/transactions`,
-        //   transaction,
-        //   { headers }
-        // );
-
-        // Mock implementation
-        return of({
-            success: true,
-            data: { ...transaction, createdAt: new Date(), updatedAt: new Date() },
-            message: 'Transaction saved successfully'
-        }).pipe(delay(1000));
+        // debugger;
+        return this.http.post<ApiResponse<TransactionFormData>>(`${this.API_BASE_URL}/save`, transaction);
     }
 
     /**
@@ -101,6 +90,11 @@ export class ExpenseTrackerService {
 
         return of(this.getMockCategories().filter(cat => cat.type === type)).pipe(delay(300));
     }
+
+    getTransaction(id: string): Observable<TransactionFormData> {
+        return this.http.get<TransactionFormData>(`${this.API_BASE_URL}/transactions/${id}`);
+    }
+        // return of(this.getMockData().find(t => t.id === id)!).pipe(delay(300));}
 
     /**
      * Get all accounts
@@ -192,43 +186,43 @@ export class ExpenseTrackerService {
         return [
             // Income Categories
             {
-                id: 'inc-1',
+                id: '507f1f77bcf86cd799439011', // was 'inc-1'
                 name: 'Salary',
                 icon: 'bi-cash-stack',
                 color: '#10b981',
                 type: TransactionType.INCOME,
                 subcategories: [
-                    { id: 'inc-1-1', name: 'Monthly Salary', icon: 'bi-calendar-month', color: '#10b981', type: TransactionType.INCOME, parentId: 'inc-1' },
-                    { id: 'inc-1-2', name: 'Bonus', icon: 'bi-gift', color: '#10b981', type: TransactionType.INCOME, parentId: 'inc-1' },
-                    { id: 'inc-1-3', name: 'Overtime', icon: 'bi-clock', color: '#10b981', type: TransactionType.INCOME, parentId: 'inc-1' }
+                    { id: '507f1f77bcf86cd799439012', name: 'Monthly Salary', icon: 'bi-calendar-month', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
+                    { id: '507f1f77bcf86cd799439013', name: 'Bonus', icon: 'bi-gift', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
+                    { id: '507f1f77bcf86cd799439014', name: 'Overtime', icon: 'bi-clock', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' }
                 ]
             },
             {
-                id: 'inc-2',
+                id: '507f1f77bcf86cd799439015', // was 'inc-2'
                 name: 'Business Income',
                 icon: 'bi-briefcase',
                 color: '#06b6d4',
                 type: TransactionType.INCOME,
                 subcategories: [
-                    { id: 'inc-2-1', name: 'Sales', icon: 'bi-cart', color: '#06b6d4', type: TransactionType.INCOME, parentId: 'inc-2' },
-                    { id: 'inc-2-2', name: 'Services', icon: 'bi-tools', color: '#06b6d4', type: TransactionType.INCOME, parentId: 'inc-2' },
-                    { id: 'inc-2-3', name: 'Consulting', icon: 'bi-person-badge', color: '#06b6d4', type: TransactionType.INCOME, parentId: 'inc-2' }
+                    { id: '507f1f77bcf86cd799439016', name: 'Sales', icon: 'bi-cart', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
+                    { id: '507f1f77bcf86cd799439017', name: 'Services', icon: 'bi-tools', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
+                    { id: '507f1f77bcf86cd799439018', name: 'Consulting', icon: 'bi-person-badge', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' }
                 ]
             },
             {
-                id: 'inc-3',
+                id: '507f1f77bcf86cd799439019', // was 'inc-3'
                 name: 'Investment',
                 icon: 'bi-graph-up',
                 color: '#8b5cf6',
                 type: TransactionType.INCOME,
                 subcategories: [
-                    { id: 'inc-3-1', name: 'Dividends', icon: 'bi-pie-chart', color: '#8b5cf6', type: TransactionType.INCOME, parentId: 'inc-3' },
-                    { id: 'inc-3-2', name: 'Interest', icon: 'bi-percent', color: '#8b5cf6', type: TransactionType.INCOME, parentId: 'inc-3' },
-                    { id: 'inc-3-3', name: 'Capital Gains', icon: 'bi-arrow-up-circle', color: '#8b5cf6', type: TransactionType.INCOME, parentId: 'inc-3' }
+                    { id: '507f1f77bcf86cd79943901a', name: 'Dividends', icon: 'bi-pie-chart', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
+                    { id: '507f1f77bcf86cd79943901b', name: 'Interest', icon: 'bi-percent', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
+                    { id: '507f1f77bcf86cd79943901c', name: 'Capital Gains', icon: 'bi-arrow-up-circle', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' }
                 ]
             },
             {
-                id: 'inc-4',
+                id: '507f1f77bcf86cd79943901d', // was 'inc-4'
                 name: 'Other Income',
                 icon: 'bi-plus-circle',
                 color: '#f59e0b',
@@ -237,125 +231,125 @@ export class ExpenseTrackerService {
 
             // Expense Categories
             {
-                id: 'exp-1',
+                id: '507f1f77bcf86cd79943901e', // was 'exp-1'
                 name: 'Food & Dining',
                 icon: 'bi-cup-straw',
                 color: '#ef4444',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-1-1', name: 'Groceries', icon: 'bi-bag', color: '#ef4444', type: TransactionType.EXPENSE, parentId: 'exp-1' },
-                    { id: 'exp-1-2', name: 'Restaurants', icon: 'bi-shop', color: '#ef4444', type: TransactionType.EXPENSE, parentId: 'exp-1' },
-                    { id: 'exp-1-3', name: 'Cafes', icon: 'bi-cup-hot', color: '#ef4444', type: TransactionType.EXPENSE, parentId: 'exp-1' },
-                    { id: 'exp-1-4', name: 'Food Delivery', icon: 'bi-bicycle', color: '#ef4444', type: TransactionType.EXPENSE, parentId: 'exp-1' }
+                    { id: '507f1f77bcf86cd79943901f', name: 'Groceries', icon: 'bi-bag', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+                    { id: '507f1f77bcf86cd799439020', name: 'Restaurants', icon: 'bi-shop', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+                    { id: '507f1f77bcf86cd799439021', name: 'Cafes', icon: 'bi-cup-hot', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+                    { id: '507f1f77bcf86cd799439022', name: 'Food Delivery', icon: 'bi-bicycle', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' }
                 ]
             },
             {
-                id: 'exp-2',
+                id: '507f1f77bcf86cd799439023', // was 'exp-2'
                 name: 'Transportation',
                 icon: 'bi-car-front',
                 color: '#3b82f6',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-2-1', name: 'Fuel', icon: 'bi-fuel-pump', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: 'exp-2' },
-                    { id: 'exp-2-2', name: 'Public Transport', icon: 'bi-bus-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: 'exp-2' },
-                    { id: 'exp-2-3', name: 'Taxi/Ride Share', icon: 'bi-taxi-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: 'exp-2' },
-                    { id: 'exp-2-4', name: 'Parking', icon: 'bi-p-square', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: 'exp-2' },
-                    { id: 'exp-2-5', name: 'Vehicle Maintenance', icon: 'bi-wrench', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: 'exp-2' }
+                    { id: '507f1f77bcf86cd799439024', name: 'Fuel', icon: 'bi-fuel-pump', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+                    { id: '507f1f77bcf86cd799439025', name: 'Public Transport', icon: 'bi-bus-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+                    { id: '507f1f77bcf86cd799439026', name: 'Taxi/Ride Share', icon: 'bi-taxi-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+                    { id: '507f1f77bcf86cd799439027', name: 'Parking', icon: 'bi-p-square', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+                    { id: '507f1f77bcf86cd799439028', name: 'Vehicle Maintenance', icon: 'bi-wrench', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' }
                 ]
             },
             {
-                id: 'exp-3',
+                id: '507f1f77bcf86cd799439029', // was 'exp-3'
                 name: 'Shopping',
                 icon: 'bi-bag-heart',
                 color: '#ec4899',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-3-1', name: 'Clothing', icon: 'bi-bag', color: '#ec4899', type: TransactionType.EXPENSE, parentId: 'exp-3' },
-                    { id: 'exp-3-2', name: 'Electronics', icon: 'bi-laptop', color: '#ec4899', type: TransactionType.EXPENSE, parentId: 'exp-3' },
-                    { id: 'exp-3-3', name: 'Household Items', icon: 'bi-house', color: '#ec4899', type: TransactionType.EXPENSE, parentId: 'exp-3' },
-                    { id: 'exp-3-4', name: 'Personal Care', icon: 'bi-heart-pulse', color: '#ec4899', type: TransactionType.EXPENSE, parentId: 'exp-3' }
+                    { id: '507f1f77bcf86cd79943902a', name: 'Clothing', icon: 'bi-bag', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+                    { id: '507f1f77bcf86cd79943902b', name: 'Electronics', icon: 'bi-laptop', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+                    { id: '507f1f77bcf86cd79943902c', name: 'Household Items', icon: 'bi-house', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+                    { id: '507f1f77bcf86cd79943902d', name: 'Personal Care', icon: 'bi-heart-pulse', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' }
                 ]
             },
             {
-                id: 'exp-4',
+                id: '507f1f77bcf86cd79943902e', // was 'exp-4'
                 name: 'Bills & Utilities',
                 icon: 'bi-receipt',
                 color: '#f97316',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-4-1', name: 'Electricity', icon: 'bi-lightning', color: '#f97316', type: TransactionType.EXPENSE, parentId: 'exp-4' },
-                    { id: 'exp-4-2', name: 'Water', icon: 'bi-droplet', color: '#f97316', type: TransactionType.EXPENSE, parentId: 'exp-4' },
-                    { id: 'exp-4-3', name: 'Internet', icon: 'bi-wifi', color: '#f97316', type: TransactionType.EXPENSE, parentId: 'exp-4' },
-                    { id: 'exp-4-4', name: 'Mobile', icon: 'bi-phone', color: '#f97316', type: TransactionType.EXPENSE, parentId: 'exp-4' },
-                    { id: 'exp-4-5', name: 'Gas', icon: 'bi-fire', color: '#f97316', type: TransactionType.EXPENSE, parentId: 'exp-4' }
+                    { id: '507f1f77bcf86cd79943902f', name: 'Electricity', icon: 'bi-lightning', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+                    { id: '507f1f77bcf86cd799439030', name: 'Water', icon: 'bi-droplet', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+                    { id: '507f1f77bcf86cd799439031', name: 'Internet', icon: 'bi-wifi', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+                    { id: '507f1f77bcf86cd799439032', name: 'Mobile', icon: 'bi-phone', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+                    { id: '507f1f77bcf86cd799439033', name: 'Gas', icon: 'bi-fire', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' }
                 ]
             },
             {
-                id: 'exp-5',
+                id: '507f1f77bcf86cd799439034', // was 'exp-5'
                 name: 'Entertainment',
                 icon: 'bi-film',
                 color: '#a855f7',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-5-1', name: 'Movies', icon: 'bi-camera-reels', color: '#a855f7', type: TransactionType.EXPENSE, parentId: 'exp-5' },
-                    { id: 'exp-5-2', name: 'Streaming Services', icon: 'bi-play-circle', color: '#a855f7', type: TransactionType.EXPENSE, parentId: 'exp-5' },
-                    { id: 'exp-5-3', name: 'Gaming', icon: 'bi-controller', color: '#a855f7', type: TransactionType.EXPENSE, parentId: 'exp-5' },
-                    { id: 'exp-5-4', name: 'Sports', icon: 'bi-trophy', color: '#a855f7', type: TransactionType.EXPENSE, parentId: 'exp-5' }
+                    { id: '507f1f77bcf86cd799439035', name: 'Movies', icon: 'bi-camera-reels', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+                    { id: '507f1f77bcf86cd799439036', name: 'Streaming Services', icon: 'bi-play-circle', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+                    { id: '507f1f77bcf86cd799439037', name: 'Gaming', icon: 'bi-controller', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+                    { id: '507f1f77bcf86cd799439038', name: 'Sports', icon: 'bi-trophy', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' }
                 ]
             },
             {
-                id: 'exp-6',
+                id: '507f1f77bcf86cd799439039', // was 'exp-6'
                 name: 'Healthcare',
                 icon: 'bi-heart-pulse-fill',
                 color: '#dc2626',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-6-1', name: 'Doctor Visits', icon: 'bi-hospital', color: '#dc2626', type: TransactionType.EXPENSE, parentId: 'exp-6' },
-                    { id: 'exp-6-2', name: 'Medicines', icon: 'bi-capsule', color: '#dc2626', type: TransactionType.EXPENSE, parentId: 'exp-6' },
-                    { id: 'exp-6-3', name: 'Lab Tests', icon: 'bi-clipboard2-pulse', color: '#dc2626', type: TransactionType.EXPENSE, parentId: 'exp-6' },
-                    { id: 'exp-6-4', name: 'Insurance', icon: 'bi-shield-plus', color: '#dc2626', type: TransactionType.EXPENSE, parentId: 'exp-6' }
+                    { id: '507f1f77bcf86cd79943903a', name: 'Doctor Visits', icon: 'bi-hospital', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+                    { id: '507f1f77bcf86cd79943903b', name: 'Medicines', icon: 'bi-capsule', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+                    { id: '507f1f77bcf86cd79943903c', name: 'Lab Tests', icon: 'bi-clipboard2-pulse', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+                    { id: '507f1f77bcf86cd79943903d', name: 'Insurance', icon: 'bi-shield-plus', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' }
                 ]
             },
             {
-                id: 'exp-7',
+                id: '507f1f77bcf86cd79943903e', // was 'exp-7'
                 name: 'Education',
                 icon: 'bi-book',
                 color: '#0ea5e9',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-7-1', name: 'Tuition Fees', icon: 'bi-mortarboard', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: 'exp-7' },
-                    { id: 'exp-7-2', name: 'Books', icon: 'bi-journal', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: 'exp-7' },
-                    { id: 'exp-7-3', name: 'Online Courses', icon: 'bi-laptop', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: 'exp-7' },
-                    { id: 'exp-7-4', name: 'Stationery', icon: 'bi-pencil', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: 'exp-7' }
+                    { id: '507f1f77bcf86cd79943903f', name: 'Tuition Fees', icon: 'bi-mortarboard', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+                    { id: '507f1f77bcf86cd799439040', name: 'Books', icon: 'bi-journal', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+                    { id: '507f1f77bcf86cd799439041', name: 'Online Courses', icon: 'bi-laptop', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+                    { id: '507f1f77bcf86cd799439042', name: 'Stationery', icon: 'bi-pencil', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' }
                 ]
             },
             {
-                id: 'exp-8',
+                id: '507f1f77bcf86cd799439043', // was 'exp-8'
                 name: 'Housing',
                 icon: 'bi-house-door',
                 color: '#84cc16',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-8-1', name: 'Rent', icon: 'bi-key', color: '#84cc16', type: TransactionType.EXPENSE, parentId: 'exp-8' },
-                    { id: 'exp-8-2', name: 'Mortgage', icon: 'bi-bank2', color: '#84cc16', type: TransactionType.EXPENSE, parentId: 'exp-8' },
-                    { id: 'exp-8-3', name: 'Maintenance', icon: 'bi-tools', color: '#84cc16', type: TransactionType.EXPENSE, parentId: 'exp-8' },
-                    { id: 'exp-8-4', name: 'Property Tax', icon: 'bi-file-text', color: '#84cc16', type: TransactionType.EXPENSE, parentId: 'exp-8' }
+                    { id: '507f1f77bcf86cd799439044', name: 'Rent', icon: 'bi-key', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+                    { id: '507f1f77bcf86cd799439045', name: 'Mortgage', icon: 'bi-bank2', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+                    { id: '507f1f77bcf86cd799439046', name: 'Maintenance', icon: 'bi-tools', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+                    { id: '507f1f77bcf86cd799439047', name: 'Property Tax', icon: 'bi-file-text', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' }
                 ]
             },
             {
-                id: 'exp-9',
+                id: '507f1f77bcf86cd799439048', // was 'exp-9'
                 name: 'Travel',
                 icon: 'bi-airplane',
                 color: '#06b6d4',
                 type: TransactionType.EXPENSE,
                 subcategories: [
-                    { id: 'exp-9-1', name: 'Flights', icon: 'bi-airplane-engines', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: 'exp-9' },
-                    { id: 'exp-9-2', name: 'Hotels', icon: 'bi-building', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: 'exp-9' },
-                    { id: 'exp-9-3', name: 'Vacation', icon: 'bi-palm-tree', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: 'exp-9' }
+                    { id: '507f1f77bcf86cd799439049', name: 'Flights', icon: 'bi-airplane-engines', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
+                    { id: '507f1f77bcf86cd79943904a', name: 'Hotels', icon: 'bi-building', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
+                    { id: '507f1f77bcf86cd79943904b', name: 'Vacation', icon: 'bi-palm-tree', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' }
                 ]
             },
             {
-                id: 'exp-10',
+                id: '507f1f77bcf86cd79943904c', // was 'exp-10'
                 name: 'Other Expenses',
                 icon: 'bi-three-dots',
                 color: '#6b7280',
@@ -363,11 +357,10 @@ export class ExpenseTrackerService {
             }
         ];
     }
-
     private getMockAccounts(): Account[] {
         return [
             {
-                id: 'acc-1',
+                id: '65a7b1c2d3e4f5a6b7c8d9e0', // was 'acc-1'
                 name: 'HDFC Savings Account',
                 type: 'BANK',
                 accountNumber: '****1234',
@@ -378,7 +371,7 @@ export class ExpenseTrackerService {
                 isActive: true
             },
             {
-                id: 'acc-2',
+                id: '65a7b1c2d3e4f5a6b7c8d9e1', // was 'acc-2'
                 name: 'SBI Current Account',
                 type: 'BANK',
                 accountNumber: '****5678',
@@ -389,7 +382,7 @@ export class ExpenseTrackerService {
                 isActive: true
             },
             {
-                id: 'acc-3',
+                id: '65a7b1c2d3e4f5a6b7c8d9e2', // was 'acc-3'
                 name: 'ICICI Credit Card',
                 type: 'CREDIT_CARD',
                 accountNumber: '****9012',
@@ -400,7 +393,7 @@ export class ExpenseTrackerService {
                 isActive: true
             },
             {
-                id: 'acc-4',
+                id: '65a7b1c2d3e4f5a6b7c8d9e3', // was 'acc-4'
                 name: 'Cash Wallet',
                 type: 'CASH',
                 balance: 5000,
@@ -409,7 +402,7 @@ export class ExpenseTrackerService {
                 isActive: true
             },
             {
-                id: 'acc-5',
+                id: '65a7b1c2d3e4f5a6b7c8d9e4', // was 'acc-5'
                 name: 'Paytm Wallet',
                 type: 'WALLET',
                 balance: 2500,
@@ -419,25 +412,24 @@ export class ExpenseTrackerService {
             }
         ];
     }
-
     private getMockUpiProviders(): UpiProvider[] {
         return [
-            { id: 'upi-1', name: 'Google Pay', icon: 'bi-google' },
-            { id: 'upi-2', name: 'PhonePe', icon: 'bi-phone' },
-            { id: 'upi-3', name: 'Paytm', icon: 'bi-wallet2' },
-            { id: 'upi-4', name: 'Amazon Pay', icon: 'bi-amazon' },
-            { id: 'upi-5', name: 'BHIM', icon: 'bi-bank' },
-            { id: 'upi-6', name: 'WhatsApp Pay', icon: 'bi-whatsapp' },
-            { id: 'upi-7', name: 'Other', icon: 'bi-three-dots' }
+            { id: '65a7b1c2d3e4f5a6b7c8d9e5', name: 'Google Pay', icon: 'bi-google' }, // was 'upi-1'
+            { id: '65a7b1c2d3e4f5a6b7c8d9e6', name: 'PhonePe', icon: 'bi-phone' }, // was 'upi-2'
+            { id: '65a7b1c2d3e4f5a6b7c8d9e7', name: 'Paytm', icon: 'bi-wallet2' }, // was 'upi-3'
+            { id: '65a7b1c2d3e4f5a6b7c8d9e8', name: 'Amazon Pay', icon: 'bi-amazon' }, // was 'upi-4'
+            { id: '65a7b1c2d3e4f5a6b7c8d9e9', name: 'BHIM', icon: 'bi-bank' }, // was 'upi-5'
+            { id: '65a7b1c2d3e4f5a6b7c8d9ea', name: 'WhatsApp Pay', icon: 'bi-whatsapp' }, // was 'upi-6'
+            { id: '65a7b1c2d3e4f5a6b7c8d9eb', name: 'Other', icon: 'bi-three-dots' } // was 'upi-7'
+        ];
+    }
+    private getMockContacts(): Contact[] {
+        return [
+            { id: '65a7b1c2d3e4f5a6b7c8d9ec', name: 'John Doe', phone: '+91 98765 43210', email: 'john@example.com', upiId: 'john@paytm' }, // was 'cnt-1'
+            { id: '65a7b1c2d3e4f5a6b7c8d9ed', name: 'Jane Smith', phone: '+91 98765 43211', email: 'jane@example.com', upiId: 'jane@gpay' }, // was 'cnt-2'
+            { id: '65a7b1c2d3e4f5a6b7c8d9ee', name: 'Bob Johnson', phone: '+91 98765 43212', email: 'bob@example.com' }, // was 'cnt-3'
+            { id: '65a7b1c2d3e4f5a6b7c8d9ef', name: 'Alice Brown', phone: '+91 98765 43213', email: 'alice@example.com', upiId: 'alice@phonepe' } // was 'cnt-4'
         ];
     }
 
-    private getMockContacts(): Contact[] {
-        return [
-            { id: 'cnt-1', name: 'John Doe', phone: '+91 98765 43210', email: 'john@example.com', upiId: 'john@paytm' },
-            { id: 'cnt-2', name: 'Jane Smith', phone: '+91 98765 43211', email: 'jane@example.com', upiId: 'jane@gpay' },
-            { id: 'cnt-3', name: 'Bob Johnson', phone: '+91 98765 43212', email: 'bob@example.com' },
-            { id: 'cnt-4', name: 'Alice Brown', phone: '+91 98765 43213', email: 'alice@example.com', upiId: 'alice@phonepe' }
-        ];
-    }
 }

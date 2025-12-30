@@ -2,6 +2,7 @@
 annotated-types==0.7.0
 anyio==4.12.0
 bcrypt==5.0.0
+beanie==2.0.1
 boto3==1.42.17
 botocore==1.42.17
 click==8.3.1
@@ -15,11 +16,15 @@ h11==0.16.0
 httptools==0.7.1
 idna==3.11
 jmespath==1.0.1
+lazy-model==0.4.0
+motor==3.7.1
 passlib==1.7.4
 pyasn1==0.6.1
 pydantic==2.12.5
 pydantic_core==2.41.5
+pymongo==4.15.5
 python-dateutil==2.9.0.post0
+python-decouple==3.8
 python-dotenv==1.2.1
 python-jose==3.5.0
 python-multipart==0.0.21
