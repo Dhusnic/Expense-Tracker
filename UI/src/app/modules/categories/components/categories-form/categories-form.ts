@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { CdkDragDrop, DragDropModule, moveItemInArray } from '@angular/cdk/drag-drop';
 
@@ -46,9 +46,9 @@ export class CategoriesForm implements OnInit, OnDestroy {
 
   // Selected Icon Preview
   selectedCategoryIcon = signal<CategoryIcon | null>(null);
- 
-  category_id: string|undefined = undefined;
 
+  categoryId: string | undefined | null = undefined;
+  isDuplicated: boolean = false;
   // Transaction Types
   transactionTypes = [
     { value: TransactionType.INCOME, label: 'Income', icon: 'bi-arrow-down-circle', color: '#10b981' },
@@ -122,10 +122,18 @@ export class CategoriesForm implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private router: Router,
     private categoryService: CategoryService,
-    private expenseTrackerService: ExpenseTrackerService
+    private expenseTrackerService: ExpenseTrackerService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
+    debugger;
+    // Check for categoryId in query params
+    this.categoryId = this.route.snapshot.queryParamMap.get('categoryId');
+    this.isDuplicated = this.route.snapshot.queryParamMap.get('isDuplicated') === 'true';
+    if (this.categoryId) {
+      this.loadCategory(this.categoryId);
+    }
     this.initializeForm();
     this.loadExistingCategories();
     this.loadBootstrapIcons();
@@ -189,6 +197,126 @@ export class CategoriesForm implements OnInit, OnDestroy {
 
     // Update selected icon preview
     this.updateCategoryIconPreview();
+  }
+
+
+  /**
+   * Load category data for editing
+   */
+  private loadCategory(categoryId: string): void {
+    console.log('🔍 Loading category:', categoryId);
+    this.categoryService.getCategoryById(categoryId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response?.success && response?.data) {
+            console.log('✅ Category data:', response.data);
+            // ✅ Use the new populate method
+            this.populateCategoryForm(response.data);
+            // Update icon preview
+            this.updateCategoryIconPreview();
+            console.log('✅ Category loaded successfully');
+            console.log('📊 Subcategories count:', this.subcategoriesArray.length);
+          } else {
+            this.showErrorMessage('Failed to load category data');
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error loading category:', error);
+          this.showErrorMessage('Failed to load category details');
+        }
+      });
+  }
+
+  /**
+   * Populate category form with data (handles subcategories properly)
+   */
+  private populateCategoryForm(categoryData: any): void {
+    console.log('🔄 Populating form with category:', categoryData.name);
+
+    // STEP 1: Clear existing subcategories
+    this.subcategoriesArray.clear();
+    console.log('🗑️ Cleared existing subcategories');
+
+    // STEP 2: Rebuild subcategories FormArray
+    if (categoryData.subcategories && Array.isArray(categoryData.subcategories)) {
+      console.log(`➕ Adding ${categoryData.subcategories.length} subcategories...`);
+
+      categoryData.subcategories.forEach((sub: any, index: number) => {
+        const subcategoryGroup = this.createSubcategoryFormGroup(sub);
+        this.subcategoriesArray.push(subcategoryGroup);
+        console.log(`  ✓ Subcategory ${index + 1}: ${sub.name}`);
+      });
+    }
+
+    // STEP 3: Patch the main form
+    this.categoryForm.patchValue({
+      name: categoryData.name || '',
+      description: categoryData.description || '',
+      icon: {
+        type: categoryData.icon?.type || IconType.BOOTSTRAP_ICON,
+        value: categoryData.icon?.value || '',
+        color: categoryData.icon?.color || '#3b82f6',
+        backgroundColor: categoryData.icon?.backgroundColor || '#eff6ff'
+      },
+      transactionTypes: categoryData.transactionTypes || [
+        TransactionType.INCOME,
+        TransactionType.EXPENSE,
+        TransactionType.TRANSFER,
+        TransactionType.DEBT_GIVEN,
+        TransactionType.DEBT_RECEIVED,
+        TransactionType.DEBT_REPAYMENT,
+        TransactionType.DEBT_COLLECTION
+      ],
+      sortOrder: categoryData.sortOrder ?? 0,
+      isActive: categoryData.isActive ?? true,
+      isDefault: categoryData.isDefault ?? false,
+      budgetLimit: categoryData.budgetLimit || null,
+      isTaxDeductible: categoryData.isTaxDeductible || false,
+      taxCategory: categoryData.taxCategory || '',
+      defaultAccountId: categoryData.defaultAccountId || '',
+      linkedAccountIds: categoryData.linkedAccountIds || []
+    });
+
+    console.log('✅ Form populated. Subcategories:', this.subcategoriesArray.length);
+  }
+
+  /**
+   * Create subcategory FormGroup with data
+   */
+  private createSubcategoryFormGroup(subcategory?: any): FormGroup {
+    return this.fb.group({
+      id: [subcategory?.id || this.generateSubcategoryId()],
+      name: [
+        subcategory?.name || '',
+        [Validators.required, Validators.minLength(2), Validators.maxLength(100)]
+      ],
+      description: [subcategory?.description || '', [Validators.maxLength(500)]],
+      icon: this.fb.group({
+        type: [subcategory?.icon?.type || IconType.BOOTSTRAP_ICON, [Validators.required]],
+        value: [subcategory?.icon?.value || 'bi-circle', [Validators.required]],
+        color: [subcategory?.icon?.color || '#3b82f6'],
+        backgroundColor: [subcategory?.icon?.backgroundColor || '#eff6ff']
+      }),
+      sortOrder: [subcategory?.sortOrder ?? this.subcategoriesArray.length],
+      isActive: [subcategory?.isActive ?? true],
+      budgetLimit: [subcategory?.budgetLimit || null, [CategoryValidators.positiveBudget()]],
+      isTaxDeductible: [subcategory?.isTaxDeductible || false],
+      taxCategory: [subcategory?.taxCategory || ''],
+      defaultAccountId: [subcategory?.defaultAccountId || ''],
+      linkedAccountIds: [
+        subcategory?.linkedAccountIds || [],
+        [CategoryValidators.validLinkedAccounts()]
+      ],
+      createdAt: [subcategory?.createdAt || null],
+      updatedAt: [subcategory?.updatedAt || null]
+    });
+  }
+  /**
+   * Generate unique ID for new subcategories
+   */
+  private generateSubcategoryId(): string {
+    return `sub_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   /**
@@ -634,11 +762,11 @@ export class CategoriesForm implements OnInit, OnDestroy {
 
   //   // Check for duplicate category name
   //   const categoryName = this.categoryForm.get('name')?.value?.trim();
-  //   const isDuplicate = this.existingCategories().some(
+  //   const isDuplicated = this.existingCategories().some(
   //     cat => cat.name.trim().toLowerCase() === categoryName.toLowerCase()
   //   );
 
-  //   if (isDuplicate) {
+  //   if (isDuplicated) {
   //     this.showErrorMessage('A category with this name already exists');
   //     this.categoryForm.get('name')?.setErrors({ duplicate: true });
   //     return;
@@ -710,11 +838,11 @@ export class CategoriesForm implements OnInit, OnDestroy {
 
     // Check for duplicate category name
     const categoryName = this.categoryForm.get('name')?.value?.trim();
-    const isDuplicate = this.existingCategories().some(
+    const isDuplicated = this.existingCategories().some(
       cat => cat.name.trim().toLowerCase() === categoryName.toLowerCase()
     );
 
-    if (isDuplicate) {
+    if (isDuplicated) {
       this.showErrorMessage('A category with this name already exists');
       this.categoryForm.get('name')?.setErrors({ duplicate: true });
       return;
@@ -763,7 +891,7 @@ export class CategoriesForm implements OnInit, OnDestroy {
     const formValue = this.categoryForm.value;
 
     return {
-      category_id: this.category_id,
+      categoryId: this.categoryId,
       name: formValue.name?.trim(),
       icon: formValue.icon,
       description: formValue.description?.trim(),
@@ -787,7 +915,8 @@ export class CategoriesForm implements OnInit, OnDestroy {
       taxCategory: formValue.taxCategory,
       isDefault: formValue.isDefault,
       defaultAccountId: formValue.defaultAccountId,
-      linkedAccountIds: formValue.linkedAccountIds
+      linkedAccountIds: formValue.linkedAccountIds,
+      isDuplicated: this.isDuplicated
     };
   }
 
@@ -827,7 +956,7 @@ export class CategoriesForm implements OnInit, OnDestroy {
    */
   onCancel(): void {
     if (confirm('Are you sure you want to cancel? All unsaved changes will be lost.')) {
-      this.router.navigate(['/expense-tracker/categories']);
+      this.router.navigate(['/categories']);
     }
   }
 
@@ -1127,5 +1256,5 @@ export class CategoriesForm implements OnInit, OnDestroy {
     return this.subcategoriesArray.at(index) as FormGroup;
   }
 
-  
+
 }

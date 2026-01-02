@@ -125,7 +125,7 @@ export interface CategoriesListState {
  * Category with computed properties
  */
 export interface CategoryViewModel extends Category {
-    category_id?: string;
+    categoryId?: string;
     // Computed properties
     subcategoryCount: number;
     primaryTransactionType: TransactionType;

@@ -198,7 +198,7 @@ async def list_transactions(
     transaction_type: Optional[TransactionType] = None,
     start_date: Optional[date] = None,
     end_date: Optional[date] = None,
-    category_id: Optional[str] = None,
+    categoryId: Optional[str] = None,
     payment_method: Optional[PaymentMethod] = None,
     search: Optional[str] = None,
 ):
@@ -211,8 +211,8 @@ async def list_transactions(
         if transaction_type:
             query = query.find(Transaction.transaction_type == transaction_type)
 
-        if category_id:
-            query = query.find(Transaction.category_id == category_id)
+        if categoryId:
+            query = query.find(Transaction.categoryId == categoryId)
 
         if payment_method:
             query = query.find(Transaction.payment_method == payment_method)
@@ -278,8 +278,8 @@ async def update_transaction(
         update_data = data.dict(exclude_unset=True, by_alias=False)
 
         # Handle ObjectId conversions
-        if "category_id" in update_data and update_data["category_id"]:
-            update_data["category_id"] = str(update_data["category_id"])
+        if "categoryId" in update_data and update_data["categoryId"]:
+            update_data["categoryId"] = str(update_data["categoryId"])
 
         # Django-style update
         await transaction.update(**update_data)
@@ -358,11 +358,11 @@ async def list_categories(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/categories/{category_id}")
-async def get_category(category_id: str, current_user=Depends(get_current_user)):
+@router.get("/categories/{categoryId}")
+async def get_category(categoryId: str, current_user=Depends(get_current_user)):
     """Get single category with subcategories"""
     try:
-        category = await Category.get(str(category_id))
+        category = await Category.get(str(categoryId))
         if not category:
             raise HTTPException(status_code=404, detail="Category not found")
 
@@ -564,7 +564,7 @@ async def get_category_stats(
         # Group by category
         category_totals = {}
         for t in transactions:
-            cat_id = str(t.category_id)
+            cat_id = str(t.categoryId)
             category_totals[cat_id] = category_totals.get(cat_id, 0) + t.amount
 
         # Get category names

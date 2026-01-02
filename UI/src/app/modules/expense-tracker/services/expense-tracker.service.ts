@@ -42,12 +42,12 @@ export class ExpenseTrackerService {
      * Initialize mock data (remove this when API is ready)
      */
     private initializeMockData(): void {
-        this.categories.set(this.getMockCategories());
+        // this.categories.set(this.getMockCategories());
         this.accounts.set(this.getMockAccounts());
         this.upiProviders.set(this.getMockUpiProviders());
         this.contacts.set(this.getMockContacts());
 
-        this.categoriesSubject.next(this.getMockCategories());
+        // this.categoriesSubject.next(this.getMockCategories());
         this.accountsSubject.next(this.getMockAccounts());
     }
 
@@ -82,14 +82,14 @@ export class ExpenseTrackerService {
     /**
      * Get categories by transaction type
      */
-    getCategoriesByType(type: TransactionType): Observable<Category[]> {
-        // TODO: Replace with actual API call
-        // return this.http.get<ApiResponse<Category[]>>(
-        //   `${this.API_BASE_URL}/categories?type=${type}`
-        // ).pipe(map(response => response.data || []));
+    // getCategoriesByType(type: TransactionType): Observable<Category[]> {
+    //     // TODO: Replace with actual API call
+    //     // return this.http.get<ApiResponse<Category[]>>(
+    //     //   `${this.API_BASE_URL}/categories?type=${type}`
+    //     // ).pipe(map(response => response.data || []));
 
-        return of(this.getMockCategories().filter(cat => cat.type === type)).pipe(delay(300));
-    }
+    //     return of(this.getMockCategories().filter(cat => cat.type === type)).pipe(delay(300));
+    // }
 
     getTransaction(id: string): Observable<TransactionFormData> {
         return this.http.get<TransactionFormData>(`${this.API_BASE_URL}/transactions/${id}`);
@@ -182,181 +182,181 @@ export class ExpenseTrackerService {
     // ==================== MOCK DATA METHODS ====================
     // TODO: Remove these when API is integrated
 
-    private getMockCategories(): Category[] {
-        return [
-            // Income Categories
-            {
-                id: '507f1f77bcf86cd799439011', // was 'inc-1'
-                name: 'Salary',
-                icon: 'bi-cash-stack',
-                color: '#10b981',
-                type: TransactionType.INCOME,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439012', name: 'Monthly Salary', icon: 'bi-calendar-month', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
-                    { id: '507f1f77bcf86cd799439013', name: 'Bonus', icon: 'bi-gift', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
-                    { id: '507f1f77bcf86cd799439014', name: 'Overtime', icon: 'bi-clock', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439015', // was 'inc-2'
-                name: 'Business Income',
-                icon: 'bi-briefcase',
-                color: '#06b6d4',
-                type: TransactionType.INCOME,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439016', name: 'Sales', icon: 'bi-cart', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
-                    { id: '507f1f77bcf86cd799439017', name: 'Services', icon: 'bi-tools', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
-                    { id: '507f1f77bcf86cd799439018', name: 'Consulting', icon: 'bi-person-badge', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439019', // was 'inc-3'
-                name: 'Investment',
-                icon: 'bi-graph-up',
-                color: '#8b5cf6',
-                type: TransactionType.INCOME,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943901a', name: 'Dividends', icon: 'bi-pie-chart', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
-                    { id: '507f1f77bcf86cd79943901b', name: 'Interest', icon: 'bi-percent', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
-                    { id: '507f1f77bcf86cd79943901c', name: 'Capital Gains', icon: 'bi-arrow-up-circle', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd79943901d', // was 'inc-4'
-                name: 'Other Income',
-                icon: 'bi-plus-circle',
-                color: '#f59e0b',
-                type: TransactionType.INCOME
-            },
+    // private getMockCategories(): Category[] {
+    //     return [
+    //         // Income Categories
+    //         {
+    //             id: '507f1f77bcf86cd799439011', // was 'inc-1'
+    //             name: 'Salary',
+    //             icon: 'bi-cash-stack',
+    //             color: '#10b981',
+    //             type: TransactionType.INCOME,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439012', name: 'Monthly Salary', icon: 'bi-calendar-month', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
+    //                 { id: '507f1f77bcf86cd799439013', name: 'Bonus', icon: 'bi-gift', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' },
+    //                 { id: '507f1f77bcf86cd799439014', name: 'Overtime', icon: 'bi-clock', color: '#10b981', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439011' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439015', // was 'inc-2'
+    //             name: 'Business Income',
+    //             icon: 'bi-briefcase',
+    //             color: '#06b6d4',
+    //             type: TransactionType.INCOME,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439016', name: 'Sales', icon: 'bi-cart', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
+    //                 { id: '507f1f77bcf86cd799439017', name: 'Services', icon: 'bi-tools', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' },
+    //                 { id: '507f1f77bcf86cd799439018', name: 'Consulting', icon: 'bi-person-badge', color: '#06b6d4', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439015' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439019', // was 'inc-3'
+    //             name: 'Investment',
+    //             icon: 'bi-graph-up',
+    //             color: '#8b5cf6',
+    //             type: TransactionType.INCOME,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943901a', name: 'Dividends', icon: 'bi-pie-chart', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
+    //                 { id: '507f1f77bcf86cd79943901b', name: 'Interest', icon: 'bi-percent', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' },
+    //                 { id: '507f1f77bcf86cd79943901c', name: 'Capital Gains', icon: 'bi-arrow-up-circle', color: '#8b5cf6', type: TransactionType.INCOME, parentId: '507f1f77bcf86cd799439019' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd79943901d', // was 'inc-4'
+    //             name: 'Other Income',
+    //             icon: 'bi-plus-circle',
+    //             color: '#f59e0b',
+    //             type: TransactionType.INCOME
+    //         },
 
-            // Expense Categories
-            {
-                id: '507f1f77bcf86cd79943901e', // was 'exp-1'
-                name: 'Food & Dining',
-                icon: 'bi-cup-straw',
-                color: '#ef4444',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943901f', name: 'Groceries', icon: 'bi-bag', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
-                    { id: '507f1f77bcf86cd799439020', name: 'Restaurants', icon: 'bi-shop', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
-                    { id: '507f1f77bcf86cd799439021', name: 'Cafes', icon: 'bi-cup-hot', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
-                    { id: '507f1f77bcf86cd799439022', name: 'Food Delivery', icon: 'bi-bicycle', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439023', // was 'exp-2'
-                name: 'Transportation',
-                icon: 'bi-car-front',
-                color: '#3b82f6',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439024', name: 'Fuel', icon: 'bi-fuel-pump', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
-                    { id: '507f1f77bcf86cd799439025', name: 'Public Transport', icon: 'bi-bus-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
-                    { id: '507f1f77bcf86cd799439026', name: 'Taxi/Ride Share', icon: 'bi-taxi-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
-                    { id: '507f1f77bcf86cd799439027', name: 'Parking', icon: 'bi-p-square', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
-                    { id: '507f1f77bcf86cd799439028', name: 'Vehicle Maintenance', icon: 'bi-wrench', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439029', // was 'exp-3'
-                name: 'Shopping',
-                icon: 'bi-bag-heart',
-                color: '#ec4899',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943902a', name: 'Clothing', icon: 'bi-bag', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
-                    { id: '507f1f77bcf86cd79943902b', name: 'Electronics', icon: 'bi-laptop', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
-                    { id: '507f1f77bcf86cd79943902c', name: 'Household Items', icon: 'bi-house', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
-                    { id: '507f1f77bcf86cd79943902d', name: 'Personal Care', icon: 'bi-heart-pulse', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd79943902e', // was 'exp-4'
-                name: 'Bills & Utilities',
-                icon: 'bi-receipt',
-                color: '#f97316',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943902f', name: 'Electricity', icon: 'bi-lightning', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
-                    { id: '507f1f77bcf86cd799439030', name: 'Water', icon: 'bi-droplet', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
-                    { id: '507f1f77bcf86cd799439031', name: 'Internet', icon: 'bi-wifi', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
-                    { id: '507f1f77bcf86cd799439032', name: 'Mobile', icon: 'bi-phone', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
-                    { id: '507f1f77bcf86cd799439033', name: 'Gas', icon: 'bi-fire', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439034', // was 'exp-5'
-                name: 'Entertainment',
-                icon: 'bi-film',
-                color: '#a855f7',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439035', name: 'Movies', icon: 'bi-camera-reels', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
-                    { id: '507f1f77bcf86cd799439036', name: 'Streaming Services', icon: 'bi-play-circle', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
-                    { id: '507f1f77bcf86cd799439037', name: 'Gaming', icon: 'bi-controller', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
-                    { id: '507f1f77bcf86cd799439038', name: 'Sports', icon: 'bi-trophy', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439039', // was 'exp-6'
-                name: 'Healthcare',
-                icon: 'bi-heart-pulse-fill',
-                color: '#dc2626',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943903a', name: 'Doctor Visits', icon: 'bi-hospital', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
-                    { id: '507f1f77bcf86cd79943903b', name: 'Medicines', icon: 'bi-capsule', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
-                    { id: '507f1f77bcf86cd79943903c', name: 'Lab Tests', icon: 'bi-clipboard2-pulse', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
-                    { id: '507f1f77bcf86cd79943903d', name: 'Insurance', icon: 'bi-shield-plus', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd79943903e', // was 'exp-7'
-                name: 'Education',
-                icon: 'bi-book',
-                color: '#0ea5e9',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd79943903f', name: 'Tuition Fees', icon: 'bi-mortarboard', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
-                    { id: '507f1f77bcf86cd799439040', name: 'Books', icon: 'bi-journal', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
-                    { id: '507f1f77bcf86cd799439041', name: 'Online Courses', icon: 'bi-laptop', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
-                    { id: '507f1f77bcf86cd799439042', name: 'Stationery', icon: 'bi-pencil', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439043', // was 'exp-8'
-                name: 'Housing',
-                icon: 'bi-house-door',
-                color: '#84cc16',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439044', name: 'Rent', icon: 'bi-key', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
-                    { id: '507f1f77bcf86cd799439045', name: 'Mortgage', icon: 'bi-bank2', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
-                    { id: '507f1f77bcf86cd799439046', name: 'Maintenance', icon: 'bi-tools', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
-                    { id: '507f1f77bcf86cd799439047', name: 'Property Tax', icon: 'bi-file-text', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd799439048', // was 'exp-9'
-                name: 'Travel',
-                icon: 'bi-airplane',
-                color: '#06b6d4',
-                type: TransactionType.EXPENSE,
-                subcategories: [
-                    { id: '507f1f77bcf86cd799439049', name: 'Flights', icon: 'bi-airplane-engines', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
-                    { id: '507f1f77bcf86cd79943904a', name: 'Hotels', icon: 'bi-building', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
-                    { id: '507f1f77bcf86cd79943904b', name: 'Vacation', icon: 'bi-palm-tree', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' }
-                ]
-            },
-            {
-                id: '507f1f77bcf86cd79943904c', // was 'exp-10'
-                name: 'Other Expenses',
-                icon: 'bi-three-dots',
-                color: '#6b7280',
-                type: TransactionType.EXPENSE
-            }
-        ];
-    }
+    //         // Expense Categories
+    //         {
+    //             id: '507f1f77bcf86cd79943901e', // was 'exp-1'
+    //             name: 'Food & Dining',
+    //             icon: 'bi-cup-straw',
+    //             color: '#ef4444',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943901f', name: 'Groceries', icon: 'bi-bag', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+    //                 { id: '507f1f77bcf86cd799439020', name: 'Restaurants', icon: 'bi-shop', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+    //                 { id: '507f1f77bcf86cd799439021', name: 'Cafes', icon: 'bi-cup-hot', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' },
+    //                 { id: '507f1f77bcf86cd799439022', name: 'Food Delivery', icon: 'bi-bicycle', color: '#ef4444', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943901e' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439023', // was 'exp-2'
+    //             name: 'Transportation',
+    //             icon: 'bi-car-front',
+    //             color: '#3b82f6',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439024', name: 'Fuel', icon: 'bi-fuel-pump', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+    //                 { id: '507f1f77bcf86cd799439025', name: 'Public Transport', icon: 'bi-bus-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+    //                 { id: '507f1f77bcf86cd799439026', name: 'Taxi/Ride Share', icon: 'bi-taxi-front', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+    //                 { id: '507f1f77bcf86cd799439027', name: 'Parking', icon: 'bi-p-square', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' },
+    //                 { id: '507f1f77bcf86cd799439028', name: 'Vehicle Maintenance', icon: 'bi-wrench', color: '#3b82f6', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439023' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439029', // was 'exp-3'
+    //             name: 'Shopping',
+    //             icon: 'bi-bag-heart',
+    //             color: '#ec4899',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943902a', name: 'Clothing', icon: 'bi-bag', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+    //                 { id: '507f1f77bcf86cd79943902b', name: 'Electronics', icon: 'bi-laptop', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+    //                 { id: '507f1f77bcf86cd79943902c', name: 'Household Items', icon: 'bi-house', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' },
+    //                 { id: '507f1f77bcf86cd79943902d', name: 'Personal Care', icon: 'bi-heart-pulse', color: '#ec4899', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439029' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd79943902e', // was 'exp-4'
+    //             name: 'Bills & Utilities',
+    //             icon: 'bi-receipt',
+    //             color: '#f97316',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943902f', name: 'Electricity', icon: 'bi-lightning', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+    //                 { id: '507f1f77bcf86cd799439030', name: 'Water', icon: 'bi-droplet', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+    //                 { id: '507f1f77bcf86cd799439031', name: 'Internet', icon: 'bi-wifi', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+    //                 { id: '507f1f77bcf86cd799439032', name: 'Mobile', icon: 'bi-phone', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' },
+    //                 { id: '507f1f77bcf86cd799439033', name: 'Gas', icon: 'bi-fire', color: '#f97316', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943902e' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439034', // was 'exp-5'
+    //             name: 'Entertainment',
+    //             icon: 'bi-film',
+    //             color: '#a855f7',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439035', name: 'Movies', icon: 'bi-camera-reels', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+    //                 { id: '507f1f77bcf86cd799439036', name: 'Streaming Services', icon: 'bi-play-circle', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+    //                 { id: '507f1f77bcf86cd799439037', name: 'Gaming', icon: 'bi-controller', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' },
+    //                 { id: '507f1f77bcf86cd799439038', name: 'Sports', icon: 'bi-trophy', color: '#a855f7', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439034' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439039', // was 'exp-6'
+    //             name: 'Healthcare',
+    //             icon: 'bi-heart-pulse-fill',
+    //             color: '#dc2626',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943903a', name: 'Doctor Visits', icon: 'bi-hospital', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+    //                 { id: '507f1f77bcf86cd79943903b', name: 'Medicines', icon: 'bi-capsule', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+    //                 { id: '507f1f77bcf86cd79943903c', name: 'Lab Tests', icon: 'bi-clipboard2-pulse', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' },
+    //                 { id: '507f1f77bcf86cd79943903d', name: 'Insurance', icon: 'bi-shield-plus', color: '#dc2626', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439039' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd79943903e', // was 'exp-7'
+    //             name: 'Education',
+    //             icon: 'bi-book',
+    //             color: '#0ea5e9',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd79943903f', name: 'Tuition Fees', icon: 'bi-mortarboard', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+    //                 { id: '507f1f77bcf86cd799439040', name: 'Books', icon: 'bi-journal', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+    //                 { id: '507f1f77bcf86cd799439041', name: 'Online Courses', icon: 'bi-laptop', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' },
+    //                 { id: '507f1f77bcf86cd799439042', name: 'Stationery', icon: 'bi-pencil', color: '#0ea5e9', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd79943903e' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439043', // was 'exp-8'
+    //             name: 'Housing',
+    //             icon: 'bi-house-door',
+    //             color: '#84cc16',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439044', name: 'Rent', icon: 'bi-key', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+    //                 { id: '507f1f77bcf86cd799439045', name: 'Mortgage', icon: 'bi-bank2', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+    //                 { id: '507f1f77bcf86cd799439046', name: 'Maintenance', icon: 'bi-tools', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' },
+    //                 { id: '507f1f77bcf86cd799439047', name: 'Property Tax', icon: 'bi-file-text', color: '#84cc16', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439043' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd799439048', // was 'exp-9'
+    //             name: 'Travel',
+    //             icon: 'bi-airplane',
+    //             color: '#06b6d4',
+    //             type: TransactionType.EXPENSE,
+    //             subcategories: [
+    //                 { id: '507f1f77bcf86cd799439049', name: 'Flights', icon: 'bi-airplane-engines', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
+    //                 { id: '507f1f77bcf86cd79943904a', name: 'Hotels', icon: 'bi-building', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' },
+    //                 { id: '507f1f77bcf86cd79943904b', name: 'Vacation', icon: 'bi-palm-tree', color: '#06b6d4', type: TransactionType.EXPENSE, parentId: '507f1f77bcf86cd799439048' }
+    //             ]
+    //         },
+    //         {
+    //             id: '507f1f77bcf86cd79943904c', // was 'exp-10'
+    //             name: 'Other Expenses',
+    //             icon: 'bi-three-dots',
+    //             color: '#6b7280',
+    //             type: TransactionType.EXPENSE
+    //         }
+    //     ];
+    // }
     private getMockAccounts(): Account[] {
         return [
             {

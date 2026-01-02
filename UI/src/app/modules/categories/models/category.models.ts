@@ -43,7 +43,7 @@ export interface Subcategory {
  */
 export interface Category {
     id?: string;
-    category_id?: string;
+    categoryId?: string;
     name: string;
     icon: CategoryIcon;
     description?: string;
@@ -65,7 +65,7 @@ export interface Category {
  * Category Form Data (for submission)
  */
 export interface CategoryFormData {
-    category_id: string|undefined;
+    categoryId: string|undefined|null;
     name: string;
     icon: CategoryIcon;
     description?: string;
@@ -79,6 +79,7 @@ export interface CategoryFormData {
     isDefault: boolean;
     defaultAccountId?: string;
     linkedAccountIds: string[];
+    isDuplicated?: boolean;
 }
 
 /**

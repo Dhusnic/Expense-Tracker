@@ -24,26 +24,26 @@ async def save_category(data: CategoryCreate):
     try:
         category_data = data.model_dump(by_alias=False, exclude_unset=True)
         
-        category_id = category_data.get("category_id")
+        categoryId = category_data.get("CategoryID")
         is_duplicated = category_data.pop("is_duplicated", False)
         
-        is_new = not category_id or category_id in utils.none_list
-        is_duplicate = category_id and is_duplicated
-        is_update = category_id and not is_duplicated
+        is_new = not categoryId or categoryId in utils.none_list
+        is_duplicate = categoryId and is_duplicated
+        is_update = categoryId and not is_duplicated
         
         # === CREATE NEW CATEGORY ===
         if is_new:
-            category_data.pop("category_id", None)
+            category_data.pop("categoryId", None)
             category_data.pop("id", None)  # ✅ Remove frontend id
             
-            category_data["category_id"] = utils.get_id()
+            category_data["categoryId"] = utils.get_id()
             category_data["created_at"] = datetime.utcnow()
             category_data["is_deleted"] = False
             
             # ✅ Generate IDs for subcategories
             if "subcategories" in category_data:
                 for i, sub in enumerate(category_data["subcategories"]):
-                    sub["id"] = utils.get_id()  # ✅ Use 'id' not 'subcategory_id'
+                    sub["id"] = utils.get_id()  # ✅ Use 'id' not 'subcategoryId'
                     sub["sort_order"] = i
                     sub["created_at"] = datetime.utcnow()
             
@@ -59,14 +59,14 @@ async def save_category(data: CategoryCreate):
         # === UPDATE EXISTING CATEGORY ===
         elif is_update:
             category = await Category.find_one(
-                Category.category_id == category_id,
+                Category.categoryId == categoryId,
                 Category.is_deleted == False,
             )
             
             if not category:
                 raise HTTPException(status_code=404, detail="Category not found")
             
-            category_data.pop("category_id", None)
+            category_data.pop("categoryId", None)
             category_data.pop("created_at", None)
             category_data["updated_at"] = datetime.utcnow()
             
@@ -102,35 +102,6 @@ async def save_category(data: CategoryCreate):
             message="Failed to save category",
             errors=[str(e)]
         )
-
-
-@router.get("/categories/{category_id}")
-async def get_category(category_id: str):
-    """Get single category by custom category_id"""
-    try:
-        # Use find_one() for custom fields
-        category = await Category.find_one(
-            Category.category_id == category_id,
-            Category.is_deleted == False
-        )
-        
-        if not category:
-            raise HTTPException(status_code=404, detail="Category not found")
-        
-        return ApiResponse(
-            success=True,
-            data=category.model_dump(by_alias=True, mode='json'),
-            message="Category retrieved successfully"
-        )
-        
-    except HTTPException:
-        raise
-    except Exception as e:
-        import traceback
-        print(f"Error getting category: {str(e)}")
-        print(traceback.format_exc())
-        raise HTTPException(status_code=400, detail=str(e))
-
 
 @router.get("/get_list")
 async def list_categories(
@@ -196,71 +167,6 @@ async def list_categories(
         print(traceback.format_exc())
         raise HTTPException(status_code=400, detail=str(e))
 
-
-@router.delete("/categories/{category_id}")
-async def delete_category(category_id: str):
-    """Soft delete category"""
-    try:
-        category = await Category.find_one(
-            Category.category_id == category_id,
-            Category.is_deleted == False
-        )
-        
-        if not category:
-            raise HTTPException(status_code=404, detail="Category not found")
-        
-        # Prevent deletion of system categories
-        if category.is_system_category:
-            raise HTTPException(
-                status_code=403, 
-                detail="System categories cannot be deleted"
-            )
-        
-        # Soft delete
-        category.is_deleted = True
-        category.updated_at = datetime.utcnow()
-        await category.save()
-        
-        return ApiResponse(
-            success=True, 
-            message="Category deleted successfully"
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        import traceback
-        print(f"Error deleting category: {str(e)}")
-        print(traceback.format_exc())
-        raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.put("/categories/{category_id}/reorder")
-async def reorder_categories(category_id: str, new_order: int = Query(..., ge=0)):
-    """Update category display order"""
-    try:
-        category = await Category.find_one(
-            Category.category_id == category_id,
-            Category.is_deleted == False
-        )
-        
-        if not category:
-            raise HTTPException(status_code=404, detail="Category not found")
-        
-        category.display_order = new_order
-        category.updated_at = datetime.utcnow()
-        await category.save()
-        
-        return ApiResponse(
-            success=True,
-            data=category.model_dump(by_alias=True, mode="json"),
-            message="Category order updated successfully"
-        )
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
-
-
 @router.get("/stats/summary")
 async def get_category_stats():
     """Get category statistics"""
@@ -291,4 +197,94 @@ async def get_category_stats():
             "data": stats
         }
     except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.put("/categories/{categoryId}/reorder")
+async def reorder_categories(categoryId: str, new_order: int = Query(..., ge=0)):
+    """Update category display order"""
+    try:
+        category = await Category.find_one(
+            Category.categoryId == categoryId,
+            Category.is_deleted == False
+        )
+        
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        category.display_order = new_order
+        category.updated_at = datetime.utcnow()
+        await category.save()
+        
+        return ApiResponse(
+            success=True,
+            data=category.model_dump(by_alias=True, mode="json"),
+            message="Category order updated successfully"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.delete("/{categoryId}")
+async def delete_category(categoryId: str):
+    """Soft delete category"""
+    try:
+        category = await Category.find_one(
+            Category.categoryId == categoryId,
+            Category.is_deleted == False
+        )
+        
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        # Prevent deletion of system categories
+        if category.is_system_category:
+            raise HTTPException(
+                status_code=403, 
+                detail="System categories cannot be deleted"
+            )
+        
+        # Soft delete
+        category.is_deleted = True
+        category.updated_at = datetime.utcnow()
+        await category.save()
+        
+        return ApiResponse(
+            success=True, 
+            message="Category deleted successfully"
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        print(f"Error deleting category: {str(e)}")
+        print(traceback.format_exc())
+        raise HTTPException(status_code=400, detail=str(e))
+
+@router.get("/{categoryId}")
+async def get_category(categoryId: str):
+    """Get single category by custom categoryId"""
+    try:
+        # Use find_one() for custom fields
+        category = await Category.find_one(
+            Category.categoryId == categoryId,
+            Category.is_deleted == False
+        )
+        
+        if not category:
+            raise HTTPException(status_code=404, detail="Category not found")
+        
+        return ApiResponse(
+            success=True,
+            data=category.model_dump(by_alias=True, mode='json'),
+            message="Category retrieved successfully"
+        )
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        import traceback
+        print(f"Error getting category: {str(e)}")
+        print(traceback.format_exc())
         raise HTTPException(status_code=400, detail=str(e))

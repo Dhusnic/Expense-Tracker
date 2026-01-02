@@ -324,54 +324,184 @@
                         <!-- Category -->
                         @if (transactionForm.get('step1.transactionType')?.value
                         !== TransactionType.TRANSFER) {
-                        <div class="col-md-6">
+
+                        <!-- Category Selection -->
+                        <div class="col-12">
                             <div class="form-group">
-                                <label
-                                    class="form-label required">Category</label>
-                                <select
-                                    class="form-select form-select-lg"
-                                    formControlName="categoryId"
-                                    [class.is-invalid]="transactionForm.get('step2.categoryId')?.invalid && transactionForm.get('step2.categoryId')?.touched">
-                                    <option [value]="null">Select
-                                        Category</option>
-                                    @for (category of filteredCategories();
-                                    track category.id) {
-                                    <option [value]="category.id">
-                                        <i [class]="'bi ' + category.icon"></i>
-                                        {{ category.name }}
-                                    </option>
+                                <label class="form-label required">
+                                    <i class="bi bi-tag-fill me-2"></i>
+                                    Category
+                                </label>
+
+                                <!-- Selected Category Display -->
+                                <div class="category-selector-wrapper">
+                                    <button
+                                        type="button"
+                                        class="category-selector-btn"
+                                        [class.is-invalid]="transactionForm.get('step2.categoryId')?.invalid && transactionForm.get('step2.categoryId')?.touched"
+                                        [class.has-value]="selectedCategory()"
+                                        (click)="openCategoryModal()">
+
+                                        @if (selectedCategory()) {
+                                        <!-- Selected Category Preview -->
+                                        <div class="selected-category-preview">
+                                            <div class="category-icon-wrapper">
+                                                @if
+                                                (selectedCategory()!.icon.type
+                                                === IconType.BOOTSTRAP_ICON) {
+                                                <i
+                                                    [class]="'bi ' + selectedCategory()!.icon.value"
+                                                    [style.color]="selectedCategory()!.icon.color || '#6366f1'"
+                                                    [style.background-color]="selectedCategory()!.icon.backgroundColor || 'transparent'"></i>
+                                                } @else if
+                                                (selectedCategory()!.icon.type
+                                                === IconType.EMOJI ) {
+                                                <span class="category-emoji">{{
+                                                    selectedCategory()!.icon.value
+                                                    }}</span>
+                                                } @else {
+                                                <img
+                                                    [src]="selectedCategory()!.icon.value"
+                                                    [alt]="selectedCategory()!.name"
+                                                    class="category-image">
+                                                }
+                                            </div>
+                                            <div class="category-info">
+                                                <span class="category-name">{{
+                                                    selectedCategory()!.name
+                                                    }}</span>
+                                                @if
+                                                (selectedCategory()!.description)
+                                                {
+                                                <span
+                                                    class="category-description">{{
+                                                    selectedCategory()!.description
+                                                    }}</span>
+                                                }
+                                            </div>
+                                            <i
+                                                class="bi bi-chevron-down ms-auto"></i>
+                                        </div>
+                                        } @else {
+                                        <!-- Placeholder -->
+                                        <div class="category-placeholder">
+                                            <i class="bi bi-search"></i>
+                                            <span>Search and select
+                                                category</span>
+                                            <i
+                                                class="bi bi-chevron-down ms-auto"></i>
+                                        </div>
+                                        }
+                                    </button>
+
+                                    @if
+                                    (transactionForm.get('step2.categoryId')?.invalid
+                                    &&
+                                    transactionForm.get('step2.categoryId')?.touched)
+                                    {
+                                    <div class="invalid-feedback d-block">
+                                        <i
+                                            class="bi bi-exclamation-circle me-1"></i>
+                                        Category is required
+                                    </div>
                                     }
-                                </select>
-                                @if
-                                (transactionForm.get('step2.categoryId')?.invalid
-                                &&
-                                transactionForm.get('step2.categoryId')?.touched)
-                                {
-                                <div class="invalid-feedback">
-                                    Category is required
                                 </div>
-                                }
+
+                                <!-- Hidden form control for validation -->
+                                <input
+                                    type="hidden"
+                                    formControlName="categoryId">
                             </div>
                         </div>
 
-                        <!-- Subcategory -->
+                        <!-- Subcategory Selection (if category has subcategories) -->
                         @if (subcategories().length > 0) {
-                        <div class="col-md-6">
+                        <div class="col-12">
                             <div class="form-group">
-                                <label class="form-label">Subcategory</label>
-                                <select class="form-select form-select-lg"
-                                    formControlName="subcategoryId">
-                                    <option [value]="null">Select Subcategory
-                                        (Optional)</option>
+                                <label class="form-label">
+                                    <i class="bi bi-folder me-2"></i>
+                                    Subcategory
+                                    <span
+                                        class="text-muted ms-2">(Optional)</span>
+                                </label>
+
+                                <!-- Subcategory Grid -->
+                                <div class="subcategory-grid">
                                     @for (subcategory of subcategories(); track
                                     subcategory.id) {
-                                    <option [value]="subcategory.id">{{
-                                        subcategory.name }}</option>
+                                    <button
+                                        type="button"
+                                        class="subcategory-card"
+                                        [class.selected]="selectedSubcategory()?.id === subcategory.id"
+                                        (click)="selectSubcategory(subcategory)">
+
+                                        <div class="subcategory-icon">
+                                            @if (subcategory.icon.type ===
+                                            IconType.BOOTSTRAP_ICON) {
+                                            <i
+                                                [class]="'bi ' + subcategory.icon.value"
+                                                [style.color]="subcategory.icon.color || '#6366f1'"
+                                                [style.background-color]="subcategory.icon.backgroundColor || 'transparent'"></i>
+                                            } @else if (subcategory.icon.type
+                                            === IconType.EMOJI) {
+                                            <span class="subcategory-emoji">{{
+                                                subcategory.icon.value }}</span>
+                                            } @else {
+                                            <img [src]="subcategory.icon.value"
+                                                [alt]="subcategory.name"
+                                                class="subcategory-image">
+                                            }
+                                        </div>
+
+                                        <div class="subcategory-info">
+                                            <span class="subcategory-name">{{
+                                                subcategory.name }}</span>
+                                            @if (subcategory.description) {
+                                            <span
+                                                class="subcategory-description">{{
+                                                subcategory.description
+                                                }}</span>
+                                            }
+                                            @if (subcategory.budgetLimit) {
+                                            <span class="subcategory-budget">
+                                                <i class="bi bi-piggy-bank"></i>
+                                                Budget: ₹{{
+                                                subcategory.budgetLimit | number
+                                                }}
+                                            </span>
+                                            }
+                                        </div>
+
+                                        <i
+                                            class="bi bi-check-circle-fill check-icon"></i>
+                                    </button>
                                     }
-                                </select>
+
+                                    <!-- Clear Subcategory Button -->
+                                    @if (selectedSubcategory()) {
+                                    <button
+                                        type="button"
+                                        class="subcategory-card clear-subcategory"
+                                        (click)="clearSubcategory()">
+                                        <div class="subcategory-icon">
+                                            <i class="bi bi-x-circle"></i>
+                                        </div>
+                                        <div class="subcategory-info">
+                                            <span class="subcategory-name">No
+                                                Subcategory</span>
+                                        </div>
+                                    </button>
+                                    }
+                                </div>
+
+                                <!-- Hidden form control for subcategory -->
+                                <input
+                                    type="hidden"
+                                    formControlName="subcategoryId">
                             </div>
                         </div>
                         }
+
                         }
 
                         <!-- Contact (for debt transactions) -->
@@ -1226,8 +1356,7 @@
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-primary"
-                                    (click)="nextStep()"
-                                    >
+                                    (click)="nextStep()">
                                     Next
                                     <i class="bi bi-arrow-right ms-2"></i>
                                 </button>
@@ -1255,3 +1384,196 @@
         </div>
     </div>
 </div>
+
+
+<!-- ========================================
+     📋 CATEGORY SELECTION MODAL
+     ======================================== -->
+
+@if (showCategoryModal()) {
+<div class="modal-overlay" (click)="closeCategoryModal()">
+    <div class="category-modal" (click)="$event.stopPropagation()">
+
+        <!-- Modal Header -->
+        <div class="modal-header">
+            <h3 class="modal-title">
+                <i class="bi bi-tag-fill me-2"></i>
+                Select Category
+            </h3>
+            <button 
+                type="button"
+                class="btn-close-modal"
+                (click)="closeCategoryModal()"
+                aria-label="Close modal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="modal-search">
+            <div class="search-input-wrapper">
+                <i class="bi bi-search search-icon"></i>
+                <input 
+                    type="text"
+                    class="search-input"
+                    placeholder="Search categories..."
+                    [value]="categorySearchQuery()"
+                    (input)="categorySearchQuery.set($any($event.target).value)"
+                    #searchInput>
+                @if (categorySearchQuery()) {
+                    <button 
+                        type="button"
+                        class="btn-clear-search"
+                        (click)="clearCategorySearch()">
+                        <i class="bi bi-x"></i>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="modal-filters">
+            <button 
+                type="button"
+                class="filter-tab"
+                [class.active]="categoryFilter() === 'all'"
+                (click)="setCategoryFilter('all')">
+                <i class="bi bi-collection"></i>
+                All Categories
+                <span class="badge">{{ filteredCategories().length }}</span>
+            </button>
+            <button 
+                type="button"
+                class="filter-tab"
+                [class.active]="categoryFilter() === 'recent'"
+                (click)="setCategoryFilter('recent')">
+                <i class="bi bi-clock-history"></i>
+                Recent
+            </button>
+            <button 
+                type="button"
+                class="filter-tab"
+                [class.active]="categoryFilter() === 'favorites'"
+                (click)="setCategoryFilter('favorites')">
+                <i class="bi bi-star-fill"></i>
+                Favorites
+            </button>
+        </div>
+
+        <!-- Category List -->
+        <div class="modal-body">
+            @if (filteredCategories().length > 0) {
+                <div class="category-list">
+                    @for (category of filteredCategories(); track category.id || category.categoryId) {
+                        <button
+                            type="button"
+                            class="category-item"
+                            [class.selected]="selectedCategory()?.id === category.id || selectedCategory()?.categoryId === category.categoryId"
+                            (click)="selectCategory(category)">
+
+                            <!-- Category Icon -->
+                            <div class="category-item-icon">
+                                @if (category.icon.type === IconType.BOOTSTRAP_ICON) {
+                                    <i [class]="'bi ' + category.icon.value"
+                                       [style.color]="category.icon.color || '#6366f1'"
+                                       [style.background-color]="category.icon.backgroundColor || 'transparent'"></i>
+                                } @else if (category.icon.type === IconType.EMOJI) {
+                                    <span class="category-emoji-large">{{ category.icon.value }}</span>
+                                } @else {
+                                    <img [src]="category.icon.value" 
+                                         [alt]="category.name"
+                                         class="category-image-large">
+                                }
+                            </div>
+
+                            <!-- Category Details -->
+                            <div class="category-item-details">
+                                <div class="category-item-header">
+                                    <span class="category-item-name">{{ category.name }}</span>
+                                    @if (category.isDefault) {
+                                        <span class="badge badge-default">
+                                            <i class="bi bi-star-fill"></i>
+                                            Default
+                                        </span>
+                                    }
+                                </div>
+
+                                @if (category.description) {
+                                    <p class="category-item-description">
+                                        {{ category.description }}
+                                    </p>
+                                }
+
+                                <!-- Category Meta Info -->
+                                <div class="category-item-meta">
+                                    @if (category.subcategories && category.subcategories.length > 0) {
+                                        <span class="meta-tag">
+                                            <i class="bi bi-folder"></i>
+                                            {{ category.subcategories.length }} subcategories
+                                        </span>
+                                    }
+                                    @if (category.budgetLimit) {
+                                        <span class="meta-tag">
+                                            <i class="bi bi-piggy-bank"></i>
+                                            ₹{{ category.budgetLimit | number }}
+                                        </span>
+                                    }
+                                    @if (category.isTaxDeductible) {
+                                        <span class="meta-tag tax-deductible">
+                                            <i class="bi bi-receipt"></i>
+                                            Tax Deductible
+                                        </span>
+                                    }
+                                </div>
+
+                                <!-- Transaction Types -->
+                                @if (category.transactionTypes && category.transactionTypes.length > 0) {
+                                    <div class="category-item-types">
+                                        @for (type of category.transactionTypes; track type) {
+                                            <span class="type-badge" [attr.data-type]="type">
+                                                {{ getTransactionTypeLabel(type) }}
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Selection Indicator -->
+                            <div class="category-item-action">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                        </button>
+                    }
+                </div>
+            } @else {
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <i class="bi bi-inbox"></i>
+                    <h4>No Categories Found</h4>
+                    <p>Try adjusting your search or filters</p>
+                </div>
+            }
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+            <button 
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="closeCategoryModal()">
+                <i class="bi bi-x-circle me-2"></i>
+                Cancel
+            </button>
+            <button 
+                type="button"
+                class="btn btn-primary"
+                [disabled]="!selectedCategory()"
+                (click)="confirmCategorySelection()">
+                <i class="bi bi-check-circle me-2"></i>
+                Confirm Selection
+            </button>
+        </div>
+
+    </div>
+</div>
+}

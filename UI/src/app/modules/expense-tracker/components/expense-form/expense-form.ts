@@ -8,10 +8,16 @@ import {
   TransactionFormData,
   TransactionType,
   PaymentMethod,
-  RecurrenceFrequency
+  RecurrenceFrequency,
+  // Category
 } from '../../models/expense-tracker.models';
 import { CustomValidators } from '../../validators/custom-validators';
 import { interval } from 'rxjs';
+import { HostListener } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { IconType, Category, Subcategory } from '../../../categories/models/category.models';
+import { CategoryService } from '../../../categories/services/category.service';
+
 interface WizardStep {
   id: number;
   title: string;
@@ -24,7 +30,7 @@ interface WizardStep {
 @Component({
   selector: 'app-expense-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './expense-form.html',
   styleUrl: './expense-form.scss'
 })
@@ -32,7 +38,7 @@ export class ExpenseForm implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   transaction_id = undefined;
-  is_duplicated:boolean = false;
+  is_duplicated: boolean = false;
   // Form Groups
   transactionForm!: FormGroup;
 
@@ -40,6 +46,8 @@ export class ExpenseForm implements OnInit, OnDestroy {
   currentStep = signal<number>(1);
   totalSteps = 4;
 
+  // Wizard Steps Configuration
+  IconType = IconType;
   steps: WizardStep[] = [
     { id: 1, title: 'Transaction Type', subtitle: 'Choose transaction type', icon: 'bi-arrow-left-right', completed: false, valid: false },
     { id: 2, title: 'Basic Information', subtitle: 'Enter transaction details', icon: 'bi-info-circle', completed: false, valid: false },
@@ -64,20 +72,46 @@ export class ExpenseForm implements OnInit, OnDestroy {
   upiProviders = computed(() => this.expenseService.upiProviders());
   contacts = computed(() => this.expenseService.contacts());
 
-  // Filtered categories based on transaction type
-  filteredCategories = computed(() => {
-    const type = this.transactionForm?.get('step1.transactionType')?.value;
-    if (!type) return [];
-    return this.categories().filter(cat => cat.type === type);
-  });
+  // Add these properties
+  // showCategoryModal = signal<boolean>(false);
+  // selectedCategory = signal<Category | null>(null);
+  // selectedSubcategory = signal<Subcategory | null>(null);
+  // categorySearchQuery = signal<string>('');
+
+  // // Filtered categories based on transaction type
+  // filteredCategories = computed(() => {
+  //   const type = this.transactionForm?.get('step1.transactionType')?.value;
+  //   if (!type) return [];
+  //   return this.categories().filter(cat => cat.type === type);
+  // });
+
+
+
+  // // Enums for template
+  // TransactionType = TransactionType;
+  // IconType = IconType;
+
+  // Category Modal State
+  showCategoryModal = signal(false);
+  selectedCategory = signal<Category | null>(null);
+  selectedSubcategory = signal<Subcategory | null>(null);
+
+  // Search & Filter
+  categorySearchQuery = signal('');
+  categoryFilter = signal<'all' | 'recent' | 'favorites'>('all');
+  recentCategories = signal<string[]>([]);
+  favoriteCategories = signal<string[]>([]);
+
+  // All Categories (load from your service)
+  allCategories = signal<Category[]>([]);
 
   // Subcategories based on selected category
-  subcategories = computed(() => {
-    const categoryId = this.transactionForm?.get('step2.categoryId')?.value;
-    if (!categoryId) return [];
-    const category = this.categories().find(cat => cat.id === categoryId);
-    return category?.subcategories || [];
-  });
+  // subcategories = computed(() => {
+  //   const categoryId = this.transactionForm?.get('step2.categoryId')?.value;
+  //   if (!categoryId) return [];
+  //   const category = this.categories().find(cat => cat.id === categoryId);
+  //   return category?.subcategories || [];
+  // });
 
   // Progress percentage
   progressPercentage = computed(() => {
@@ -97,27 +131,68 @@ export class ExpenseForm implements OnInit, OnDestroy {
     public fb: FormBuilder,
     public router: Router,
     public expenseService: ExpenseTrackerService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit(): void {
     this.initializeForm();
     this.setupFormListeners();
     this.route.queryParams.subscribe(params => {
-      // debugger;
       this.transaction_id = params['transaction_id'];
 
       if (this.transaction_id) {
         // Load the transaction to duplicate
         this.loadTransactionForEditing(this.transaction_id);
       }
-      if(params['duplicate'] === 'true' || params['duplicate'] === true){
+      if (params['duplicate'] === 'true' || params['duplicate'] === true) {
         this.is_duplicated = true;
       }
     });
+
     setTimeout(() => {
       this.transactionForm.updateValueAndValidity();
     }, 0);
+
+    // Load stored preferences
+    this.loadStoredPreferences();
+
+    // Load categories
+    this.loadCategories();
+
+    // Watch for category changes in form
+    this.transactionForm?.get('step2.categoryId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(categoryId => {
+        if (categoryId) {
+          const category = this.allCategories().find(
+            c => (c.categoryId === categoryId) || (c.id === categoryId)
+          );
+          if (category) {
+            this.selectedCategory.set(category);
+          }
+        } else {
+          this.selectedCategory.set(null);
+          this.selectedSubcategory.set(null);
+        }
+      });
+
+    // Watch for subcategory changes in form
+    this.transactionForm?.get('step2.subcategoryId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(subcategoryId => {
+        if (subcategoryId) {
+          const category = this.selectedCategory();
+          if (category && category.subcategories) {
+            const subcategory = category.subcategories.find(s => s.id === subcategoryId);
+            if (subcategory) {
+              this.selectedSubcategory.set(subcategory);
+            }
+          }
+        } else {
+          this.selectedSubcategory.set(null);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -145,12 +220,21 @@ export class ExpenseForm implements OnInit, OnDestroy {
       });
   }
 
+  @HostListener('document:keydown', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent): void {
+    if (!this.showCategoryModal()) return;
+    if (event.key === 'Escape') this.closeCategoryModal();
+    if (event.key === 'Enter' && this.selectedCategory()) {
+      this.confirmCategorySelection();
+    }
+  }
+
   /**
    * Populate form with transaction data
    */
   private populateForm(transaction: any): void {
     // Convert date to YYYY-MM-DD format for input[type="date"]
-    transaction=transaction.data;
+    transaction = transaction.data;
     const transactionDate = transaction.transactionDate
       ? new Date(transaction.transactionDate).toISOString().split('T')[0]
       : new Date().toISOString().split('T')[0];
@@ -739,7 +823,6 @@ export class ExpenseForm implements OnInit, OnDestroy {
     if (this.transactionForm.valid && !this.isSubmitting()) {
       this.isSubmitting.set(true);
       const formData = this.buildTransactionData();
-      // debugger;
       this.expenseService.saveTransaction(formData)
         .pipe(takeUntil(this.destroy$))
         .subscribe({
@@ -803,7 +886,7 @@ export class ExpenseForm implements OnInit, OnDestroy {
       taxCategory: step3.taxCategory,
       attachments: step3.attachments,
       splitTransactions: step3.splitTransactions,
-      is_duplicated : this.is_duplicated
+      is_duplicated: this.is_duplicated
     };
   }
 
@@ -851,18 +934,18 @@ export class ExpenseForm implements OnInit, OnDestroy {
   /**
    * Get transaction type label
    */
-  getTransactionTypeLabel(type: TransactionType): string {
-    const labelMap: Record<TransactionType, string> = {
-      [TransactionType.INCOME]: 'Income',
-      [TransactionType.EXPENSE]: 'Expense',
-      [TransactionType.TRANSFER]: 'Transfer',
-      [TransactionType.DEBT_GIVEN]: 'Debt Given',
-      [TransactionType.DEBT_RECEIVED]: 'Debt Received',
-      [TransactionType.DEBT_REPAYMENT]: 'Debt Repayment',
-      [TransactionType.DEBT_COLLECTION]: 'Debt Collection'
-    };
-    return labelMap[type] || type;
-  }
+  // getTransactionTypeLabel(type: TransactionType): string {
+  //   const labelMap: Record<TransactionType, string> = {
+  //     [TransactionType.INCOME]: 'Income',
+  //     [TransactionType.EXPENSE]: 'Expense',
+  //     [TransactionType.TRANSFER]: 'Transfer',
+  //     [TransactionType.DEBT_GIVEN]: 'Debt Given',
+  //     [TransactionType.DEBT_RECEIVED]: 'Debt Received',
+  //     [TransactionType.DEBT_REPAYMENT]: 'Debt Repayment',
+  //     [TransactionType.DEBT_COLLECTION]: 'Debt Collection'
+  //   };
+  //   return labelMap[type] || type;
+  // }
 
   /**
    * Get category by ID
@@ -911,4 +994,321 @@ export class ExpenseForm implements OnInit, OnDestroy {
   submitTransaction(): void {
     this.onSubmit();
   }
+
+  // Open modal
+  // openCategoryModal(): void {
+  //   console.log('Opening modal...');
+  //   this.showCategoryModal.set(true);
+  // }
+
+  // // Close modal
+  // closeCategoryModal(): void {
+  //   console.log('Closing modal...');
+  //   this.showCategoryModal.set(false);
+  // }
+
+  // // Confirm selection
+  // confirmCategorySelection(): void {
+  //   console.log('Confirming selection...');
+  //   const category = this.selectedCategory();
+  //   if (category) {
+  //     // Update your form here
+  //     this.closeCategoryModal();
+  //   }
+  // }
+
+  // Filtered Categories
+  filteredCategories = computed(() => {
+    let categories = this.allCategories();
+
+    // Apply search filter
+    const searchQuery = this.categorySearchQuery().toLowerCase();
+    if (searchQuery) {
+      categories = categories.filter(cat =>
+        cat.name.toLowerCase().includes(searchQuery) ||
+        (cat.description && cat.description.toLowerCase().includes(searchQuery))
+      );
+    }
+
+    // Apply category filter
+    const filter = this.categoryFilter();
+    if (filter === 'recent') {
+      const recentIds = this.recentCategories();
+      categories = categories.filter(cat =>
+        cat.categoryId && recentIds.includes(cat.categoryId)
+      );
+    } else if (filter === 'favorites') {
+      const favoriteIds = this.favoriteCategories();
+      categories = categories.filter(cat =>
+        cat.categoryId && favoriteIds.includes(cat.categoryId)
+      );
+    }
+
+    // Filter by transaction type
+    const currentTransactionType = this.transactionForm?.get('step1.transactionType')?.value;
+    if (currentTransactionType && currentTransactionType !== TransactionType.TRANSFER) {
+      categories = categories.filter(cat =>
+        cat.transactionTypes && cat.transactionTypes.includes(currentTransactionType)
+      );
+    }
+
+    return categories;
+  });
+
+  // Subcategories for selected category
+  subcategories = computed(() => {
+    const category = this.selectedCategory();
+    if (!category || !category.subcategories) {
+      return [];
+    }
+    return category.subcategories;
+  });
+
+  // ========================================
+  // 🎬 CATEGORY MODAL METHODS
+  // ========================================
+
+  /**
+   * Open category selection modal
+   */
+  openCategoryModal(): void {
+    console.log('🔍 Opening category modal');
+    this.showCategoryModal.set(true);
+
+    // Focus search input after modal opens
+    setTimeout(() => {
+      const searchInput = document.querySelector<HTMLInputElement>('.search-input');
+      if (searchInput) {
+        searchInput.focus();
+      }
+    }, 100);
+  }
+
+  /**
+   * Close category modal
+   */
+  closeCategoryModal(): void {
+    console.log('❌ Closing category modal');
+    this.showCategoryModal.set(false);
+    this.categorySearchQuery.set('');
+  }
+
+  /**
+   * Select category
+   */
+  selectCategory(category: Category): void {
+    console.log('✅ Category selected:', category.name);
+    this.selectedCategory.set(category);
+
+    // Clear subcategory when category changes
+    this.selectedSubcategory.set(null);
+    this.transactionForm.get('step2.subcategoryId')?.setValue(null);
+  }
+
+  /**
+   * Confirm category selection and close modal
+   */
+  confirmCategorySelection(): void {
+    const category = this.selectedCategory();
+    if (!category) {
+      console.warn('⚠️ No category selected');
+      return;
+    }
+
+    console.log('✅ Confirming category selection:', category.name);
+
+    // Update form control - use categoryId if available, otherwise id
+    const categoryIdValue = category.categoryId || category.id;
+    this.transactionForm.get('step2.categoryId')?.setValue(categoryIdValue);
+
+    // Add to recent categories
+    if (categoryIdValue) {
+      this.addToRecentCategories(categoryIdValue);
+    }
+
+    // Close modal
+    this.closeCategoryModal();
+  }
+
+  /**
+   * Search categories
+   */
+  onCategorySearch(): void {
+    console.log('🔍 Searching:', this.categorySearchQuery());
+    // The computed signal will automatically filter
+  }
+
+  /**
+   * Clear category search
+   */
+  clearCategorySearch(): void {
+    this.categorySearchQuery.set('');
+    const searchInput = document.querySelector<HTMLInputElement>('.search-input');
+    if (searchInput) {
+      searchInput.focus();
+    }
+  }
+
+  /**
+   * Set category filter
+   */
+  setCategoryFilter(filter: 'all' | 'recent' | 'favorites'): void {
+    console.log('🔧 Filter changed to:', filter);
+    this.categoryFilter.set(filter);
+  }
+
+  // ========================================
+  // 📂 SUBCATEGORY METHODS
+  // ========================================
+
+  /**
+   * Select subcategory
+   */
+  selectSubcategory(subcategory: Subcategory): void {
+    console.log('✅ Subcategory selected:', subcategory.name);
+    this.selectedSubcategory.set(subcategory);
+
+    // Update form control
+    this.transactionForm.get('step2.subcategoryId')?.setValue(subcategory.id);
+  }
+
+  /**
+   * Clear subcategory selection
+   */
+  clearSubcategory(): void {
+    console.log('❌ Clearing subcategory');
+    this.selectedSubcategory.set(null);
+    this.transactionForm.get('step2.subcategoryId')?.setValue(null);
+  }
+
+  // ========================================
+  // 📊 HELPER METHODS
+  // ========================================
+
+  /**
+   * Get transaction type label
+   */
+  getTransactionTypeLabel(type: TransactionType): string {
+    const labels: Record<TransactionType, string> = {
+      [TransactionType.INCOME]: 'Income',
+      [TransactionType.EXPENSE]: 'Expense',
+      [TransactionType.TRANSFER]: 'Transfer',
+      [TransactionType.DEBT_GIVEN]: 'Debt Given',
+      [TransactionType.DEBT_RECEIVED]: 'Debt Received',
+      [TransactionType.DEBT_REPAYMENT]: 'Debt Repayment',
+      [TransactionType.DEBT_COLLECTION]: 'Debt Collection'
+    };
+    return labels[type] || type;
+  }
+
+  /**
+   * Add category to recent list
+   */
+  private addToRecentCategories(categoryId: string): void {
+    const recent = this.recentCategories();
+
+    // Remove if already exists
+    const filtered = recent.filter(id => id !== categoryId);
+
+    // Add to beginning and keep only last 5
+    const updated = [categoryId, ...filtered].slice(0, 5);
+
+    this.recentCategories.set(updated);
+
+    // Save to localStorage
+    try {
+      localStorage.setItem('recentCategories', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving recent categories:', e);
+    }
+  }
+
+  /**
+   * Toggle favorite category
+   */
+  toggleFavorite(categoryId: string, event: Event): void {
+    event.stopPropagation(); // Prevent category selection
+
+    const favorites = this.favoriteCategories();
+    const index = favorites.indexOf(categoryId);
+
+    let updated: string[];
+    if (index >= 0) {
+      // Remove from favorites
+      updated = favorites.filter(id => id !== categoryId);
+      console.log('💔 Removed from favorites:', categoryId);
+    } else {
+      // Add to favorites
+      updated = [...favorites, categoryId];
+      console.log('⭐ Added to favorites:', categoryId);
+    }
+
+    this.favoriteCategories.set(updated);
+
+    // Save to localStorage
+    try {
+      localStorage.setItem('favoriteCategories', JSON.stringify(updated));
+    } catch (e) {
+      console.error('Error saving favorite categories:', e);
+    }
+  }
+
+  /**
+   * Check if category is favorite
+   */
+  isFavorite(categoryId: string): boolean {
+    return this.favoriteCategories().includes(categoryId);
+  }
+
+  /**
+   * Load recent and favorite categories from localStorage
+   */
+  private loadStoredPreferences(): void {
+    // Load recent categories
+    try {
+      const recentJson = localStorage.getItem('recentCategories');
+      if (recentJson) {
+        const recent = JSON.parse(recentJson);
+        this.recentCategories.set(recent);
+      }
+    } catch (e) {
+      console.error('Error loading recent categories:', e);
+    }
+
+    // Load favorite categories
+    try {
+      const favoritesJson = localStorage.getItem('favoriteCategories');
+      if (favoritesJson) {
+        const favorites = JSON.parse(favoritesJson);
+        this.favoriteCategories.set(favorites);
+      }
+    } catch (e) {
+      console.error('Error loading favorite categories:', e);
+    }
+  }
+
+  /**
+   * Load categories from service
+   */
+  private loadCategories(): void {
+    // Replace with your actual service call
+    this.categoryService.getCategories()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          if (response.data) {
+            if (response.data.length <= 0) {
+              console.warn('⚠️ No categories found from service');
+            }
+            else { 
+              this.allCategories.set(response.data); }
+            console.log('✅ Categories loaded:', response.data.length);
+          }
+        },
+        error: (error) => {
+          console.error('❌ Error loading categories:', error);
+        }
+      });
+  }
+
 }

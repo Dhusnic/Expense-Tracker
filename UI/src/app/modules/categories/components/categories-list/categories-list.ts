@@ -33,6 +33,7 @@ import { CategoryFilters } from '../category-filters/category-filters';
 import { CategoryDetailModal } from '../category-detail-modal/category-detail-modal';
 import { CategoryQuickEditModal } from '../category-quick-edit-modal/category-quick-edit-modal';
 import { trigger, transition, style, animate, query, stagger } from '@angular/animations';
+import { ca } from 'intl-tel-input/i18n';
 @Component({
   selector: 'app-categories-list',
   standalone: true,
@@ -775,40 +776,22 @@ export class CategoriesList implements OnInit, OnDestroy {
    * Navigate to create category
    */
   createCategory(): void {
-    this.router.navigate(['/categories/new']);
+    this.router.navigate(['/categories/add']);
   }
 
   /**
    * Navigate to edit category
    */
   editCategory(category: CategoryViewModel): void {
-    this.router.navigate(['/categories/edit', category.id]);
+    debugger;
+    this.router.navigate(['/categories/add'], { queryParams: { categoryId: category.categoryId } });
   }
 
   /**
    * Duplicate category
    */
   duplicateCategory(category: CategoryViewModel): void {
-    if (!confirm(`Duplicate category "${category.name}"?`)) return;
-
-    this.loadingState.update(s => ({ ...s, isSaving: true }));
-
-    // ✅ Create proper duplicated object
-    const duplicated: CategoryViewModel = {
-      ...category,
-      id: `${Date.now()}`,
-      category_id: `cat_${Date.now()}`, // ✅ Added
-      name: `${category.name} (Copy)`,
-      createdAt: new Date(),
-      updatedAt: undefined // ✅ Changed from null to undefined
-    };
-
-    setTimeout(() => {
-      this.categories.update(cats => [...cats, duplicated]);
-      this.applyFiltersAndSort();
-      this.showToast('success', `Duplicated "${category.name}"`);
-      this.loadingState.update(s => ({ ...s, isSaving: false }));
-    }, 1000);
+    this.router.navigate(['/categories/add'], { queryParams: { categoryId: category.categoryId, isDuplicated: true } });
   }
 
 
@@ -817,9 +800,18 @@ export class CategoriesList implements OnInit, OnDestroy {
    */
   deleteCategory(category: CategoryViewModel): void {
     if (!confirm(`Delete category "${category.name}"? This action cannot be undone.`)) return;
+    this.categoryService.deleteCategory(category.id!).subscribe({
+      next: () => {
+        this.categories.update(cats => cats.filter(c => c.id !== category.id));
+        this.applyFiltersAndSort();
+        this.showToast('success', `Deleted "${category.name}"`);
+      },
+      error: () => {
+        this.showToast('error', 'Failed to delete category');
+      }
+    });
 
     this.loadingState.update(s => ({ ...s, isSaving: true }));
-
     // TODO: Call API to delete
     setTimeout(() => {
       this.categories.update(cats => cats.filter(c => c.id !== category.id));

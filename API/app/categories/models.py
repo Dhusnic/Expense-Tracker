@@ -89,7 +89,7 @@ class Subcategory(BaseModel):
 
 class Category(BaseDocument):
     """Main Category model - Matches Angular Category interface"""
-    category_id: str = Field(..., alias="categoryId")
+    categoryId: str = Field(..., alias="categoryId")
     name: str = Field(..., min_length=2, max_length=100)
     icon: CategoryIcon
     description: Optional[str] = Field(None, max_length=500)
@@ -110,7 +110,8 @@ class Category(BaseDocument):
     created_by: Optional[str] = Field(None, alias="createdBy")
     is_deleted: bool = Field(default=False, alias="isDeleted")
     is_system_category: bool = Field(default=False, alias="isSystemCategory")
-    
+    isDuplicated: bool = Field(default=False, alias="isDuplicated")
+
     @field_validator('name', mode='after')
     @classmethod
     def clean_name(cls, v):
@@ -148,7 +149,7 @@ class Category(BaseDocument):
     class Settings:
         name = "categories"
         indexes = [
-            "category_id",
+            "categoryId",
             "name",
             "transaction_types",
             "is_active",
@@ -204,7 +205,7 @@ class SubcategoryCreate(BaseModel):
 
 class CategoryCreate(BaseModel):
     """Schema for creating categories - Matches Angular CategoryFormData"""
-    category_id: Optional[str] = Field(None, alias="categoryId")
+    categoryId: Optional[str] = Field(None, alias="categoryId")
     id: Optional[str] = None
     name: str = Field(..., min_length=2, max_length=100)
     icon: CategoryIcon
@@ -220,7 +221,7 @@ class CategoryCreate(BaseModel):
     is_default: bool = Field(default=False, alias="isDefault")
     default_account_id: Optional[str] = Field(None, alias="defaultAccountId")
     linked_account_ids: List[str] = Field(default_factory=list, alias="linkedAccountIds")
-    is_duplicated: bool = Field(default=False, alias="isDuplicate")
+    isDuplicated: bool = Field(default=False, alias="isDuplicated")
     
     @field_validator('tax_category', 'description', 'default_account_id', mode='before')
     @classmethod

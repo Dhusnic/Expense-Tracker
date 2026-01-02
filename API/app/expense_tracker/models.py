@@ -176,7 +176,7 @@ class Transaction(BaseDocument):
     amount: float = Field(..., gt=0)
     currency: str = "INR"
     transaction_date: date = Field(default_factory=date.today, alias="transactionDate")
-    category_id: str = Field(..., alias="categoryId")
+    categoryId: str = Field(..., alias="categoryId")
     subcategory_id: Optional[str] = Field(None, alias="subcategoryId")
     description: str = Field(..., min_length=3, max_length=200)
     notes: Optional[str] = Field(None, max_length=500)
@@ -258,7 +258,7 @@ class Transaction(BaseDocument):
             "transaction_id",
             "transaction_date",
             "transaction_type",
-            "category_id",
+            "categoryId",
             "from_account_id",
             "to_account_id",
             "contact_id",
@@ -276,7 +276,7 @@ class Transaction(BaseDocument):
 class Budget(BaseDocument):
     """Budget tracking"""
     name: str = Field(..., min_length=1, max_length=100)
-    category_id: str = Field(..., alias="categoryId")
+    categoryId: str = Field(..., alias="categoryId")
     amount: float = Field(..., gt=0)
     period: Literal['DAILY', 'WEEKLY', 'MONTHLY', 'QUARTERLY', 'YEARLY']
     start_date: date = Field(..., alias="startDate")
@@ -290,7 +290,7 @@ class Budget(BaseDocument):
     class Settings:
         name = "budgets"
         indexes = [
-            "category_id",
+            "categoryId",
             [("start_date", 1), ("end_date", 1)],
             "is_active"
         ]
@@ -343,7 +343,7 @@ class TransactionCreate(BaseModel):
     amount: float = Field(..., gt=0)
     currency: str = "INR"
     transaction_date: date = Field(..., alias="transactionDate")
-    category_id: str = Field(..., alias="categoryId")
+    categoryId: str = Field(..., alias="categoryId")
     subcategory_id: Optional[str] = Field(None, alias="subcategoryId")
     description: str = Field(..., min_length=3, max_length=200)
     notes: Optional[str] = None
@@ -398,7 +398,7 @@ class TransactionUpdate(BaseModel):
     amount: Optional[float] = Field(None, gt=0)
     currency: Optional[str] = None
     transaction_date: Optional[date] = Field(None, alias="transactionDate")
-    category_id: Optional[str] = Field(None, alias="categoryId")
+    categoryId: Optional[str] = Field(None, alias="categoryId")
     subcategory_id: Optional[str] = Field(None, alias="subcategoryId")
     description: Optional[str] = None
     notes: Optional[str] = None

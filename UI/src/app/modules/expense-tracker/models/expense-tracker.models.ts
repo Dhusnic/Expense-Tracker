@@ -30,13 +30,16 @@ export enum RecurrenceFrequency {
 }
 
 export interface Category {
-    id: string;
+    categoryId?: string;
+    id?: string;
     name: string;
+    description?: string;
     icon: string;
     color: string;
     type: TransactionType;
     parentId?: string;
     subcategories?: Category[];
+    transactionTypes: TransactionType[];
 }
 
 export interface Account {
