@@ -5,8 +5,7 @@ from pydantic import BaseModel
 import logging
 from decouple import Config, RepositoryEnv
 from pathlib import Path
-
-
+from .core.config import *
 
 # SQLAlchemy imports (for existing auth system)
 from sqlalchemy import create_engine
@@ -17,17 +16,11 @@ from sqlalchemy.orm import sessionmaker
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-BASE_DIR = Path(__file__).resolve().parent
-ENV_PATH = BASE_DIR / "core" / "settings" / ".env"
 
-config = Config(RepositoryEnv(ENV_PATH))
 # ==================== SQLAlchemy Configuration (Existing Auth) ====================
 
 
-SQLALCHEMY_DATABASE_URL = config(
-    "DATABASE_URL",
-    default="sqlite:///./sql_app.db"  # Default SQLite for testing
-)
+SQLALCHEMY_DATABASE_URL = SQLALCHEMY_DATABASE_URL
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -46,10 +39,6 @@ def get_db():
     finally:
         db.close()
 
-# ==================== MongoDB Configuration (Expense Tracker) ====================
-
-MONGO_URL = config("MONGO_URL", default="mongodb://10.0.5.97:27017")
-DB_NAME = config("DB_NAME", default="expense_tracker")
 
 # Type variable for generic operations
 T = TypeVar('T', bound=Document)
@@ -389,6 +378,17 @@ class BaseDocument(Document):
         if fresh:
             for field, value in fresh.dict().items():
                 setattr(self, field, value)
+    def to_dict(self) -> dict:
+        return self.dict()
+    
+    class Settings:
+        use_state_management = True
+        validate_on_save = True
+        
+        
+    class Config:  # ✅ ADD THIS
+        populate_by_name = True
+        validate_by_name = True 
     
     @classmethod
     async def get_by_id(cls: Type[T], id: PydanticObjectId) -> Optional[T]:

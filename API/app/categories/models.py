@@ -3,6 +3,10 @@ from typing import Optional, List
 from enum import Enum
 from pydantic import Field, field_validator, BaseModel
 from ..database import BaseDocument
+from ..core.config import *
+from ..cloud_services.aws_services.dynamodb import *
+
+
 
 
 # ==================== ENUMS ====================
@@ -86,8 +90,11 @@ class Subcategory(BaseModel):
 
 
 # ==================== MAIN MODELS ====================
-
-class Category(BaseDocument):
+if IS_CLOUD:
+    model = BaseDocument
+else:
+    model = BaseDynamoModel
+class Category(model):
     """Main Category model - Matches Angular Category interface"""
     categoryId: str = Field(..., alias="categoryId")
     name: str = Field(..., min_length=2, max_length=100)

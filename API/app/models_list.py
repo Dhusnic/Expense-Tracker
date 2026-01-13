@@ -12,3 +12,14 @@ models_list = [
     UpiProvider,
     Category
 ]
+
+dynamodb_models_list = [
+    User,
+    Transaction,
+    Category,
+    Account,
+    Contact,
+    Budget,
+    UpiProvider,
+    Category
+]
